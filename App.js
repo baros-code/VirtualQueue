@@ -22,7 +22,7 @@ import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
 
 const navigator = createStackNavigator(
-  // gayBaran
+
   {
     ClientDashboard: ClientDashboard,
     CreateReservation : CreateReservation,
