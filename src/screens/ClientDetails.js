@@ -7,7 +7,7 @@ import { Context as AuthContext } from '../context/AuthContext';
 const ClientDetails = ({ navigation }) => {
     const { state, rejectUser, acceptUser } = useContext(AuthContext);
 
-
+    //deneme1
     const id = navigation.getParam('id');
 
     // state === [] of clients
