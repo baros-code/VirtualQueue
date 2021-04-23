@@ -11,7 +11,6 @@ const AdminDashboard = ( {navigation} ) => {
 
   const { state, deleteQueue, resetQueue } = useContext(QueueContext);
 
-  //console.log("saaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
   return (
   <View style={styles.background}>
     <FlatList

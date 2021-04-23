@@ -5,7 +5,6 @@ import QueueForm from '../components/QueueForm';
 
 const CreateQueue = ({ navigation }) => {
     const { addQueue } = useContext(QueueContext);
-    //console.log("");
 
     return (
         <QueueForm 
@@ -15,7 +14,7 @@ const CreateQueue = ({ navigation }) => {
     );
 };
 
-//denemee
+
 const styles = StyleSheet.create({
 });
 

@@ -13,7 +13,6 @@ const CreateReservation = ({ navigation }) => {
     const clientId = navigation.getParam('clientId');
 
     console.log("sa" + clientId, clientName, organizationName);
-    //console.log("saaa");
 
     if(organizationName) {
         return (

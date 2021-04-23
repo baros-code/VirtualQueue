@@ -16,7 +16,6 @@ const ClientDashboard = ( {navigation} ) => {
 
   CLIENT_ID = Math.floor((Math.random() * 10000) + 1);
   console.log("id: "+ CLIENT_ID);
-  //deneme2
     
   return (
   <View style={styles.background}>
