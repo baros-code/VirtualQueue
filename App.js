@@ -21,8 +21,6 @@ import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
 
-//denemeeeeee
-
 const navigator = createStackNavigator(
 
   {
