@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "413665534659",
+    "firebase_url": "https://virtualqueue-efbe6-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "virtualqueue-efbe6",
+    "storage_bucket": "virtualqueue-efbe6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413665534659:android:8db16fc9b1188478d93876",
+        "android_client_info": {
+          "package_name": "com.example.virtualqueue"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "413665534659-fai4bnbrjjr0i9v7e09f4mvbe5qt1rjc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.virtualqueue",
+            "certificate_hash": "a316bc0444fcb61a2e172da903b28795a5a85149"
+          }
+        },
+        {
+          "client_id": "413665534659-jsovfjrn5275q13g7khpt59feeuj4v4l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrnD7INx8hsGeT2Zt3UhSKI9ucD9wiVYM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "413665534659-jsovfjrn5275q13g7khpt59feeuj4v4l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

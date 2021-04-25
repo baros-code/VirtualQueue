@@ -2,6 +2,10 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+
+
+import LoginApp from './LoginApp'
+
 import { Provider as ReservationProvider } from './src/context/ReservationContext'
 import { Provider as QueueProvider } from './src/context/QueueContext'
 import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
@@ -52,6 +56,8 @@ const App = createAppContainer(navigator);
 
 export default () => {
   return (
+    <LoginApp />
+    /*
     <QueueProvider>
       <OrganizationProvider>
         <ReservationProvider>
@@ -61,6 +67,7 @@ export default () => {
        </ReservationProvider>
     </OrganizationProvider>
   </QueueProvider>
+  */
   )
 };
 
