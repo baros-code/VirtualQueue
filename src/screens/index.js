@@ -7,10 +7,16 @@ import HomeScreen from "./HomeScreen/HomeScreen"
 // create screens
 const screens = {
     Login: {
-        screen:LoginScreen
+        screen:LoginScreen,
+        navigationOptions: {
+        title:"Virtual Queue"
+        }
     },
     Home: {
-      screen: HomeScreen
+      screen: HomeScreen,
+      navigationOptions: {
+        title:"Dashboard"
+        }
     },
     Register: {
       screen: RegistrationScreen
@@ -22,10 +28,9 @@ const screens = {
   
   const Stack = createStackNavigator(screens, {
     defaultNavigationOptions: {
-        gestureEnabled:false,
-        headerTintColor:"white",
+        headerTintColor:"#0e66d4",
         headerStyle: {
-             backgroundColor:"#0e66d4",
+             backgroundColor:"white",
              
         }
   } });
