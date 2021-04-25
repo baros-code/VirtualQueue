@@ -25,9 +25,8 @@ export default function LoginScreen({navigation}) {
                             alert("User does not exist anymore.")
                             return;
                         }
-                        const user = userData.val()
-                        console.log(user)
-                        navigation.navigate('Home', {user})
+                        const data = userData.val()
+                        navigation.navigate('Home', data)
                     })
                     .catch(error => {
                         alert(error)

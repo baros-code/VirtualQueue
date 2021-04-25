@@ -38,7 +38,7 @@ export default function RegistrationScreen({navigation}) {
                     phoneNumber,
                     role,
                 };
-                const usersRef = firebase.database().ref("users" + uid)
+                const usersRef = firebase.database().ref("users/" + uid)
                 usersRef
                     .set(data)
                     .then(() => {
