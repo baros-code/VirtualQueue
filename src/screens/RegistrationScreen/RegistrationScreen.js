@@ -42,7 +42,7 @@ export default function RegistrationScreen({navigation}) {
                 usersRef
                     .set(data)
                     .then(() => {
-                        navigation.navigate('Home', {data})
+                        navigation.navigate('Home', data)
                     })
                     .catch((error) => {
                         alert(error)
