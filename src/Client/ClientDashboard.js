@@ -23,19 +23,23 @@ const ClientDashboard = ( {navigation} ) => {
 
   const { deleteReservation } = useContext(ReservationContext);
 
+
   const [state, setState] = useState({reservations: [], isFetching: false});
 
+  
   useEffect(() => {
     const fetchReservations = async () => {
         try {
             setState({reservations: state.reservations, isFetching: true});
             //const response = await axios.get(USER_SERVICE_URL);
             const ref =firebase.database().ref("reservations");
-            ref.orderByChild("clientId").equalTo("userId2").on("child_added", snapshot => {
-              const response = snapshot.val();
-              console.log("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-              setState({reservations: response, isFetching: false});
-         });
+            var response = [];
+            await ref.orderByChild("clientId").equalTo("userId2").on("child_added", function (snapshot) {
+              response = [...response, snapshot.val()];
+              console.log("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY :" + response);
+            });
+            console.log("this is response:  " + response);
+            setState({reservations: response, isFetching: false});
             
         } catch (e) {
             console.log(e);
@@ -45,19 +49,24 @@ const ClientDashboard = ( {navigation} ) => {
     fetchReservations();
   }, []);
 
-  console.log("reservations: " + state.reservations.startTime);
+
+
+
+  if(state.reservations[0] != undefined)
+      console.log("reservations: " + state.reservations[0].startTime);
+  //console.log("sa");
   //console.log("reservations: " + state.reservations[0].organizationId);
   
   return (
   <View style={styles.background}>
-    {/* <FlatList
-      state={state.reservations}
-      keyExtractor={(reservation) => reservation.id.toString()}
+    <FlatList
+      data={state.reservations}
+      keyExtractor={(reservation) => reservation.startTime.toString()}
       renderItem={({item}) => {
         return (
         <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
           <View style={styles.row}>     
-            <Text style={styles.organizationStyle}>{item.organizationName} - {item.date}</Text>
+            <Text style={styles.organizationStyle}>{item.organizationId} - {item.employeeId}</Text>
             <TouchableOpacity onPress={() => deleteReservation(item.id)}>
               <Feather style={styles.icon} name="trash" />
             </TouchableOpacity>
@@ -65,7 +74,7 @@ const ClientDashboard = ( {navigation} ) => {
         </TouchableOpacity>
         );
       }}
-    /> */}
+    />
     <View style={styles.button}>
     <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
     </View>
