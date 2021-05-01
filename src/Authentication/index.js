@@ -3,7 +3,7 @@ import { createStackNavigator } from 'react-navigation-stack'
 import LoginScreen from './LoginScreen'
 import RegistrationScreen from "./RegistrationScreen"
 import HomeScreen from "./HomeScreen"
-import PhoneVerification from "./PhoneVerification"
+import phoneAuthentication from "./PhoneAuthentication"
 
 // create screens
 const screens = {
@@ -24,7 +24,10 @@ const screens = {
     },
 
     PhoneVerification: {
-      screen: PhoneVerification
+      screen: phoneAuthentication,
+      navigationOptions: {
+        title:"Phone Verification"
+        }
     }
   
   }
