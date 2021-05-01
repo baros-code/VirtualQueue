@@ -4,17 +4,21 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 
-import LoginApp from './LoginApp'
-
 import { Provider as ReservationProvider } from './src/context/ReservationContext'
 import { Provider as QueueProvider } from './src/context/QueueContext'
 import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
 import { Provider as AuthProvider } from './src/context/AuthContext'
 
-import ClientDashboard from './src/screens/ClientDashboard';
-import CreateReservation from './src/screens/CreateReservation';
-import ReservationDetails from './src/screens/ReservationDetails';
-import Organizations from './src/screens/Organizations';
+
+import LoginScreen from './src/Authentication/LoginScreen'
+import HomeScreen from './src/Authentication/HomeScreen'
+import RegistrationScreen from './src/Authentication/RegistrationScreen'
+import PhoneVerification from './src/Authentication/PhoneVerification'
+
+import ClientDashboard from './src/Client/ClientDashboard';
+import CreateReservation from './src/Client/CreateReservation';
+import ReservationDetails from './src/Client/ReservationDetails';
+import Organizations from './src/Client/Organizations';
 
 import AdminDashboard from './src/screens/AdminDashboard';
 import CreateQueue from './src/screens/CreateQueue';
@@ -39,10 +43,24 @@ const navigator = createStackNavigator(
     EmployeeDashboard: EmployeeDashboard,
     ListClients : ListClients,
     ClientDetails: ClientDetails,
+    Login : {
+      screen: LoginScreen,
+      navigationOptions: {
+      title:"Virtual Queue"
+      }
+  },
+    Home: {
+      screen: HomeScreen,
+      navigationOptions: {
+        title:"Dashboard"
+        }
+    },
+    Register: RegistrationScreen,
+    PhoneVerification: PhoneVerification
   },
 
   {
-    initialRouteName: 'ClientDashboard',
+    initialRouteName: 'Login',
     defaultNavigationOptions: {
       headerMode: 'screen',
       cardStyle: { backgroundColor: '#047DB9'},
@@ -56,8 +74,7 @@ const App = createAppContainer(navigator);
 
 export default () => {
   return (
-    <LoginApp />
-    /*
+
     <QueueProvider>
       <OrganizationProvider>
         <ReservationProvider>
@@ -67,7 +84,7 @@ export default () => {
        </ReservationProvider>
     </OrganizationProvider>
   </QueueProvider>
-  */
+  
   )
 };
 

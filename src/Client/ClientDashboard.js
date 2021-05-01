@@ -1,26 +1,57 @@
-import React, { useContext } from 'react';
+import React, { useEffect, useState ,useContext } from 'react';
+
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 import { Context as ReservationContext } from '../context/ReservationContext'  //context object
 //import { Context as ImageContext } .....
 import { Feather } from '@expo/vector-icons'; 
+import { firebase } from '../firebase/config'
 
-var CLIENT_ID = Math.floor((Math.random() * 10000) + 1);
 
-const CLIENT_NAME = "BARAN ATEŞ"; 
+// const fetchReservations = (clientId) => {
+//       const ref =firebase.statebase().ref("reservations");
+//       ref.orderByChild("clientId").equalTo(clientId).on("child_added", snapshot => {
+//            state = snapshot.val();
+//            console.log(state);
+//            return state;
+//       });
+// };
+
 
 const ClientDashboard = ( {navigation} ) => {
 
   //console.log("ReservationContext is : " + ReservationContext);
 
-  const { state, deleteReservation } = useContext(ReservationContext);
+  const { deleteReservation } = useContext(ReservationContext);
 
-  CLIENT_ID = Math.floor((Math.random() * 10000) + 1);
-  console.log("id: "+ CLIENT_ID);
-    
+  const [state, setState] = useState({reservations: [], isFetching: false});
+
+  useEffect(() => {
+    const fetchReservations = async () => {
+        try {
+            setState({reservations: state.reservations, isFetching: true});
+            //const response = await axios.get(USER_SERVICE_URL);
+            const ref =firebase.database().ref("reservations");
+            ref.orderByChild("clientId").equalTo("userId2").on("child_added", snapshot => {
+              const response = snapshot.val();
+              console.log("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
+              setState({reservations: response, isFetching: false});
+         });
+            
+        } catch (e) {
+            console.log(e);
+            setState({reservations: state.reservations, isFetching: false});
+        }
+    };
+    fetchReservations();
+  }, []);
+
+  console.log("reservations: " + state.reservations.startTime);
+  //console.log("reservations: " + state.reservations[0].organizationId);
+  
   return (
   <View style={styles.background}>
-    <FlatList
-      data={state}
+    {/* <FlatList
+      state={state.reservations}
       keyExtractor={(reservation) => reservation.id.toString()}
       renderItem={({item}) => {
         return (
@@ -34,7 +65,7 @@ const ClientDashboard = ( {navigation} ) => {
         </TouchableOpacity>
         );
       }}
-    />
+    /> */}
     <View style={styles.button}>
     <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
     </View>
@@ -50,10 +81,11 @@ calls the navigationOptions function.
 ClientDashboard.navigationOptions = ( {navigation} ) => {
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Organizations', {clientId: CLIENT_ID, clientName: CLIENT_NAME} )}>
+      <TouchableOpacity onPress={() => navigation.navigate('Organizations', {clientId: navigation.getParam("uid"), clientName: navigation.getParam("fullName")} )}>
         <Feather style={styles.icon} name="plus" size={30} />
       </TouchableOpacity>
     ),
+    title: "Hello, " + navigation.getParam("fullName") + navigation.getParam("uid"),
   };
 };
 

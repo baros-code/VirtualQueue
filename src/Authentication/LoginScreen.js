@@ -9,8 +9,8 @@ export default function LoginScreen({navigation}) {
     const [password, setPassword] = useState('')
 
     const onFooterLinkPress = () => {
-       // navigation.navigate('Register')
-       navigation.navigate("PhoneVerification")
+       navigation.navigate('Register')
+       //navigation.navigate("PhoneVerification")
     }
 
     const onLoginPress = () => {
@@ -23,18 +23,26 @@ export default function LoginScreen({navigation}) {
                 usersRef.get()
                     .then((userData) => {
                         if (!userData.exists) {
-                            alert("User does not exist anymore.")
+                            alert("User does not exist anymore.");
                             return;
                         }
-                        const data = userData.val()
-                        navigation.navigate('Home', data)
+                        const data = {...userData.val(), uid: uid}; //add uid property to data object
+                        
+                        if  (data.role === 0)
+                            navigation.navigate('ClientDashboard', data)
+                        else if(data.role === 1)
+                            navigation.navigate('EmployeeDashboard', data);
+                        else if(data.role === 2)
+                            navigation.navigate('AdminDashboard', data);
+                        else
+                            alert("Undefined role!");
                     })
                     .catch(error => {
-                        alert(error)
+                        alert(error);
                     });
             })
             .catch(error => {
-                alert(error)
+                alert(error);
             })
     }
 

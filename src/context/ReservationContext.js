@@ -1,9 +1,12 @@
 import createDataContext from './createDataContext'
+// import { firebase } from '../firebase/config'
 
 //ID LERI RANDOM ATTIRABILIRIZ
 
 const reservationReducer = (state, action) => {
     switch(action.type) {
+        case 'fetch_reservations':
+            return action.payload;  
         case 'add_reservation':
             const RESERVATION_ID = Math.floor((Math.random() * 100000) + 1);
             return [...state, { id: RESERVATION_ID , clientId: action.payload.clientId, transactionType: action.payload.transactionType, date: action.payload.date, organizationName: action.payload.organizationName} ];
@@ -13,6 +16,19 @@ const reservationReducer = (state, action) => {
             return state;
     }
 };
+
+
+// const fetchReservations = dispatch => {
+//     return (clientId) => {
+//         const ref =firebase.database().ref("reservations");
+//         ref.orderByChild("clientId").equalTo(clientId).on("child_added", snapshot => {
+//              data = snapshot.val();
+//              console.log(data);
+//             dispatch({ type: 'fetch_reservations', payload: data });
+//         });
+
+//     }
+//   };
 
 
 const addReservation = dispatch => {
