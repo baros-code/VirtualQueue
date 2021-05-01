@@ -211,7 +211,6 @@ const styles = StyleSheet.create({
     //borderWidth: 2,
     borderRadius: 5,
     paddingLeft: 10,
-    color: '#0e66d4',
     fontSize: 16,
     backgroundColor:"white"
   },
@@ -226,7 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   themeButtonTitle: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#fff'
   },

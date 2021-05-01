@@ -56,7 +56,7 @@ export default function RegistrationScreen({navigation}) {
         }
         const mailFlag=await isMailExist()
         if (mailFlag) {
-            alert("Mail is alerady used")
+            alert("Mail is already used")
             return
         }
         const item={email:email,password:password,fullName:fullName};
