@@ -1,8 +1,9 @@
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
-import LoginScreen from './LoginScreen/LoginScreen'
-import RegistrationScreen from "./RegistrationScreen/RegistrationScreen"
-import HomeScreen from "./HomeScreen/HomeScreen"
+import LoginScreen from './LoginScreen'
+import RegistrationScreen from "./RegistrationScreen"
+import HomeScreen from "./HomeScreen"
+import PhoneVerification from "./PhoneVerification"
 
 // create screens
 const screens = {
@@ -20,6 +21,10 @@ const screens = {
     },
     Register: {
       screen: RegistrationScreen
+    },
+
+    PhoneVerification: {
+      screen: PhoneVerification
     }
   
   }

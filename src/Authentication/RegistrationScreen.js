@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
-import { firebase } from '../../firebase/config'
+import { firebase } from '../firebase/config'
 
 export default function RegistrationScreen({navigation}) {
     const [fullName, setFullName] = useState('')
@@ -62,7 +62,7 @@ export default function RegistrationScreen({navigation}) {
                 keyboardShouldPersistTaps="always">
                 <Image
                     style={styles.logo}
-                    source={require('../../../assets/icon.png')}
+                    source={require('../../assets/queue-icon.jpg')}
                 />
                 <TextInput
                     style={styles.input}
@@ -90,6 +90,8 @@ export default function RegistrationScreen({navigation}) {
                     value={phoneNumber}
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
+                    keyboardType="phone-pad"
+                    autoCompleteType="tel"
                 />
                 <TextInput
                     style={styles.input}

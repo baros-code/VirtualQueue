@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react'
 import {decode, encode} from 'base-64'
-import Navigator from "./src/screens/index"
+import Navigator from "./src/Authentication/index"
 
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }
