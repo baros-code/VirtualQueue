@@ -31,8 +31,8 @@ const ClientDashboard = ( {navigation} ) => {
 
   const [state, setState] = useState({reservations: [], dataIsReturned: false});
  
+      
    
-  
   useEffect(()  => {
     const fetchReservations =  () => {
         try {
@@ -70,7 +70,7 @@ const ClientDashboard = ( {navigation} ) => {
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
                 <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.date.day}`}</Text>
-                <TouchableOpacity onPress={() => deleteReservation(item.transactionType)}>
+                <TouchableOpacity onPress={() => deleteReservation(item.id)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
               </View>

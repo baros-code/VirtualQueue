@@ -8,7 +8,7 @@ const reservationReducer = (state, action) => {
         case 'fetch_reservations':
             return action.payload;  
         case 'add_reservation':
-            const ref =firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
+            var ref =firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
             const reservation = action.payload;
             ref.set({
             date: {
@@ -28,7 +28,8 @@ const reservationReducer = (state, action) => {
             transactionType: reservation.transactionType
             });
         case 'delete_reservation':
-            return state.filter(reservation => reservation.id !== action.payload);
+            ref = firebase.database().ref("reservations");   
+            ref.child(action.payload).remove();         //if not found exception eklenmeli.
         default:
             return state;
     }
