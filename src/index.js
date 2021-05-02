@@ -39,8 +39,6 @@ const screens = {
   
   }
 
-
-  
   const Stack = createStackNavigator(screens, {
     defaultNavigationOptions: {
         headerTintColor:"#0e66d4",

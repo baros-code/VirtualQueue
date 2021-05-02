@@ -2,6 +2,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react'
 import {decode, encode} from 'base-64'
 import Navigator from "./src/index"
+import {Text,View} from "react"
 
 if (!global.btoa) {  global.btoa = encode }
 if (!global.atob) { global.atob = decode }

@@ -31,10 +31,6 @@ const AdminDashboard = ( {navigation} ) => {
 
   }
 
-  //console.log(navigation)
-
-  //const { state, deleteQueue, resetQueue } = useContext(QueueContext);
-
   useEffect(() => {
       fetchQueues()
   },([]))
