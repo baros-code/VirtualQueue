@@ -1,11 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import { Context as AuthContext } from '../context/AuthContext';
 
 
 
 const ClientDetails = ({ navigation }) => {
-    const { state, rejectUser, acceptUser } = useContext(AuthContext);
+    const [state, setState]= useState([]);
 
 
     const id = navigation.getParam('id');

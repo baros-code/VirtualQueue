@@ -1,8 +1,6 @@
-import React, { useEffect, useState ,useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
-import { Context as ReservationContext } from '../context/ReservationContext'  //context object
-//import { Context as ImageContext } .....
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 

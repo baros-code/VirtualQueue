@@ -1,7 +1,5 @@
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { Context as ReservationContext } from '../context/ReservationContext';
-import { Context as QueueContext } from '../context/QueueContext'
 import ReservationForm from '../components/ReservationForm';
 import { firebase } from '../firebase/config'
 

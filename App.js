@@ -4,10 +4,9 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 
-import { Provider as ReservationProvider } from './src/context/ReservationContext'
+
 import { Provider as QueueProvider } from './src/context/QueueContext'
 import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
-import { Provider as AuthProvider } from './src/context/AuthContext'
 
 
 import LoginScreen from './src/Authentication/LoginScreen'
@@ -77,11 +76,7 @@ export default () => {
 
     <QueueProvider>
       <OrganizationProvider>
-        <ReservationProvider>
-          <AuthProvider>
             <App />
-          </AuthProvider>
-       </ReservationProvider>
     </OrganizationProvider>
   </QueueProvider>
   

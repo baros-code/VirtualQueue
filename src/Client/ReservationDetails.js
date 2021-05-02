@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import { Context as ReservationContext } from '../context/ReservationContext';
 import { firebase } from '../firebase/config'
 
 const ReservationDetails = ({ navigation }) => {
 
     const [state, setState] = useState({reservation: {}, dataIsReturned: false});
-    const { deleteReservation } = useContext(ReservationContext);
+
+    const deleteReservation = (id) => {
+        const ref = firebase.database().ref("reservations");   
+        ref.child(id).remove();         //if not found exception eklenmeli.
+      
+        setState(state.filter(reservation => {return reservation.id !== id} ) );
+        
+      
+      }
  
     const id = navigation.getParam('id');
     // const reservation = state.find((reservation) => reservation.id === id);
