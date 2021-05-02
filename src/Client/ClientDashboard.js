@@ -7,15 +7,17 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../firebase/config'
 
 
-// const fetchReservations = (clientId) => {
-//       const ref =firebase.statebase().ref("reservations");
-//       ref.orderByChild("clientId").equalTo(clientId).on("child_added", snapshot => {
-//            state = snapshot.val();
-//            console.log(state);
-//            return state;
-//       });
-// };
+const fetchReservations =  (clientId) => {
+    const ref =firebase.database().ref("reservations");
+            var response = [];
+            ref.orderByChild("clientId").equalTo(clientId).on("child_added", function (snapshot) {
+              response = [...response, snapshot.val()];
+            });
+            return response;
+};
+ 
 
+/*onWillFocus metodu kullanırsak sayfa geçişi olduğu zaman updated data var ise tekrar render çalıştırıyor */
 
 const ClientDashboard = ( {navigation} ) => {
 
@@ -24,26 +26,25 @@ const ClientDashboard = ( {navigation} ) => {
   const { deleteReservation } = useContext(ReservationContext);
 
 
-  const [state, setState] = useState({reservations: [], isFetching: false});
+  const [state, setState] = useState({reservations: fetchReservations("userId2"), dataIsReturned: false});
 
   
-  useEffect(() => {
+  useEffect(()  => {
     const fetchReservations = async () => {
         try {
-            setState({reservations: state.reservations, isFetching: true});
+            setState({reservations: state.reservations, dataIsReturned: false});
             //const response = await axios.get(USER_SERVICE_URL);
             const ref =firebase.database().ref("reservations");
             var response = [];
             await ref.orderByChild("clientId").equalTo("userId2").on("child_added", function (snapshot) {
               response = [...response, snapshot.val()];
-              console.log("HEYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY :" + response);
             });
-            console.log("this is response:  " + response);
-            setState({reservations: response, isFetching: false});
+            console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA FROM USEEFFECT");
+            setState({reservations: response, dataIsReturned: true});
             
         } catch (e) {
             console.log(e);
-            setState({reservations: state.reservations, isFetching: false});
+            setState({reservations: state.reservations, dataIsReturned: false});
         }
     };
     fetchReservations();
@@ -52,35 +53,45 @@ const ClientDashboard = ( {navigation} ) => {
 
 
 
-  if(state.reservations[0] != undefined)
-      console.log("reservations: " + state.reservations[0].startTime);
+  // if(state.reservations[0] != undefined)
+  //     console.log("reservations: " + state.reservations[0].startTime);
   //console.log("sa");
   //console.log("reservations: " + state.reservations[0].organizationId);
-  
-  return (
-  <View style={styles.background}>
-    <FlatList
-      data={state.reservations}
-      keyExtractor={(reservation) => reservation.startTime.toString()}
-      renderItem={({item}) => {
-        return (
-        <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
-          <View style={styles.row}>     
-            <Text style={styles.organizationStyle}>{item.organizationId} - {item.employeeId}</Text>
-            <TouchableOpacity onPress={() => deleteReservation(item.id)}>
-              <Feather style={styles.icon} name="trash" />
+
+
+  if (state.dataIsReturned) {
+    return (
+      <View style={styles.background}>
+        <FlatList
+          data={state.reservations}
+          keyExtractor={(reservation) => reservation.startTime.toString()}
+          renderItem={({item}) => {
+            return (
+            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.transactionType})}>
+              <View style={styles.row}>     
+                <Text style={styles.organizationStyle}>{item.organizationId} - {item.employeeId}</Text>
+                <TouchableOpacity onPress={() => deleteReservation(item.transactionType)}>
+                  <Feather style={styles.icon} name="trash" />
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-        );
-      }}
-    />
-    <View style={styles.button}>
-    <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
+            );
+          }}
+        />
+        <View style={styles.button}>
+        <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
+        </View>
+        <Button title="Go to Employee Dashboard" onPress={() => navigation.navigate("EmployeeDashboard")} />
+      </View>
+      );
+  }
+
+  else {
+    return <View>
+      <Text>LOADING SCREEN...</Text>
     </View>
-    <Button title="Go to Employee Dashboard" onPress={() => navigation.navigate("EmployeeDashboard")} />
-  </View>
-  );
+  }
+
 };
 
 /*Whenever React renders ClientDashboard, react-navigation automatically
