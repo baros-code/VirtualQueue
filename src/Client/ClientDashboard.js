@@ -7,14 +7,6 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../firebase/config'
 
 
-const fetchReservations =  (clientId) => {
-    const ref =firebase.database().ref("reservations");
-            var response = [];
-            ref.orderByChild("clientId").equalTo(clientId).on("child_added", function (snapshot) {
-              response = [...response, snapshot.val()];
-            });
-            return response;
-};
   
  
 /*
@@ -30,33 +22,40 @@ const ClientDashboard = ( {navigation} ) => {
   const USER_ID = navigation.getParam("uid");
 
   const [state, setState] = useState({reservations: [], dataIsReturned: false});
+
+
  
-      
    
   useEffect(()  => {
-    const fetchReservations =  () => {
-        try {
-            setState({reservations: state.reservations, dataIsReturned: false});
-            //const response = await axios.get(USER_SERVICE_URL);
-            const ref =firebase.database().ref("reservations");
-            var response = [];
-            ref.orderByChild("clientId").equalTo(USER_ID).on("child_added", function (snapshot) {
-              response = [...response, {...snapshot.val(), id: snapshot.key} ];
-              console.log(snapshot.val());
+    const fetchReservations = async  () => {
+      try {
+          setState({reservations: state.reservations, dataIsReturned: false});
+          //const response = await axios.get(USER_SERVICE_URL);
+          const ref = await firebase.database().ref("reservations");
+          var response = [];
+          await ref.once("value",function (reservationsSnapShot) {
+            reservationsSnapShot.forEach( reservationSnapShot => {
+                let currentReservation = reservationSnapShot.val()
+                currentReservation.id = reservationSnapShot.key;
+                let clientId = currentReservation.clientId;
+                if (clientId === USER_ID) {
+                  response.push(currentReservation)
+                    
+                }
             });
             setState({reservations: response, dataIsReturned: true});
-            
-        } catch (e) {
-            console.log(e);
-            setState({reservations: state.reservations, dataIsReturned: false});
-        }
-    };
+        });   
+          
+      } catch (e) {
+          console.log(e);
+          setState({reservations: state.reservations, dataIsReturned: false});
+      }
+  };
     fetchReservations();
   }, []);
 
-
+ 
   
-
 
  
   if (state.dataIsReturned) {
@@ -94,6 +93,19 @@ const ClientDashboard = ( {navigation} ) => {
 
 };
 
+
+const deleteReservation = (id) => {
+    const ref = firebase.database().ref("reservations");   
+    ref.child(action.payload).remove();         //if not found exception eklenmeli.
+
+    
+
+}
+
+
+
+
+
 /*Whenever React renders ClientDashboard, react-navigation automatically
 calls the navigationOptions function.
  */
@@ -105,7 +117,7 @@ ClientDashboard.navigationOptions = ( {navigation} ) => {
         <Feather style={styles.icon} name="plus" size={30} />
       </TouchableOpacity>
     ),
-    title: "Hello, " + navigation.getParam("fullName") + navigation.getParam("uid"),
+    title: "Hello, " + navigation.getParam("fullName"),
   };
 };
 

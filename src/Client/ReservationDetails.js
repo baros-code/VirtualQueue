@@ -16,7 +16,7 @@ const ReservationDetails = ({ navigation }) => {
             try {
                 setState({reservations: state.reservation, dataIsReturned: false});
                 //const response = await axios.get(USER_SERVICE_URL);
-                const ref =firebase.database().ref("reservations/"+ id);
+                const ref = await firebase.database().ref("reservations/"+ id);
                 var response = {};
                 await ref.get().then(reservation => {
                     response = reservation.val();
