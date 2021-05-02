@@ -1,23 +1,44 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { Context as ReservationContext } from '../context/ReservationContext';
-
+import { firebase } from '../firebase/config'
 
 const ReservationDetails = ({ navigation }) => {
-    const { state, deleteReservation } = useContext(ReservationContext);
 
+    const [state, setState] = useState({reservation: {}, dataIsReturned: false});
+    const { deleteReservation } = useContext(ReservationContext);
+ 
     const id = navigation.getParam('id');
+    // const reservation = state.find((reservation) => reservation.id === id);
 
-    // state === [] of reservations
-    const reservation = state.find((reservation) => reservation.id === id);
-
-    if(reservation) {
+    useEffect(()  => {
+        const fetchReservation = async () => {
+            try {
+                setState({reservations: state.reservation, dataIsReturned: false});
+                //const response = await axios.get(USER_SERVICE_URL);
+                const ref =firebase.database().ref("reservations/"+ id);
+                var response = {};
+                await ref.get().then(reservation => {
+                    response = reservation.val();
+                })
+                setState({reservation: response, dataIsReturned: true});
+                
+            } catch (e) {
+                console.log(e);
+                setState({reservation: state.reservation, dataIsReturned: false});
+            }
+        };
+        fetchReservation();
+      }, []);
+ 
+ 
+    if(state.reservation) {
         return (
             <View>
-                <Text style={styles.label}>Organization: {reservation.organizationName}</Text>
-                <Text style={styles.label}>Date and Time: {reservation.date}</Text>
-                <Text style={styles.label}>Reservation Number: {reservation.id}</Text>
-                <Text style={styles.label}>Transaction Type: {reservation.transactionType}</Text>
+                <Text style={styles.label}>Organization: {state.reservation.organizationId}</Text>
+                <Text style={styles.label}>Date and Time: {`${state.reservation.Date.day}/${state.reservation.Date.month}/${state.reservation.Date.year} - ${state.reservation.Date.time}`}</Text>
+                <Text style={styles.label}>Reservation Number: {id}</Text>
+                <Text style={styles.label}>Transaction Type: {state.reservation.transactionType}</Text>
                 <View style={styles.button}>
                     <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation, navigation) }/>
                 </View>

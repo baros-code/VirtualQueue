@@ -30,7 +30,7 @@ const ClientDashboard = ( {navigation} ) => {
 
   const [state, setState] = useState({reservations: fetchReservations("userId2"), dataIsReturned: false});
 
-  
+   
   useEffect(()  => {
     const fetchReservations = async () => {
         try {
@@ -39,7 +39,7 @@ const ClientDashboard = ( {navigation} ) => {
             const ref =firebase.database().ref("reservations");
             var response = [];
             await ref.orderByChild("clientId").equalTo("userId2").on("child_added", function (snapshot) {
-              response = [...response, snapshot.val()];
+              response = [...response, {...snapshot.val(), id: snapshot.key} ];
             });
             console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA FROM USEEFFECT");
             setState({reservations: response, dataIsReturned: true});
@@ -52,13 +52,10 @@ const ClientDashboard = ( {navigation} ) => {
     fetchReservations();
   }, []);
 
-
-
-
+ 
+ 
   // if(state.reservations[0] != undefined)
-  //     console.log("reservations: " + state.reservations[0].startTime);
-  //console.log("sa");
-  //console.log("reservations: " + state.reservations[0].organizationId);
+  //     console.log("RESERVATIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN: " + state.reservations[0].id);
 
 
   if (state.dataIsReturned) {
@@ -66,20 +63,20 @@ const ClientDashboard = ( {navigation} ) => {
       <View style={styles.background}>
         <FlatList
           data={state.reservations}
-          keyExtractor={(reservation) => reservation.startTime.toString()}
+          keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.transactionType})}>
+            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationId} - {item.employeeId}</Text>
+                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.Date.day}/${item.Date.month}/${item.Date.year} - ${item.Date.time}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.transactionType)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
-            );
+            ); 
           }}
-        />
+        /> 
         <View style={styles.button}>
         <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
         </View>
