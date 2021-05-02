@@ -1,5 +1,5 @@
 import createDataContext from './createDataContext'
-// import { firebase } from '../firebase/config'
+import { firebase } from '../firebase/config'
 
 //ID LERI RANDOM ATTIRABILIRIZ
 
@@ -8,8 +8,25 @@ const reservationReducer = (state, action) => {
         case 'fetch_reservations':
             return action.payload;  
         case 'add_reservation':
-            const RESERVATION_ID = Math.floor((Math.random() * 100000) + 1);
-            return [...state, { id: RESERVATION_ID , clientId: action.payload.clientId, transactionType: action.payload.transactionType, date: action.payload.date, organizationName: action.payload.organizationName} ];
+            const ref =firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
+            const reservation = action.payload;
+            ref.set({
+            date: {
+                day: reservation.date,
+                month: reservation.date,
+                year: reservation.date,
+                time: reservation.date
+            },
+            clientId: reservation.clientId,
+            employeeId: "userId3",
+            estimatedRemainingTimeSec: "300",
+            startTime: "14.30",
+            finishTime: "14.45",
+            organizationId: reservation.organizationName,
+            queueId: "queueId2",
+            status: "2",
+            transactionType: reservation.transactionType
+            });
         case 'delete_reservation':
             return state.filter(reservation => reservation.id !== action.payload);
         default:

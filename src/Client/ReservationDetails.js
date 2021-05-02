@@ -36,7 +36,7 @@ const ReservationDetails = ({ navigation }) => {
         return (
             <View>
                 <Text style={styles.label}>Organization: {state.reservation.organizationId}</Text>
-                <Text style={styles.label}>Date and Time: {`${state.reservation.Date.day}/${state.reservation.Date.month}/${state.reservation.Date.year} - ${state.reservation.Date.time}`}</Text>
+                <Text style={styles.label}>Date and Time: {`${state.reservation.Date}/${state.reservation.Date}/${state.reservation.Date} - ${state.reservation.Date}`}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.reservation.transactionType}</Text>
                 <View style={styles.button}>
