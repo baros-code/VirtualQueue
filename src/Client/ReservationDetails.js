@@ -66,7 +66,7 @@ const createTwoButtonAlert = ( action, navigation ) =>
     "Are you sure you want to cancel the reservation?",
     [
         { text: "Cancel", onPress: () => navigation.navigate('Details',{id: navigation.getParam('id')}) },
-        { text: "OK", onPress: () => action(navigation.getParam('id'), () => navigation.navigate('Dashboard'))}
+        { text: "OK", onPress: () => action(navigation.getParam('id'), () => navigation.navigate('ClientDashboard'))}
     ]
     );
 

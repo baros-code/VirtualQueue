@@ -7,29 +7,35 @@ import { Feather } from '@expo/vector-icons';
 import { firebase } from '../firebase/config'
 
 
+
   
- 
 /*
 ŞU AN LOGINDEN SONRA HEMEN ÇEKMIYOR, DASHBOARD EKRANINDA KODU TEKRAR SAVELEYINCE(RE-RENDER YAPINCA YANI) GETİRİYOR REZERVASYONLARI XDDD 
 onWillFocus metodu kullanırsak sayfa geçişi olduğu zaman updated data var ise tekrar render çalıştırıyor */
 
 const ClientDashboard = ( {navigation} ) => {
 
-  //console.log("ReservationContext is : " + ReservationContext);
-
-  const { deleteReservation } = useContext(ReservationContext);
-
   const USER_ID = navigation.getParam("uid");
 
-  const [state, setState] = useState({reservations: [], dataIsReturned: false});
+ // const [state, setState] = useState({reservations: [], dataIsReturned: false});
+
+  const [state, setState] = useState([]);
 
 
- 
+
+  const deleteReservation = (id) => {
+    const ref = firebase.database().ref("reservations");   
+    ref.child(id).remove();         //if not found exception eklenmeli.
+  
+    setState(state.filter(reservation => {return reservation.id !== id} ) );
+    
+  
+  }
    
   useEffect(()  => {
     const fetchReservations = async  () => {
       try {
-          setState({reservations: state.reservations, dataIsReturned: false});
+          setState(state);
           //const response = await axios.get(USER_SERVICE_URL);
           const ref = await firebase.database().ref("reservations");
           var response = [];
@@ -43,26 +49,24 @@ const ClientDashboard = ( {navigation} ) => {
                     
                 }
             });
-            setState({reservations: response, dataIsReturned: true});
+            setState(response);
         });   
           
       } catch (e) {
           console.log(e);
-          setState({reservations: state.reservations, dataIsReturned: false});
+          setState(state);
       }
   };
     fetchReservations();
-  }, []);
+  }, [state]);
 
  
-  
-
  
-  if (state.dataIsReturned) {
+  if (state) {
     return (
       <View style={styles.background}>
         <FlatList
-          data={state.reservations}
+          data={state}
           keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
@@ -94,16 +98,8 @@ const ClientDashboard = ( {navigation} ) => {
 };
 
 
-const deleteReservation = (id) => {
-    const ref = firebase.database().ref("reservations");   
-    ref.child(action.payload).remove();         //if not found exception eklenmeli.
-
-    
-
-}
-
-
-
+ 
+ 
 
 
 /*Whenever React renders ClientDashboard, react-navigation automatically
