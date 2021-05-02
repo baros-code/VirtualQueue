@@ -15,8 +15,8 @@ const fetchReservations =  (clientId) => {
             });
             return response;
 };
+  
  
-
 /*
 ŞU AN LOGINDEN SONRA HEMEN ÇEKMIYOR, DASHBOARD EKRANINDA KODU TEKRAR SAVELEYINCE(RE-RENDER YAPINCA YANI) GETİRİYOR REZERVASYONLARI XDDD 
 onWillFocus metodu kullanırsak sayfa geçişi olduğu zaman updated data var ise tekrar render çalıştırıyor */
@@ -42,6 +42,7 @@ const ClientDashboard = ( {navigation} ) => {
             var response = [];
             ref.orderByChild("clientId").equalTo(USER_ID).on("child_added", function (snapshot) {
               response = [...response, {...snapshot.val(), id: snapshot.key} ];
+              console.log(snapshot.val());
             });
             setState({reservations: response, dataIsReturned: true});
             
@@ -54,11 +55,10 @@ const ClientDashboard = ( {navigation} ) => {
   }, []);
 
 
+  
+
+
  
-  // if(state.reservations[0] != undefined)
-  //     console.log("RESERVATIONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN: " + state.reservations[0].id);
-
-
   if (state.dataIsReturned) {
     return (
       <View style={styles.background}>
@@ -69,7 +69,7 @@ const ClientDashboard = ( {navigation} ) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.Date}/${item.Date}/${item.Date} - ${item.Date}`}</Text>
+                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.date.day}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.transactionType)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>

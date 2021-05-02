@@ -21,6 +21,7 @@ const ReservationDetails = ({ navigation }) => {
                 await ref.get().then(reservation => {
                     response = reservation.val();
                 })
+                console.log("RESERVATIONDETAILSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + response);    
                 setState({reservation: response, dataIsReturned: true});
                 
             } catch (e) {
@@ -31,12 +32,12 @@ const ReservationDetails = ({ navigation }) => {
         fetchReservation();
       }, []);
  
- 
-    if(state.reservation) {
+    
+    if(state.dataIsReturned) {
         return (
             <View>
                 <Text style={styles.label}>Organization: {state.reservation.organizationId}</Text>
-                <Text style={styles.label}>Date and Time: {`${state.reservation.Date}/${state.reservation.Date}/${state.reservation.Date} - ${state.reservation.Date}`}</Text>
+                <Text style={styles.label}>Date and Time: {state.reservation.date.day}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.reservation.transactionType}</Text>
                 <View style={styles.button}>
