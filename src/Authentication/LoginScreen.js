@@ -10,6 +10,7 @@ export default function LoginScreen({navigation}) {
 
     const onFooterLinkPress = () => {
        navigation.navigate("Register")
+       //navigation.navigate("AdminDashboard")
     }
 
     const onLoginPress = () => {
@@ -26,7 +27,7 @@ export default function LoginScreen({navigation}) {
                             return;
                         }
                         const data = userData.val()
-                        navigation.navigate('Home', data)
+                        navigation.navigate('AdminDashboard', data)
                     })
                     .catch(error => {
                         alert(error)

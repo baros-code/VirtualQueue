@@ -57,7 +57,6 @@ export default function phoneAuthentication ({navigation}) {
         })
         .catch(error => {
           alert(error.message)
-
           console.log(error)
         })
     } else {
@@ -101,7 +100,7 @@ export default function phoneAuthentication ({navigation}) {
               usersRef
                   .set(data)
                   .then(() => {
-                      navigation.navigate('Home', data)
+                      navigation.navigate('AdminDashboard', data)
                   })
                   .catch((error) => {
                       alert(error)

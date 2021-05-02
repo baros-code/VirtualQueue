@@ -1,37 +1,67 @@
-import React, { useContext } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Context as QueueContext } from '../context/QueueContext'  //context object
-//import { Context as ImageContext } .....
 import { Feather } from '@expo/vector-icons'; 
+import { firebase } from '../firebase/config'
+import { quad } from 'react-native/Libraries/Animated/src/Easing';
 
 
 const AdminDashboard = ( {navigation} ) => {
 
+ // const adminId=navigation.getParams("userId");
+  const adminId="userId5"
+  const [queues, setQueues] = useState([])
+
+  const fetchQueues=async () => {
+      const queuesReference=await firebase.database().ref("queues/")
+      console.log(queuesReference)
+      let newQueues=[]
+      await queuesReference.once("value",function (queuesSnapShot) {
+          queuesSnapShot.forEach( queueSnapShot => {
+              let currentQueue=queueSnapShot.val()
+              currentQueue.id=queueSnapShot.key
+              let currentIdAdmin=currentQueue.adminId
+              if (currentIdAdmin === adminId) {
+                newQueues.push(currentQueue)
+                  
+              }
+          });
+          setQueues(newQueues)
+      })
+       
+
+  }
+
   //console.log(navigation)
 
-  const { state, deleteQueue, resetQueue } = useContext(QueueContext);
+  //const { state, deleteQueue, resetQueue } = useContext(QueueContext);
+
+  useEffect(() => {
+      fetchQueues()
+  },([]))
 
   return (
   <View style={styles.background}>
-    <FlatList
-      data={state}
-      keyExtractor={(queue) => queue.transactionType.toString()}
+    <Text>Welcome {navigation.getParam("fullName")}</Text>
+    {queues.length !== 0 ? 
+    (<FlatList
+      data={queues}
+      keyExtractor={(queue) => queue.id}
       renderItem={({item}) => {
         return (
         <TouchableOpacity onPress={() => navigation.navigate("QueueDetails", {id: item.id})}>
           <View style={styles.row}>     
-            <Text style={styles.title}>{item.transactionType} - {item.employee}</Text>
+            <Text style={styles.title}>{item.transactionType} - {item.latencySec}</Text>
             <TouchableOpacity onPress={() => deleteQueue(item.id)}>
               <Feather style={styles.icon} name="trash" />
             </TouchableOpacity>
           </View>
           <TouchableOpacity onPress={() => resetQueue(item.id)}>
-                <Text style={styles.link}>Reset the Queue</Text>
+                <Text style={styles.link}>Delete the queue</Text>
             </TouchableOpacity>
         </TouchableOpacity>
         );
       }}
-    />
+    /> ) : (<Text>No queues found</Text>) }
   </View>
   );
 };
@@ -71,6 +101,7 @@ const styles = StyleSheet.create({
   },
   link: {
     color:"red",
+    fontSize:20,
     margin:10,
   }
 });

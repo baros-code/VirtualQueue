@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { Context as QueueContext } from '../context/QueueContext';
-import QueueForm from '../components/QueueForm';
+import { Context as QueueContext } from './QueueContext';
+import QueueForm from './QueueForm';
 
 const EditQueue = ( {navigation} ) => {
     const { state, editQueue } = useContext(QueueContext);

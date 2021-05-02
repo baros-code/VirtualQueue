@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
-import { Context as QueueContext } from '../context/QueueContext';
+import { Context as QueueContext } from './QueueContext';
 import { Feather } from '@expo/vector-icons'; 
 
 
