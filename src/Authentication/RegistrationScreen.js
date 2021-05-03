@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, RefreshControlBase, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { firebase } from '../firebase/config'
@@ -10,50 +10,62 @@ export default function RegistrationScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+   // const [phoneNumber, setPhoneNumber] = useState('')
 
     const onFooterLinkPress = () => {
         navigation.navigate('Login')
     }
+  
+    const isMailExist= async () => {
+        let mailFlag=false;
+        const usersRef =await firebase.database().ref("users/")
+        await usersRef.once("value",function (usersSnapShot) {
+            usersSnapShot.forEach(userSnapShot => {
+                let user=userSnapShot.val()
+                let currentMail=user.email
+                if (currentMail == email) {
+                    mailFlag=true;
+                }
+            });
+        })
+       return mailFlag
+    }
 
-    const onRegisterPress = () => {
-        if (!fullName || !email || !password || !phoneNumber) {
+    const isSpellValid=(text) => {
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        return reg.test(text)
+    }
+
+    const onRegisterPress = async () => {
+        if (!fullName || !email || !password ) {
             alert("Please fill all blanks.")
+            return
+        }
+        if (password.length < 6) {
+            alert("password must contain at least 6 character.")
             return
         }
 
         if (password !== confirmPassword) {
             alert("Passwords don't match.")
             return
-        }   
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(email, password)
-            .then((response) => {
-                const role=0
-                const uid = response.user.uid
-                const data = {
-                    email,
-                    fullName,
-                    phoneNumber,
-                    role,
-                };
-                const usersRef = firebase.database().ref("users/" + uid)
-                usersRef
-                    .set(data)
-                    .then(() => {
-                        navigation.navigate('Home', data)
-                    })
-                    .catch((error) => {
-                        alert(error)
-                    });
-            })
-            .catch((error) => {
-                alert(error)
-        });
-    
-                    
+        }        
+        if (!isSpellValid(email)) {
+            alert("Email format is wrong!")
+            return
+        }
+        const mailFlag=await isMailExist()
+        if (mailFlag) {
+            alert("Mail is already used")
+            return
+        }
+        const item={email:email,password:password,fullName:fullName};
+        navigation.navigate("PhoneVerification",item)
     }
+        
+  
+                    
+    
 
     return (
         <View style={styles.container}>
@@ -82,17 +94,6 @@ export default function RegistrationScreen({navigation}) {
                     underlineColorAndroid="transparent"
                     autoCapitalize="none"
                 />
-                 <TextInput
-                    style={styles.input}
-                    placeholder='Phone Number'
-                    placeholderTextColor="#aaaaaa"
-                    onChangeText={(text) => setPhoneNumber(text)}
-                    value={phoneNumber}
-                    underlineColorAndroid="transparent"
-                    autoCapitalize="none"
-                    keyboardType="phone-pad"
-                    autoCompleteType="tel"
-                />
                 <TextInput
                     style={styles.input}
                     placeholderTextColor="#aaaaaa"
@@ -116,7 +117,7 @@ export default function RegistrationScreen({navigation}) {
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onRegisterPress()}>
-                    <Text style={styles.buttonTitle}>Create account</Text>
+                    <Text style={styles.buttonTitle}>Next</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>
                     <Text style={styles.footerText}>Already got an account? <Text onPress={onFooterLinkPress} style={styles.footerLink}>Log in</Text></Text>

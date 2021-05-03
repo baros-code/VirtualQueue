@@ -5,7 +5,8 @@ import { createStackNavigator } from 'react-navigation-stack';
 
 
 
-import { Provider as QueueProvider } from './src/context/QueueContext'
+import { Provider as ReservationProvider } from './src/context/ReservationContext'
+import { Provider as QueueProvider } from "./src/Admin/QueueContext"
 import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
 
 
@@ -19,10 +20,10 @@ import CreateReservation from './src/Client/CreateReservation';
 import ReservationDetails from './src/Client/ReservationDetails';
 import Organizations from './src/Client/Organizations';
 
-import AdminDashboard from './src/screens/AdminDashboard';
-import CreateQueue from './src/screens/CreateQueue';
-import QueueDetails from './src/screens/QueueDetails';
-import EditQueue from './src/screens/EditQueue';
+import AdminDashboard from './src/Admin/AdminDashboard';
+import CreateQueue from './src/Admin/CreateQueue';
+import QueueDetails from './src/Admin/QueueDetails';
+import EditQueue from './src/Admin/EditQueue';
 
 import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
