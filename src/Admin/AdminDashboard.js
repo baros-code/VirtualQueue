@@ -1,8 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Feather } from '@expo/vector-icons'; 
+import { Feather,AntDesign } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
-import { quad } from 'react-native/Libraries/Animated/src/Easing';
 
 
 const AdminDashboard = ( {navigation} ) => {
@@ -36,8 +35,7 @@ const AdminDashboard = ( {navigation} ) => {
   },([]))
 
   return (
-  <View style={styles.background}>
-    <Text>Welcome {navigation.getParam("fullName")}</Text>
+  <View>
     {queues.length !== 0 ? 
     (<FlatList
       data={queues}
@@ -48,16 +46,13 @@ const AdminDashboard = ( {navigation} ) => {
           <View style={styles.row}>     
             <Text style={styles.title}>{item.transactionType} - {item.latencySec}</Text>
             <TouchableOpacity onPress={() => deleteQueue(item.id)}>
-              <Feather style={styles.icon} name="trash" />
+            <AntDesign name="delete" size={24} color="#0e66d4"  />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => resetQueue(item.id)}>
-                <Text style={styles.link}>Delete the queue</Text>
-            </TouchableOpacity>
         </TouchableOpacity>
         );
       }}
-    /> ) : (<Text>No queues found</Text>) }
+    /> ) : (<Text style={{color:"white"},{fontSize:20}}>No queues found </Text>) }
   </View>
   );
 };
@@ -67,33 +62,36 @@ AdminDashboard.navigationOptions = ( {navigation} ) => {
   return {
     headerRight: () => (
       <TouchableOpacity onPress={() => navigation.navigate('CreateQueue')}>
-        <Feather style={styles.icon} name="plus" size={30} />
+        <Feather  name="plus" size={30} color="#0e66d4" />
       </TouchableOpacity>
     ),
+    title: "Hello, " + navigation.getParam("fullName")
   };
 };
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#047DB9',
+    backgroundColor: 'white',
     color:"white"
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
+    paddingVertical: 35,
     paddingHorizontal: 10,
+    backgroundColor:"white",
+    marginTop:30,
+    borderRadius:25,
     borderTopWidth: 1,
     borderColor: 'gray',
     color:"white"
   },
   title: {
     fontSize: 18,
-    color:"white"
+    color:"#0e66d4"
   },
   icon: {
-    fontSize: 24,
-    color:"white"
+    fontSize: 24
   },
   link: {
     color:"red",
