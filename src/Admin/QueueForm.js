@@ -1,21 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native';
-import { NavigationEvents } from 'react-navigation';
 import {firebase} from "../firebase/config"
 
-const QueueForm = ( { initialValues,navigation} ) => {
+const QueueForm = ( { navigation} ) => {
 
-    const [transactionType, settransactionType] = useState(initialValues.transactionType);
-    const [employee, setemployee] = useState(initialValues.employee);
-    const [latency, setLatency] = useState(initialValues.latency);
-    const [interval, setInterval] = useState(initialValues.interval);
-    const [startTime, setstartTime] = useState(initialValues.startTime);
-    const [finishTime, setFinishTime] = useState(initialValues.finishTime);
+    const [transactionType, setTransactionType] = useState("");
+    const [employee, setEmployee] = useState("");
+    const [latency, setLatency] = useState("");
+    const [interval, setInterval] = useState("");
+    const [startTime, setstartTime] = useState("");
+    const [finishTime, setFinishTime] = useState("");
+
+
 
     const saveQueueHandler= async () => {
-        let adminId=navigation.getParam("id")
+        let adminId=navigation.getParam("adminId")
         let queueRef=undefined
-        let queueId= initialValues.queueId
+        let queueId= navigation.getParam("queueId")
         if (queueId !== "") {
             queueRef=await firebase.database().ref("queues/"+ queueId)
         } else {
@@ -25,21 +26,40 @@ const QueueForm = ( { initialValues,navigation} ) => {
         adminId: adminId,
         transactionType: transactionType,
         employee: employee,
+        latency:latency,
         interval: interval,
         startTime: startTime,
         finishTime: finishTime,
         }); 
-        navigation.navigate("AdminDashboard",{uid:adminId,currentState:true})  
+        navigation.navigate("AdminDashboard",{uid:adminId})
     }
      
+    
+  useEffect(() => {
+      if (navigation.getParam("editable")) {
+        firebase.database().ref("queues/" + navigation.getParam("queueId"))
+         .get().then( (queueData) => {
+           queueData=queueData.val()
+            setTransactionType(queueData.transactionType)
+            setEmployee(queueData.employee)
+            setInterval(queueData.interval)
+            setstartTime(queueData.startTime)
+            setFinishTime(queueData.finishTime)
+            setLatency(queueData.latency)
+       })
+        
+      }
+    
+  },([]))
+
 
     return (
     <View>
         <ScrollView>
         <Text style={styles.label}>Enter Type:</Text>
-        <TextInput style={styles.input} value={transactionType} onChangeText={(text) => settransactionType(text)} />
+        <TextInput style={styles.input} value={transactionType} onChangeText={(text) => setTransactionType(text)} />
         <Text style={styles.label}>Enter Employee:</Text>
-        <TextInput style={styles.input} value={employee} onChangeText={(employee) => setemployee(employee)} />
+        <TextInput style={styles.input} value={employee} onChangeText={(employee) => setEmployee(employee)} />
         <Text style={styles.label}>Enter Latency:</Text>
         <TextInput style={styles.input} value={latency} onChangeText={(latency) => setLatency(latency)} />
         <Text style={styles.label}>Enter Interval:</Text>
@@ -57,20 +77,6 @@ const QueueForm = ( { initialValues,navigation} ) => {
 }
 
 
-/*PROPS KOYMAZSAN DEFAULT OLARAK ASAGIDAKILER GIDIYOR.*/
-
-QueueForm.defaultProps = {
-    initialValues: {
-        transactionType: '',
-        employee: '',
-        latency:" ",
-        interval:" ",
-        startTime:" ",
-        finishTime:" ",
-        queueId:"",
-
-    }
-};
 
 
 const styles = StyleSheet.create({
