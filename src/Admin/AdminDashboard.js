@@ -6,15 +6,19 @@ import { firebase } from '../firebase/config'
 
 const AdminDashboard = ( {navigation} ) => {
 
- // const adminId=navigation.getParams("userId");
-  const adminId="userId5"
+  const adminId=navigation.getParam("uid");
   const [queues, setQueues] = useState([])
+  const[snapShot,setSnapShot]=useState("")
 
-  const fetchQueues=async () => {
+  
+
+  useEffect(() => {
+    const fetchQueues=async () => {
       const queuesReference=await firebase.database().ref("queues/")
       console.log(queuesReference)
       let newQueues=[]
-      await queuesReference.once("value",function (queuesSnapShot) {
+      await queuesReference.on("value",function (queuesSnapShot) {
+          setSnapShot(queuesSnapShot)
           queuesSnapShot.forEach( queueSnapShot => {
               let currentQueue=queueSnapShot.val()
               currentQueue.id=queueSnapShot.key
@@ -29,12 +33,11 @@ const AdminDashboard = ( {navigation} ) => {
        
 
   }
-
-  useEffect(() => {
       fetchQueues()
-  },([]))
+  },([setSnapShot]))
 
   return (
+    
   <View>
     {queues.length !== 0 ? 
     (<FlatList
@@ -52,20 +55,21 @@ const AdminDashboard = ( {navigation} ) => {
         </TouchableOpacity>
         );
       }}
-    /> ) : (<Text style={{color:"white"},{fontSize:20}}>No queues found </Text>) }
+    /> ) : (<Text>No queues found </Text>)}
   </View>
   );
 };
 
 
 AdminDashboard.navigationOptions = ( {navigation} ) => {
+  const adminId=navigation.getParam("uid");
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('CreateQueue')}>
+      <TouchableOpacity onPress={() => navigation.navigate('QueueForm',{id:adminId})}>
         <Feather  name="plus" size={30} color="#0e66d4" />
       </TouchableOpacity>
     ),
-    title: "Hello, " + navigation.getParam("fullName")
+    title: "Hello " + navigation.getParam("fullName")
   };
 };
 

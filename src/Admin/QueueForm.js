@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native';
+import { NavigationEvents } from 'react-navigation';
+import {firebase} from "../firebase/config"
 
-
-const QueueForm = ( { initialValues, onSubmit} ) => {
+const QueueForm = ( { initialValues,navigation} ) => {
 
     const [transactionType, settransactionType] = useState(initialValues.transactionType);
     const [employee, setemployee] = useState(initialValues.employee);
@@ -10,6 +11,26 @@ const QueueForm = ( { initialValues, onSubmit} ) => {
     const [interval, setInterval] = useState(initialValues.interval);
     const [startTime, setstartTime] = useState(initialValues.startTime);
     const [finishTime, setFinishTime] = useState(initialValues.finishTime);
+
+    const saveQueueHandler= async () => {
+        let adminId=navigation.getParam("id")
+        let queueRef=undefined
+        let queueId= initialValues.queueId
+        if (queueId !== "") {
+            queueRef=await firebase.database().ref("queues/"+ queueId)
+        } else {
+        queueRef = await firebase.database().ref("queues").push() //push sayesinde unique key'li branch olarak ekliyor.
+        }      
+        await queueRef.set({
+        adminId: adminId,
+        transactionType: transactionType,
+        employee: employee,
+        interval: interval,
+        startTime: startTime,
+        finishTime: finishTime,
+        }); 
+        navigation.pop()       
+    }
      
 
     return (
@@ -28,7 +49,7 @@ const QueueForm = ( { initialValues, onSubmit} ) => {
         <Text style={styles.label}>Enter Finish Time:</Text>
         <TextInput style={styles.input} value={finishTime} onChangeText={(finishTime) => setFinishTime(finishTime)} />
         <View style={styles.button}>
-            <Button title="Save Queue" onPress={() => onSubmit(transactionType, employee,latency,interval,startTime,finishTime) } />
+            <Button title="Save Queue" onPress= {() => saveQueueHandler()} />
         </View>
         </ScrollView>
     </View>
@@ -46,6 +67,7 @@ QueueForm.defaultProps = {
         interval:" ",
         startTime:" ",
         finishTime:" ",
+        queueId:"",
 
     }
 };

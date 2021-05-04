@@ -28,13 +28,14 @@ export default function LoginScreen({navigation}) {
                         }
                         const data = {...userData.val(), uid: uid}; //add uid property to data object
                         
-                        if  (data.role === 0)
-                            navigation.navigate('AdminDashboard', data)
-                        else if(data.role === 1)
+                        if  (data.role === 0) {
+                            navigation.navigate('ClientDashboard', data)
+                         } else if(data.role === 1)
                             navigation.navigate('EmployeeDashboard', data);
-                        else if(data.role === 2)
-                            navigation.navigate('AdminDashboard', data);
-                        else
+                        else if(data.role === 2) {
+                            navigation.navigate('AdminDashboard', {...data,queueState:false});
+                            
+                         } else
                             alert("Undefined role!");
                     })
                     .catch(error => {

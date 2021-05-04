@@ -16,13 +16,15 @@ import ReservationDetails from './src/Client/ReservationDetails';
 import Organizations from './src/Client/Organizations';
 
 import AdminDashboard from './src/Admin/AdminDashboard';
-import CreateQueue from './src/Admin/CreateQueue';
+import QueueForm from './src/Admin/QueueForm';
 import QueueDetails from './src/Admin/QueueDetails';
 import EditQueue from './src/Admin/EditQueue';
 
 import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
+
+
 
 const navigator = createStackNavigator(
 
@@ -32,8 +34,8 @@ const navigator = createStackNavigator(
     Details: ReservationDetails,
     Organizations: Organizations,
     AdminDashboard: AdminDashboard,
-    CreateQueue: {
-      screen:CreateQueue,
+    QueueForm: {
+      screen:QueueForm,
       navigationOptions: {
         title:"Create Queue",
       }
