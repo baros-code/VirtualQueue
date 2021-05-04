@@ -8,7 +8,7 @@ const AdminDashboard = ( {navigation} ) => {
 
   const adminId=navigation.getParam("uid");
   const [queues, setQueues] = useState([])
-  const[snapShot,setSnapShot]=useState("")
+  const[state,setState]=useState([])
 
   
 
@@ -18,7 +18,7 @@ const AdminDashboard = ( {navigation} ) => {
       console.log(queuesReference)
       let newQueues=[]
       await queuesReference.on("value",function (queuesSnapShot) {
-          setSnapShot(queuesSnapShot)
+        setState(queuesSnapShot)
           queuesSnapShot.forEach( queueSnapShot => {
               let currentQueue=queueSnapShot.val()
               currentQueue.id=queueSnapShot.key
@@ -33,8 +33,7 @@ const AdminDashboard = ( {navigation} ) => {
        
 
   }
-      fetchQueues()
-  },([setSnapShot]))
+  },([state]))
 
   return (
     

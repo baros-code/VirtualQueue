@@ -29,7 +29,7 @@ const QueueForm = ( { initialValues,navigation} ) => {
         startTime: startTime,
         finishTime: finishTime,
         }); 
-        navigation.pop()       
+        navigation.navigate("AdminDashboard",{uid:adminId,currentState:true})  
     }
      
 

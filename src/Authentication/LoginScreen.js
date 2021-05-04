@@ -33,7 +33,7 @@ export default function LoginScreen({navigation}) {
                          } else if(data.role === 1)
                             navigation.navigate('EmployeeDashboard', data);
                         else if(data.role === 2) {
-                            navigation.navigate('AdminDashboard', {...data,queueState:false});
+                            navigation.navigate('AdminDashboard', {...data,currentState:false});
                             
                          } else
                             alert("Undefined role!");
