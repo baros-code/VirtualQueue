@@ -79,10 +79,6 @@ const ClientDashboard = ( {navigation} ) => {
             ); 
           }}
         />
-        <View style={styles.button}>
-        <Button title="Go to Admin Dashboard" onPress={() => navigation.navigate("AdminDashboard")} />
-        </View>
-        <Button title="Go to Employee Dashboard" onPress={() => navigation.navigate("EmployeeDashboard")} />
       </View>
       );
   }

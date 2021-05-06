@@ -39,8 +39,6 @@ const AdminDashboard = ( {navigation} ) => {
 
 
 
-
-
   return (
     
   <View>
