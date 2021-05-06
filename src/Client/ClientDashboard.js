@@ -58,14 +58,14 @@ const ClientDashboard = ( {navigation} ) => {
   if (state) {
     return (
       <View style={styles.background}>
-        <FlatList
+        {state.length !== 0 ? <FlatList
           data={state}
           keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.date.day}`}</Text>
+                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.date}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.id)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
@@ -73,7 +73,7 @@ const ClientDashboard = ( {navigation} ) => {
             </TouchableOpacity>
             ); 
           }}
-        />
+        /> : <Text style={styles.text}>No reservations found!</Text>}
       </View>
       );
   }
@@ -103,7 +103,7 @@ ClientDashboard.navigationOptions = ( {navigation} ) => {
 
 const styles = StyleSheet.create({
   background: {
-    backgroundColor: '#047DB9'
+    backgroundColor: '#0e66d4'
   },
   row: {
     flexDirection: 'row',
@@ -122,6 +122,9 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 20,
+  },
+  text: {
+    fontSize: 24,
   }
 });
 

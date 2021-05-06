@@ -64,7 +64,7 @@ const DatePicker = ( {mode, onSubmit} ) => {
 const styles = StyleSheet.create({
     backgroundStyle: {
         marginTop: 10,
-        backgroundColor: '#047DB9',
+        backgroundColor: '#0e66d4',
         height: 50,
         borderRadius: 5,
         marginHorizontal: 15,
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     inputStyle: {
         fontSize: 18,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: 'white',
         marginBottom: 15,
         padding: 5,
         margin: 5  
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     iconStyle: {
         fontSize: 35,
         margin: 15,
-        color: 'black'
+        color: 'white'
     },
     button: {
         alignSelf: 'flex-start',

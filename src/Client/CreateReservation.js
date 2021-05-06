@@ -18,12 +18,7 @@ const CreateReservation = ({ navigation }) => {
 
         var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
         await ref.set({
-        date: {
-            day: date,
-            month: date,
-            year: date,
-            time: date
-        },
+        date: date,
         clientId: clientId,
         employeeId: "userId3",
         estimatedRemainingTimeSec: "300",

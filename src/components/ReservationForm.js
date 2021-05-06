@@ -25,9 +25,9 @@ const ReservationForm = ( { initialValues, onSubmit} ) => {
 
     return (
     <View>
-        <Text style={styles.label}>Enter organizationName:</Text>
-        <TextInput style={styles.input} value={organizationName} onChangeText={(text) => setOrganizationName(text)} />
-        <Text style={styles.label}>Enter transactionType:</Text>
+        <Text style={styles.label}>Organization Name:</Text>
+        <TextInput editable={false} style={styles.input} value={organizationName} onChangeText={(text) => setOrganizationName(text)} />
+        <Text style={styles.label}>Choose Transaction Type:</Text>
         <TextInput style={styles.input} value={transactionType} onChangeText={(transactionType) => setTransactionType(transactionType)} />
         <View style={styles.datePicker}>
             <DatePicker 
@@ -64,12 +64,14 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         marginBottom: 15,
         padding: 5,
-        margin: 5
+        margin: 5,
+        color: 'white'
     },
     label: {
         fontSize: 20,
         marginBottom: 5,
-        marginLeft: 5
+        marginLeft: 5,
+        color: 'white'
     },
     button: {
         alignSelf: 'flex-end',

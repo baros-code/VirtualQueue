@@ -4,13 +4,11 @@ import { firebase } from '../firebase/config'
 
 const ReservationDetails = ({ navigation }) => {
 
-    const [state, setState] = useState({reservation: {}, dataIsReturned: false});
+    const [state, setState] = useState({});
 
     const deleteReservation = (id, callback) => {
         const ref = firebase.database().ref("reservations");   
         ref.child(id).remove();         //if not found exception eklenmeli.
-      
-        setState(state.filter(reservation => {return reservation.id !== id} ) );
         
         callback();     //navigate to dashboard
       
@@ -22,32 +20,32 @@ const ReservationDetails = ({ navigation }) => {
     useEffect(()  => {
         const fetchReservation = async () => {
             try {
-                setState({reservations: state.reservation, dataIsReturned: false});
+                setState({state});
                 //const response = await axios.get(USER_SERVICE_URL);
                 const ref = await firebase.database().ref("reservations/"+ id);
                 var response = {};
                 await ref.get().then(reservation => {
                     response = reservation.val();
                 })
-                console.log("RESERVATIONDETAILSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + response);    
-                setState({reservation: response, dataIsReturned: true});
+                //console.log("RESERVATIONDETAILSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + response);    
+                setState(response);
                 
             } catch (e) {
                 console.log(e);
-                setState({reservation: state.reservation, dataIsReturned: false});
+                setState(state);
             }
         };
         fetchReservation();
       }, []);
  
     
-    if(state.dataIsReturned) {
+    if(state) {
         return (
             <View>
-                <Text style={styles.label}>Organization: {state.reservation.organizationId}</Text>
-                <Text style={styles.label}>Date and Time: {state.reservation.date.day}</Text>
+                <Text style={styles.label}>Organization: {state.organizationId}</Text>
+                <Text style={styles.label}>Date and Time: {state.date}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
-                <Text style={styles.label}>Transaction Type: {state.reservation.transactionType}</Text>
+                <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
                 <View style={styles.button}>
                     <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation, navigation) }/>
                 </View>
@@ -56,7 +54,7 @@ const ReservationDetails = ({ navigation }) => {
     }
     else{
         return (
-            <View></View>
+            <View>Nothing here</View>
         )
     }
         
