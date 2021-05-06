@@ -6,10 +6,6 @@ import { firebase } from '../firebase/config'
 
 
 
-  
-/*
-ŞU AN LOGINDEN SONRA HEMEN ÇEKMIYOR, DASHBOARD EKRANINDA KODU TEKRAR SAVELEYINCE(RE-RENDER YAPINCA YANI) GETİRİYOR REZERVASYONLARI XDDD 
-onWillFocus metodu kullanırsak sayfa geçişi olduğu zaman updated data var ise tekrar render çalıştırıyor */
 
 const ClientDashboard = ( {navigation} ) => {
 
@@ -18,7 +14,6 @@ const ClientDashboard = ( {navigation} ) => {
  // const [state, setState] = useState({reservations: [], dataIsReturned: false});
 
   const [state, setState] = useState([]);
-
 
 
   const deleteReservation = (id) => {
@@ -90,11 +85,6 @@ const ClientDashboard = ( {navigation} ) => {
   }
 
 };
-
-
- 
- 
-
 
 /*Whenever React renders ClientDashboard, react-navigation automatically
 calls the navigationOptions function.

@@ -3,10 +3,15 @@ import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { firebase } from '../firebase/config'
+import { LogBox } from 'react-native';
 
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
+
+
+    LogBox.ignoreLogs(['Setting a timer']); 
 
     const onFooterLinkPress = () => {
        navigation.navigate("Register")
