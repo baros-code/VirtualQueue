@@ -21,7 +21,6 @@ const ReservationForm = ( { initialValues, onSubmit} ) => {
         return dateString;
     }
 
-          
     const dateString = dateFormatter(date.toDateString() + " " + time.toTimeString());
 
     return (
@@ -33,11 +32,11 @@ const ReservationForm = ( { initialValues, onSubmit} ) => {
         <View style={styles.datePicker}>
             <DatePicker 
             mode='date'
-            callback={(date) => setDate(date)}
+            onSubmit={(selectedDate) => setDate(selectedDate)}
             />
             <DatePicker 
             mode='time'
-            callback={(time) => setTime(time)}
+            onSubmit={(selectedDate) => setTime(selectedDate)}
             />
         </View>
         <View style={styles.button}>

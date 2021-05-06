@@ -13,15 +13,16 @@ const getCurrentDate = () => {
     return today;
 }
 
-const DatePicker = ( {mode, callback} ) => {
+const DatePicker = ( {mode, onSubmit} ) => {
     const [date, setDate] = useState(new Date(getCurrentDate()));
     const [show, setShow] = useState(false);
 
     const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+        const currentDate = selectedDate || date;           //if selectedDate == null which means selection cancelled, get date from state
         setShow(Platform.OS === 'ios');
         setDate(currentDate);
-        callback(date);
+
+        onSubmit(currentDate);  
     };
 
     const showDatepicker = () => {
@@ -30,8 +31,6 @@ const DatePicker = ( {mode, callback} ) => {
 
     const showValue = mode === 'date' ? date.toDateString() : date.toTimeString();  
     const iconName = mode === 'date' ? 'calendar' : 'clock' ;
-
-    callback(date);
 
     //console.log("date is: " + date);
 
