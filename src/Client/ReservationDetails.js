@@ -6,12 +6,13 @@ const ReservationDetails = ({ navigation }) => {
 
     const [state, setState] = useState({reservation: {}, dataIsReturned: false});
 
-    const deleteReservation = (id) => {
+    const deleteReservation = (id, callback) => {
         const ref = firebase.database().ref("reservations");   
         ref.child(id).remove();         //if not found exception eklenmeli.
       
         setState(state.filter(reservation => {return reservation.id !== id} ) );
         
+        callback();     //navigate to dashboard
       
       }
  

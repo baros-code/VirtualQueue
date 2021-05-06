@@ -50,7 +50,7 @@ const AdminDashboard = ( {navigation} ) => {
         return (
         <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,editable:true})}>
           <View style={styles.row}>     
-            <Text style={styles.title}>{item.transactionType} - {item.latencySec}</Text>
+            <Text style={styles.title}>{item.transactionType} - {item.employee}</Text>
             <TouchableOpacity onPress={() => deleteQueue(item.id)}>
             <AntDesign name="delete" size={24} color="#0e66d4"  />
             </TouchableOpacity>
