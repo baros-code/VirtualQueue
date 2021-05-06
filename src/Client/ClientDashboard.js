@@ -108,7 +108,7 @@ ClientDashboard.navigationOptions = ( {navigation} ) => {
   return {
     headerRight: () => (
       <TouchableOpacity onPress={() => navigation.navigate('Organizations', {clientId: navigation.getParam("uid"), clientName: navigation.getParam("fullName")} )}>
-        <Feather style={styles.icon} name="plus" size={30} />
+        <Feather  name="plus" color="#0e66d4" size={30} />
       </TouchableOpacity>
     ),
     title: "Hello, " + navigation.getParam("fullName"),
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   icon: {
-    fontSize: 24,
+    fontSize: 24
   },
   button: {
     marginVertical: 20,
