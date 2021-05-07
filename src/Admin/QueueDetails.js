@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button } from 'react-native';
-import { Context as QueueContext } from './QueueContext';
 import { Feather } from '@expo/vector-icons'; 
 
 
 const QueueDetails = ({ navigation }) => {
-    const { state } = useContext(QueueContext);
+   // const { state } = useContext(QueueContext);
 
     const id = navigation.getParam('id');
 

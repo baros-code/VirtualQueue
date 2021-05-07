@@ -2,7 +2,6 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { Provider as QueueProvider } from "./src/Admin/QueueContext"
 import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
 
 import LoginScreen from './src/Authentication/LoginScreen'
@@ -23,13 +22,14 @@ import EditQueue from './src/Admin/EditQueue';
 import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
-
+import SimpleExample from "./src/Admin/adminscrollpicker"
 
 
 const navigator = createStackNavigator(
 
   {
     ClientDashboard: ClientDashboard,
+    BasicExample:SimpleExample,
     CreateReservation : CreateReservation,
     Details: ReservationDetails,
     Organizations: Organizations,
@@ -81,11 +81,9 @@ const App = createAppContainer(navigator);
 
 export default () => {
   return (
-    <QueueProvider>
       <OrganizationProvider>
             <App />
      </OrganizationProvider>
-    </QueueProvider>
   
   )
 };

@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Context as QueueContext } from '../Admin/QueueContext'  //context object
 //import { Context as ImageContext } .....
 import { Feather, AntDesign } from '@expo/vector-icons'; 
 
@@ -8,7 +7,7 @@ import { Feather, AntDesign } from '@expo/vector-icons';
 const Listitems = ( {navigation} ) => {
 
   //console.log(navigation)
-  const { state } = useContext(QueueContext);
+  //const { state } = useContext(QueueContext);
 
   const id = navigation.getParam('id');
   const queue = state.find(queue => queue.id === id);
