@@ -62,7 +62,7 @@ const QueueForm = ( { navigation} ) => {
         <TextInput style={styles.input} value={employee} onChangeText={(employee) => setEmployee(employee)} />
         <Text style={styles.label}>Enter Latency:</Text>
         <TextInput style={styles.input} value={latency} onChangeText={(latency) => setLatency(latency)} />
-        <Text style={styles.label}>Enter Interval:</Text>
+        <Text style={styles.label}>Enter Slot Interval:</Text>
         <TextInput style={styles.input} value={interval} onChangeText={(interval) => setInterval(interval)} />
         <Text style={styles.label}>Enter Start Time:</Text>
         <TextInput style={styles.input} value={startTime} onChangeText={(startTime) => setstartTime(startTime)} />
