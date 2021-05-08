@@ -20,7 +20,7 @@ const ClientDashboard = ( {navigation} ) => {
     const ref = firebase.database().ref("reservations");   
     ref.child(id).remove();         //if not found exception eklenmeli.
   
-    setState(state.filter(reservation => {return reservation.id !== id} ) );
+    //setState(state.filter(reservation => {return reservation.id !== id} ) );
     
   
   }

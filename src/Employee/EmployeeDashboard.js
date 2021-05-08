@@ -1,15 +1,35 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Context as QueueContext } from '../Admin/QueueContext'  //context object
-//import { Context as ImageContext } .....
 import { Feather } from '@expo/vector-icons'; 
 
 
-const AdminDashboard = ( {navigation} ) => {
+const EmployeeDashboard = ( {navigation} ) => {
 
   //console.log(navigation)
 
-  const { state, resetQueue } = useContext(QueueContext);
+  const [ state, setState ] = useState([]);
+
+
+  useEffect(() => {
+    const fetchQueues=async () => { 
+      const queuesReference=await firebase.database().ref("queues/")
+      let newQueues=[]  
+      await queuesReference.once("value",function (queuesSnapShot) {
+          queuesSnapShot.forEach( queueSnapShot => {
+              let currentQueue=queueSnapShot.val()
+              currentQueue.id=queueSnapShot.key
+              let currentIdAdmin=currentQueue.adminId
+              if (currentIdAdmin === adminId) {
+                newQueues.push(currentQueue)                 
+              }
+          });
+          setQueues(newQueues)
+      })
+     
+  }
+  fetchQueues()
+  },([queues]))
+
 
     
   return (
@@ -34,7 +54,7 @@ const AdminDashboard = ( {navigation} ) => {
   );
 };
 
-AdminDashboard.navigationOptions = ( {navigation} ) => {
+EmployeeDashboard.navigationOptions = ( {navigation} ) => {
   return {
     headerRight: () => (
       <TouchableOpacity onPress={() => navigation.navigate('CreateQueue')}>
@@ -76,4 +96,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default AdminDashboard;
+export default EmployeeDashboard;

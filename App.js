@@ -21,9 +21,9 @@ import QueueForm from './src/Admin/QueueForm';
 import QueueDetails from './src/Admin/QueueDetails';
 import EditQueue from './src/Admin/EditQueue';
 
-import EmployeeDashboard from './src/screens/EmployeeDashboard';
-import ListClients from './src/screens/ListClients';
-import ClientDetails from './src/screens/ClientDetails';
+import EmployeeDashboard from './src/Employee/EmployeeDashboard';
+import ListClients from './src/Employee/ListClients';
+import ClientDetails from './src/Employee/ClientDetails';
 
 
 

@@ -12,7 +12,8 @@ const AdminDashboard = ( {navigation} ) => {
   const deleteQueue = (id) => {
     const ref = firebase.database().ref("queues");   
     ref.child(id).remove();         //if not found exception eklenmeli.
-    setQueues(queues.filter(queue => {return id !== queue.id}))
+    
+    //setQueues(queues.filter(queue => {return id !== queue.id}))
 
   }
 
