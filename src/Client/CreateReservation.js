@@ -22,6 +22,7 @@ const CreateReservation = ({ navigation }) => {
               if(currentQueue.organizationId === organizationId && currentQueue.transactionType === transactionType) {
                   response = currentQueue;
                   return true;      //end forEach
+                  //takeValue(response);        herhangi bir methoda argüman olarak verirsek promise dönebiliyor, alternatif return şekli.
               }
           });
       }); 
