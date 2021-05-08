@@ -6,7 +6,9 @@ const ImageDetails = ({ imageSource,name, address, imageStyle }) => {
   return (
     <View style={styles.container}>
       <Image style={imageStyle} source={imageSource} />
-      {address !== undefined ? <Text style={{color:'white', alignSelf:'flex-start', margin: 10}}>ADDRESS:{'\n'} {address}</Text> : <Text style={{textTransform: 'uppercase', margin:10, fontSize: 18, color:'white', paddingLeft:30}}>{name}</Text>}
+      {address !== undefined ? 
+      <Text style={{color:'white', alignSelf:'flex-start', margin: 10}}>ADDRESS:{'\n'} {address}</Text> : 
+      <Text style={{textTransform: 'uppercase', margin:10, fontSize: 18, color:'white', paddingLeft:30}}>{name}</Text>}
     </View>
   );
 };

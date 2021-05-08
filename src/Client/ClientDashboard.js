@@ -11,8 +11,6 @@ const ClientDashboard = ( {navigation} ) => {
 
   const USER_ID = navigation.getParam("uid");
 
- // const [state, setState] = useState({reservations: [], dataIsReturned: false});
-
   const [state, setState] = useState([]);
 
 

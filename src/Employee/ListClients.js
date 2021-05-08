@@ -5,7 +5,7 @@ import { Context as QueueContext } from '../Admin/QueueContext'  //context objec
 import { Feather, AntDesign } from '@expo/vector-icons'; 
 
 
-const Listitems = ( {navigation} ) => {
+const ListClients = ( {navigation} ) => {
 
   //console.log(navigation)
   const { state } = useContext(QueueContext);
@@ -70,5 +70,5 @@ const styles = StyleSheet.create({
 });
 
 
-export default Listitems;
+export default ListClients;
 
