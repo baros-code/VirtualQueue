@@ -48,7 +48,7 @@ const AdminDashboard = ( {navigation} ) => {
       keyExtractor={(queue) => queue.id}
       renderItem={({item}) => {
         return (
-        <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,editable:true})}>
+        <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,editPage:true})}>
           <View style={styles.row}>     
             <Text style={styles.title}>{item.transactionType} - {item.employee}</Text>
             <TouchableOpacity onPress={() => deleteQueue(item.id)}>
@@ -66,9 +66,10 @@ const AdminDashboard = ( {navigation} ) => {
 
 AdminDashboard.navigationOptions = ( {navigation} ) => {
   const adminId=navigation.getParam("uid");
+  const organizationId=navigation.getParam("organizationId")
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('QueueForm',{queueId:"",adminId:adminId,editable:false})}>
+      <TouchableOpacity onPress={() => navigation.navigate('QueueForm',{queueId:"",adminId:adminId, organizationId:organizationId,editPage:false})}>
         <Feather  name="plus" size={30} color="#0e66d4" />
       </TouchableOpacity>
     ),

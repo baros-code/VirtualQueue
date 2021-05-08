@@ -1,22 +1,26 @@
 import React, { useState,useEffect } from 'react';
 import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native';
 import {firebase} from "../firebase/config"
+import ScrollPickerComponent from "../ScrollPickerComponent"
 
 const QueueForm = ( { navigation} ) => {
 
     const [transactionType, setTransactionType] = useState("");
-    const [employee, setEmployee] = useState("");
+    const [employee, setEmployee] = useState("Employee option");
     const [latency, setLatency] = useState("");
     const [interval, setInterval] = useState("");
     const [startTime, setstartTime] = useState("");
     const [finishTime, setFinishTime] = useState("");
 
+    const editPage=navigation.getParam("editPage")
 
+    
 
     const saveQueueHandler= async () => {
         let adminId=navigation.getParam("adminId")
         let queueRef=undefined
         let queueId= navigation.getParam("queueId")
+        let organizationId=navigation.getParam("organizationId")
         if (queueId !== "") {
             queueRef=await firebase.database().ref("queues/"+ queueId)
         } else {
@@ -24,6 +28,7 @@ const QueueForm = ( { navigation} ) => {
         }      
         await queueRef.set({
         adminId: adminId,
+        organizationId: organizationId,
         transactionType: transactionType,
         employee: employee,
         latency:latency,
@@ -36,7 +41,7 @@ const QueueForm = ( { navigation} ) => {
      
     
   useEffect(() => {
-      if (navigation.getParam("editable")) {
+      if (editPage) {
         firebase.database().ref("queues/" + navigation.getParam("queueId"))
          .get().then( (queueData) => {
            queueData=queueData.val()
@@ -56,10 +61,10 @@ const QueueForm = ( { navigation} ) => {
     return (
     <View>
         <ScrollView>
-        <Text style={styles.label}>Enter Type:</Text>
-        <TextInput style={styles.input} value={transactionType} onChangeText={(text) => setTransactionType(text)} />
-        <Text style={styles.label}>Enter Employee:</Text>
-        <TextInput style={styles.input} value={employee} onChangeText={(employee) => setEmployee(employee)} />
+        <Text style={styles.label}>{editPage ? "Queue Type" : "Enter Queue Type" }</Text>
+        <TextInput style={styles.input} editable={!editPage} value={transactionType} onChangeText={(text) => setTransactionType(text)} />
+        <Text style={styles.label}>{editPage ? "Set Employee" : "Select the Employee"}</Text>
+        <ScrollPickerComponent style={styles.input} editable={true} selectedValue={employee} callback={(value) => setEmployee(value)} />
         <Text style={styles.label}>Enter Latency:</Text>
         <TextInput style={styles.input} value={latency} onChangeText={(latency) => setLatency(latency)} />
         <Text style={styles.label}>Enter Slot Interval:</Text>
@@ -91,6 +96,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 20,
+        marginTop:5,
         marginBottom: 5,
         marginLeft: 5,
         color:"white",

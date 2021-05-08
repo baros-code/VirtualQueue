@@ -22,14 +22,12 @@ import EditQueue from './src/Admin/EditQueue';
 import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
-import SimpleExample from "./src/Admin/adminscrollpicker"
 
 
 const navigator = createStackNavigator(
 
   {
     ClientDashboard: ClientDashboard,
-    BasicExample:SimpleExample,
     CreateReservation : CreateReservation,
     Details: ReservationDetails,
     Organizations: Organizations,

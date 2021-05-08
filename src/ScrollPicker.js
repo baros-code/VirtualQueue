@@ -55,7 +55,7 @@ const ScrollPicker = ({
 
   return (
     <>
-      <View style={{ height: "90%", width: "60%" }}>
+      <View style={{ height: "90%", width: "100%" }}>
         <FlatList
           data={list}
           extraData={extraData}
@@ -84,9 +84,11 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "white",
+    borderRadius:5
   },
   RowText: {
-    fontSize: 17,
+    fontSize: 20,
     textAlign: "center",
   },
 });
