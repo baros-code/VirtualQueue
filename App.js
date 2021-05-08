@@ -88,12 +88,7 @@ const App = createAppContainer(navigator);
 
 export default () => {
   return (
-    <QueueProvider>
-      <OrganizationProvider>
-            <App />
-     </OrganizationProvider>
-    </QueueProvider>
-  
+        <App />
   )
 };
 

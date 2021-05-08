@@ -12,27 +12,49 @@ const CreateReservation = ({ navigation }) => {
 
     console.log("From CreateReservation: " + clientId, organizationId, organizationName);
 
+    const findQueue = async (transactionType) => {
+        var ref = await firebase.database().ref("queues");   
+        var response;
+        await ref.once("value",function (queues) {
+          queues.forEach( queue => {
+              let currentQueue = queue.val();
+              currentQueue.id = queue.key;
+              if(currentQueue.organizationId === organizationId && currentQueue.transactionType === transactionType) {
+                  response = currentQueue;
+                  return true;      //end forEach
+              }
+          });
+      }); 
+      return response;
+    }
 
-    const addReservation = async (clientId, transactionType, date, organizationName, callback) => {
+    const addReservation = async (clientId, transactionType, date, callback) => {
 
         var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
-        await ref.set({
-        date: date,
-        clientId: clientId,
-        employeeId: "userId3",
-        estimatedRemainingTimeSec: "300",
-        organizationId: organizationName,
-        queueId: "queueId2",
-        status: "2",
-        transactionType: transactionType
+        findQueue(transactionType).then(response => {
+            if(response) {
+                ref.set({
+                    date: date,
+                    clientId: clientId,
+                    employeeId: "userId3",
+                    estimatedRemainingTimeSec: "300",
+                    organizationId: organizationId,
+                    organizationName: organizationName,
+                    queueId: response.id,
+                    status: "2",
+                    transactionType: transactionType
+                    });
+                callback(); //navigate
+            }else {
+                console.log("-----------------------------QUEUE NOT FOUND!------------------------------");
+            }
         });
-        callback(); //navigate
-    }
+    };
 
     return (
         <ReservationForm
         initialValues={{organizationName: organizationName, transactionType: ''}} 
-        onSubmit={(transactionType, date, organizationName) => { addReservation(clientId, transactionType, date, organizationName, () => navigation.navigate('ClientDashboard'))}}
+        onSubmit={(transactionType, date) => { addReservation(clientId, transactionType, date, () => navigation.navigate('ClientDashboard'))}}
         type={serviceType}
         />
     );

@@ -64,7 +64,7 @@ const ClientDashboard = ( {navigation} ) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationId} - {`${item.date}`}</Text>
+                <Text style={styles.organizationStyle}>{item.organizationName} - {`${item.date}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.id)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>

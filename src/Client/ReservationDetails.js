@@ -6,6 +6,8 @@ const ReservationDetails = ({ navigation }) => {
 
     const [state, setState] = useState({});
 
+    const id = navigation.getParam('id');
+
     const deleteReservation = (id, callback) => {
         const ref = firebase.database().ref("reservations");   
         ref.child(id).remove();         //if not found exception eklenmeli.
@@ -14,7 +16,7 @@ const ReservationDetails = ({ navigation }) => {
       
       }
  
-    const id = navigation.getParam('id');
+    
     // const reservation = state.find((reservation) => reservation.id === id);
 
     useEffect(()  => {
@@ -42,7 +44,7 @@ const ReservationDetails = ({ navigation }) => {
     if(state) {
         return (
             <View>
-                <Text style={styles.label}>Organization: {state.organizationId}</Text>
+                <Text style={styles.label}>Organization: {state.organizationName}</Text>
                 <Text style={styles.label}>Date and Time: {state.date}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>

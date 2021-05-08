@@ -40,7 +40,7 @@ const ReservationForm = ( { initialValues, onSubmit, type} ) => {
             />
         </View>
         <View style={styles.button}>
-            <Button  title="Save Reservation" onPress={() => onSubmit(transactionType, dateString, organizationName) } />
+            <Button  title="Save Reservation" onPress={() => onSubmit(transactionType, dateString) } />
         </View>
     </View>
     );
