@@ -42,25 +42,21 @@ const Services = ( {navigation} ) => {
             keyExtractor={(service) => service.name.toString()}
             renderItem={({item}) => {
             return (
-                <TouchableOpacity onPress={() => navigation.navigate("Organizations", {service: item.name, clientId: clientId})}>
-                    <View style={styles.row}>
-                        <OrganizationDetails
-                        imageSource={item.imageSource}
-                        name={item.name}
-                        />
-                    </View>
-                </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("Organizations", {service: item.name, clientId: clientId})}>
+                        <View style={styles.row}>
+                            <OrganizationDetails
+                            imageSource={item.imageSource}
+                            name={item.name}
+                            />
+                            </View>
+                    </TouchableOpacity>
+                
             );
             }}
         />
     </View>
     );
 };
-
-
-
-
-
 
 const styles = StyleSheet.create({
     row: {
@@ -70,7 +66,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderTopWidth: 1,
       borderColor: 'white',
-    },
+    }
   });
 
 export default Services;

@@ -6,7 +6,7 @@ const OrganizationDetails = ({ imageSource,name, address }) => {
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={imageSource} />
-      {address !== undefined ? <Text>ADDRESS: {address}</Text> : <Text>{name}</Text>}
+      {address !== undefined ? <Text>ADDRESS: {address}</Text> : <Text style={{textTransform: 'uppercase', margin:10, fontSize: 18, color:'white', paddingLeft:30}}>{name}</Text>}
     </View>
   );
 };
@@ -17,10 +17,9 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     borderWidth: 1,
-    borderColor: 'black'
     }
 });
 

@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderTopWidth: 1,
       borderColor: 'white',
-    },
+    }
   });
 
 export default Organizations;
