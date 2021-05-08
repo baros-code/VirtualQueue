@@ -14,6 +14,7 @@ import ClientDashboard from './src/Client/ClientDashboard';
 import CreateReservation from './src/Client/CreateReservation';
 import ReservationDetails from './src/Client/ReservationDetails';
 import Organizations from './src/Client/Organizations';
+import Services from './src/Client/Services';
 
 import AdminDashboard from './src/Admin/AdminDashboard';
 import QueueForm from './src/Admin/QueueForm';
@@ -58,7 +59,13 @@ const navigator = createStackNavigator(
         }
     },
     Register: RegistrationScreen,
-    PhoneVerification: PhoneVerification
+    PhoneVerification: PhoneVerification,
+    Services: {
+      screen: Services,
+      navigationOptions: {
+        title: "Choose a service"
+      }
+    }
   },
 
   {

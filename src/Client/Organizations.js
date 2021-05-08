@@ -13,11 +13,6 @@ const Organizations = ( {navigation} ) => {
 
     const { state } = useContext(OrganizationContext);
 
-    // const state =  [
-    // {id: 0, name: 'AKBANK', imageSource: require('../../assets/images/akbank.png'), address:'1470 Sokak No: 10 Kadam 2 İş Merkezi Kat :2 Daire :3 Karşıyaka - İzmir'},
-    // {id: 1, name: 'HALKBANK', imageSource: require('../../assets/images/halkbank.png'), address:'Konak Mahallesi Lefkoşe Caddesi Artı Ofis No:10 Kat:6 Ofis No :35 Nilüfer – İzmir'},
-    // {id: 2, name: 'ZIRAAT BANKASI', imageSource: require('../../assets/images/ziraatbankasi.png'), address:'Suadiye Mahallesi Bağdat Caddesi No:399 Alsancak / İzmir'},
-    // ];
     const clientId = navigation.getParam('clientId');
     const clientName = navigation.getParam('clientName');
 

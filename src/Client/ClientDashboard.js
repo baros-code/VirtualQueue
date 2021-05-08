@@ -54,8 +54,6 @@ const ClientDashboard = ( {navigation} ) => {
   }, [state]);
 
  
- 
-  if (state) {
     return (
       <View style={styles.background}>
         {state.length !== 0 ? <FlatList
@@ -76,13 +74,6 @@ const ClientDashboard = ( {navigation} ) => {
         /> : <Text style={styles.text}>No reservations found!</Text>}
       </View>
       );
-  }
-
-  else {
-    return <View>
-      <Text>LOADING SCREEN...</Text>
-    </View>
-  }
 
 };
 
@@ -93,7 +84,7 @@ calls the navigationOptions function.
 ClientDashboard.navigationOptions = ( {navigation} ) => {
   return {
     headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Organizations', {clientId: navigation.getParam("uid"), clientName: navigation.getParam("fullName")} )}>
+      <TouchableOpacity onPress={() => navigation.navigate('Services', {clientId: navigation.getParam("uid")} )}>
         <Feather  name="plus" color="#0e66d4" size={30} />
       </TouchableOpacity>
     ),
