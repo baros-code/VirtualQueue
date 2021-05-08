@@ -4,14 +4,13 @@ import ReservationForm from '../components/ReservationForm';
 import { firebase } from '../firebase/config'
 
 const CreateReservation = ({ navigation }) => {
-    //const { addReservation } = useContext(ReservationContext);
-    //const { addClientToQueue } = useContext(QueueContext);
 
-    const clientName = navigation.getParam('clientName');
-    const organizationName = navigation.getParam('name');
+    const serviceType = navigation.getParam('serviceType');
+    const organizationId = navigation.getParam('organizationId');       //selected organization to enqueue
+    const organizationName = navigation.getParam('organizationName');       
     const clientId = navigation.getParam('clientId');
 
-    console.log("sa" + clientId, clientName, organizationName);
+    console.log("From CreateReservation: " + clientId, organizationId, organizationName);
 
 
     const addReservation = async (clientId, transactionType, date, organizationName, callback) => {
@@ -22,8 +21,6 @@ const CreateReservation = ({ navigation }) => {
         clientId: clientId,
         employeeId: "userId3",
         estimatedRemainingTimeSec: "300",
-        startTime: "14.30",
-        finishTime: "14.45",
         organizationId: organizationName,
         queueId: "queueId2",
         status: "2",
@@ -32,19 +29,11 @@ const CreateReservation = ({ navigation }) => {
         callback(); //navigate
     }
 
-
-
-    if(organizationName) {
-        return (
-            <ReservationForm
-            initialValues={{organizationName: organizationName, transactionType: ''}} 
-            onSubmit={(transactionType, date, organizationName) => { addReservation(clientId, transactionType, date, organizationName, () => navigation.navigate('ClientDashboard'))}}
-            />
-        );
-    }
     return (
-        <ReservationForm 
-        onSubmit={(transactionType, date, organizationName) => { addReservation(clientId, transactionType, date, organizationName, () => navigation.navigate('ClientDashboard') )}}
+        <ReservationForm
+        initialValues={{organizationName: organizationName, transactionType: ''}} 
+        onSubmit={(transactionType, date, organizationName) => { addReservation(clientId, transactionType, date, organizationName, () => navigation.navigate('ClientDashboard'))}}
+        type={serviceType}
         />
     );
 };

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import { images } from '../images'
 import { firebase } from '../firebase/config'
-import OrganizationDetails from '../components/OrganizationDetails';
+import ImageDetails from '../components/ImageDetails';
 
 const Services = ( {navigation} ) => {
 
@@ -20,7 +20,7 @@ const Services = ( {navigation} ) => {
                 servicesSnapShot.forEach( serviceSnapShot => {
                     let currentService = serviceSnapShot.val()
                     currentService.name = serviceSnapShot.key;
-                    currentService.imageSource = images.find(image => image.name === currentService.name).image;
+                    currentService.logo = images.find(image => image.name === currentService.name).image;
                     response.push(currentService) 
                 });
                 setState(response);
@@ -42,11 +42,12 @@ const Services = ( {navigation} ) => {
             keyExtractor={(service) => service.name.toString()}
             renderItem={({item}) => {
             return (
-                    <TouchableOpacity onPress={() => navigation.navigate("Organizations", {service: item.name, clientId: clientId})}>
+                    <TouchableOpacity onPress={() => navigation.navigate("Organizations", {serviceType: item.name, clientId: clientId})}>
                         <View style={styles.row}>
-                            <OrganizationDetails
-                            imageSource={item.imageSource}
+                            <ImageDetails
+                            imageSource={item.logo}
                             name={item.name}
+                            imageStyle={styles.logo}
                             />
                             </View>
                     </TouchableOpacity>
@@ -66,7 +67,12 @@ const styles = StyleSheet.create({
       paddingHorizontal: 10,
       borderTopWidth: 1,
       borderColor: 'white',
-    }
+    },
+    logo: {
+        width: 150,
+        height: 150,
+        borderWidth: 1,
+        }
   });
 
 export default Services;

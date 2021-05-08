@@ -8,7 +8,7 @@ TIME'LAR SEÇİLEMEMELİ.
 */
 
 
-const ReservationForm = ( { initialValues, onSubmit} ) => {
+const ReservationForm = ( { initialValues, onSubmit, type} ) => {
 
     const [organizationName, setOrganizationName] = useState(initialValues.organizationName);
     const [transactionType, setTransactionType] = useState(initialValues.transactionType);
@@ -27,7 +27,7 @@ const ReservationForm = ( { initialValues, onSubmit} ) => {
     <View>
         <Text style={styles.label}>Organization Name:</Text>
         <TextInput editable={false} style={styles.input} value={organizationName} onChangeText={(text) => setOrganizationName(text)} />
-        <Text style={styles.label}>Choose Transaction Type:</Text>
+        {type === 'bank' ? <Text style={styles.label}>Choose Transaction Type:</Text> : <Text style={styles.label}>Choose Reservation Type:</Text>}
         <TextInput style={styles.input} value={transactionType} onChangeText={(transactionType) => setTransactionType(transactionType)} />
         <View style={styles.datePicker}>
             <DatePicker 
