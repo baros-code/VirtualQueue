@@ -23,6 +23,9 @@ import EmployeeDashboard from './src/screens/EmployeeDashboard';
 import ListClients from './src/screens/ListClients';
 import ClientDetails from './src/screens/ClientDetails';
 
+import {createDrawerNavigator} from "react-navigation-drawer"
+import DashboardStack from './src/Navigation/DashboardStack';
+
 
 const navigator = createStackNavigator(
 
@@ -35,7 +38,7 @@ const navigator = createStackNavigator(
     QueueForm: {
       screen:QueueForm,
       navigationOptions: {
-        title:"Create Queue",
+        title:"Queue Settings",
       }
     },
     QueueDetails: QueueDetails,
@@ -74,6 +77,7 @@ const navigator = createStackNavigator(
 }
 
 );
+
 
 const App = createAppContainer(navigator);
 

@@ -2,7 +2,6 @@ import React, {useState,useRef, useEffect} from 'react';
 import ScrollPicker from './ScrollPicker';
 import RBSheet from './RBSheet';
 import {View, Text, StyleSheet,TouchableOpacity} from 'react-native';
-import symbolicateStackTrace from 'react-native/Libraries/Core/Devtools/symbolicateStackTrace';
 
 
 

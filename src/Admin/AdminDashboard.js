@@ -8,6 +8,7 @@ const AdminDashboard = ( {navigation} ) => {
 
   const adminId=navigation.getParam("uid");
   const [queues, setQueues] = useState([])
+  const organizationId=navigation.getParam("organizationId")
 
   const deleteQueue = (id) => {
     const ref = firebase.database().ref("queues");   
@@ -48,9 +49,9 @@ const AdminDashboard = ( {navigation} ) => {
       keyExtractor={(queue) => queue.id}
       renderItem={({item}) => {
         return (
-        <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,editPage:true})}>
+        <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,organizationId:organizationId,editPage:true})}>
           <View style={styles.row}>     
-            <Text style={styles.title}>{item.transactionType} - {item.employee}</Text>
+            <Text style={styles.title}>{item.transactionType} - {item.employeeName}</Text>
             <TouchableOpacity onPress={() => deleteQueue(item.id)}>
             <AntDesign name="delete" size={24} color="#0e66d4"  />
             </TouchableOpacity>

@@ -5,7 +5,6 @@ import RegistrationScreen from "./Authentication/RegistrationScreen"
 import HomeScreen from "./Authentication/HomeScreen"
 import phoneAuthentication from "./Authentication/PhoneAuthentication"
 import AdminDashboard from "./Admin/AdminDashboard"
-import {Text} from "react-native"
 // create screens
 const screens = {
     Login: {
