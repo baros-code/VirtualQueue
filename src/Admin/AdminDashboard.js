@@ -32,13 +32,10 @@ const AdminDashboard = ( {navigation} ) => {
               }
           });
           setQueues(newQueues)
-      })
-     
+      })     
   }
   fetchQueues()
   },([queues]))
-
-
 
   return (
     
