@@ -1,29 +1,52 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
+import { firebase } from '../firebase/config'
 
 
 const ClientDetails = ({ navigation }) => {
-    const [state, setState]= useState([]);
+    const [state, setState]= useState({});
 
 
-    const id = navigation.getParam('id');
+    const USER_ID = navigation.getParam("uid");
+    const reservationId = navigation.getParam('reservationId');
+    const clientId = navigation.getParam('clientId'); 
 
-    // state === [] of clients
-    const client = state.find((client) => client.id === id);
+    useEffect(()  => {
+        const fetchReservationAndClient = async () => {
+            try {
+                setState(state);
+                const ref = await firebase.database().ref("reservations/"+ reservationId);
+                var response;
+                await ref.get().then(reservation => {   
+                    response = reservation.val();
+                    response.id = reservation.key;
+                    getClientData(clientId).then(client => {
+                        response.client = client;
+                        setState(response);
+                    });
+                });
+                
+            } catch (e) {
+                console.log(e);
+                setState(state);
+            }
+        };
+        fetchReservationAndClient();
+      }, []);
 
-    if(client) {
+
+    if(state.client) {
         return (
             <View>
-                <Text style={styles.label}>Client name: {client.name}</Text>
-                <Text style={styles.label}>Client mail: {client.email}</Text>
-                <Text style={styles.label}>Reservation Number: {client.reservation.id}</Text>
-                <Text style={styles.label}>Transaction Type: {client.reservation.transactionType}</Text>
+                <Text style={styles.label}>Client name: {state.client.fullName}</Text>
+                <Text style={styles.label}>Client mail: {state.client.email}</Text>
+                <Text style={styles.label}>Reservation Number: {state.id}</Text>
+                <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
                 <View style={styles.button}>
                     <View style={styles.button2}>
-                    <Button  color='red' title="Reject" onPress={() => rejectUser(client.id, () => {navigation.pop()} ) }/>
+                    <Button  color='red' title="Finish" disabled={state.status !== 1} onPress={() => endAlert(endSession(reservationId, () => {navigation.pop()} )) }/>
                     </View>
-                    <Button  color='green' title="Accept" onPress={() => acceptUser(client.id, () => {navigation.pop()} ) }/>
+                    <Button  color='green' title="Start" disabled={state.status !== 0} onPress={() => startAlert(startSession(reservationId, USER_ID, () => {navigation.pop()} )) }/>
                 </View>
                     
             </View>
@@ -31,17 +54,68 @@ const ClientDetails = ({ navigation }) => {
     }
     else{
         return (
-            <View></View>
+            <View>
+            </View>
         )
     }
         
 };
 
+export const startAlert = ( action ) =>
+    Alert.alert(
+    "Session Started!",
+    "Directing to the Dashboard",
+    [
+        { text: "OK", onPress: () => action}
+    ]
+    );
+
+export const endAlert = ( action ) =>
+Alert.alert(
+"Session Finished!",
+"Directing to the Dashboard",
+[
+    { text: "OK", onPress: () => action}
+]
+);
+
 ClientDetails.navigationOptions = ( ) => {
-  return {
-    title: 'Client Details'
+    return {
+      title: 'Client Details'
+    };
   };
+  
+
+export const getClientData = async (clientId) => {
+    const ref = await firebase.database().ref("users/"+ clientId);
+    var response;
+    ref.get().then(user => {
+        response = user.val();
+        response.id = user.key;
+        return response;
+    });
 };
+
+export const startSession = async (reservationId, userId, callback) => {
+    const ref = await firebase.database().ref("reservations/" + reservationId);
+    ref.update({
+        status : 1,
+        employeeId: userId
+    });
+    if(callback)
+        callback();
+};
+
+export const endSession = async (reservationId, callback) => {
+    const ref = await firebase.database().ref("reservations/" + reservationId);
+    ref.update({
+        status : 2,
+    });
+    if(callback)
+        callback();
+};
+
+
 
 
 const styles = StyleSheet.create({

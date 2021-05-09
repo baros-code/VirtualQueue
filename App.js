@@ -15,12 +15,12 @@ import Services from './src/Client/Services';
 
 import AdminDashboard from './src/Admin/AdminDashboard';
 import QueueForm from './src/Admin/QueueForm';
-import QueueDetails from './src/Admin/QueueDetails';
 import EditQueue from './src/Admin/EditQueue';
 
 import EmployeeDashboard from './src/Employee/EmployeeDashboard';
 import ListClients from './src/Employee/ListClients';
 import ClientDetails from './src/Employee/ClientDetails';
+import EmployeeMyQueues from './src/Employee/MyQueues';
 
 
 
@@ -38,10 +38,14 @@ const navigator = createStackNavigator(
         title:"Create Queue",
       }
     },
-    QueueDetails: QueueDetails,
     EditQueue: EditQueue,
     EmployeeDashboard: EmployeeDashboard,
-    ListClients : ListClients,
+    ListClients : {
+      screen: ListClients,
+      navigationOptions: {
+        title: "Customers in the line"
+      }
+    },
     ClientDetails: ClientDetails,
     Login : {
       screen: LoginScreen,
@@ -61,6 +65,12 @@ const navigator = createStackNavigator(
       screen: Services,
       navigationOptions: {
         title: "Choose a service"
+      }
+    },
+    EmployeeMyQueues: {
+      screen: EmployeeMyQueues,
+      navigationOptions: {
+        title: "My Queues"
       }
     }
   },

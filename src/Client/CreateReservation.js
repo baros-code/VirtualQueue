@@ -37,12 +37,12 @@ const CreateReservation = ({ navigation }) => {
                 ref.set({
                     date: date,
                     clientId: clientId,
-                    employeeId: "userId3",
+                    employeeId: null,
                     estimatedRemainingTimeSec: "300",
                     organizationId: organizationId,
                     organizationName: organizationName,
                     queueId: response.id,
-                    status: "2",
+                    status: 0,
                     transactionType: transactionType
                     });
                 callback(); //navigate
