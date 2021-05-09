@@ -3,32 +3,43 @@ import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'reac
 import { Feather } from '@expo/vector-icons'; 
 
 
+
+
+
 const EmployeeDashboard = ( {navigation} ) => {
 
-  //console.log(navigation)
+  const USER_ID = navigation.getParam("uid");
+  const QUEUE_ID = navigation.getParam("queueId");
+
+
+  // state = reservations[]
 
   const [ state, setState ] = useState([]);
 
 
+  const getFirstReservation = () => {
+    state.sort(function (r1, r2) {return r1.date})
+  }
+
+  //orderby(date), getfirst one.
   useEffect(() => {
-    const fetchQueues=async () => { 
-      const queuesReference=await firebase.database().ref("queues/")
-      let newQueues=[]  
-      await queuesReference.once("value",function (queuesSnapShot) {
-          queuesSnapShot.forEach( queueSnapShot => {
-              let currentQueue=queueSnapShot.val()
-              currentQueue.id=queueSnapShot.key
-              let currentIdAdmin=currentQueue.adminId
-              if (currentIdAdmin === adminId) {
-                newQueues.push(currentQueue)                 
+    const fetchReservations= async () => { 
+      const reservationsReference=await firebase.database().ref("reservations")
+      let response=[]; 
+      await reservationsReference.once("value",function (reservations) {
+          reservations.forEach( reservation => {
+              let currentReservation=reservation.val()
+              currentReservation.id=reservation.key
+              if (currentReservation.queueId === QUEUE_ID) {            //If the reservation is in the employee's queue
+                response.push(currentReservation);                
               }
           });
-          setQueues(newQueues)
+          setState(response)
       })
      
   }
-  fetchQueues()
-  },([queues]))
+  fetchReservations()
+  },([state]));
 
 
     

@@ -2,9 +2,6 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
-import { Provider as QueueProvider } from "./src/Admin/QueueContext"
-import { Provider as OrganizationProvider } from './src/context/OrganizationContext'
-
 import LoginScreen from './src/Authentication/LoginScreen'
 import HomeScreen from './src/Authentication/HomeScreen'
 import RegistrationScreen from './src/Authentication/RegistrationScreen'

@@ -23,6 +23,15 @@ const ClientDashboard = ( {navigation} ) => {
   
   }
 
+  const compareTwoDate = (d1,d2) => {
+    dateString = new Date(dateString).toUTCString();
+    
+  }
+
+  console.log("date string: " + new Date("Sat, 08 May 2021 05:00:00").toUTCString());
+  
+  //console.log("DATE COMPARISON RESULT: " + compareTwoDate("Sat, 08 May 2021 05:00:00", "Sat, 09 May 2021 05:00:00"))
+
     
   useEffect(()  => {
     const fetchReservations = async  () => {
