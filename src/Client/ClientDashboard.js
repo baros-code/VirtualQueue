@@ -28,7 +28,6 @@ const ClientDashboard = ( {navigation} ) => {
     const fetchReservations = async  () => {
       try {
           setState(state);
-          //const response = await axios.get(USER_SERVICE_URL);
           const ref = await firebase.database().ref("reservations");
           var response = [];
           await ref.once("value",function (reservationsSnapShot) {

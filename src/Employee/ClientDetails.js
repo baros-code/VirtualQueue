@@ -4,49 +4,49 @@ import { firebase } from '../firebase/config'
 
 
 const ClientDetails = ({ navigation }) => {
-    const [state, setState]= useState({});
+    //const [state, setState]= useState({});
 
 
     const USER_ID = navigation.getParam("uid");
-    const reservationId = navigation.getParam('reservationId');
-    const clientId = navigation.getParam('clientId'); 
+    //const reservationId = navigation.getParam('reservationId');
+    const reservation = navigation.getParam('reservation'); 
 
-    useEffect(()  => {
-        const fetchReservationAndClient = async () => {
-            try {
-                setState(state);
-                const ref = await firebase.database().ref("reservations/"+ reservationId);
-                var response;
-                await ref.get().then(reservation => {   
-                    response = reservation.val();
-                    response.id = reservation.key;
-                    getClientData(clientId).then(client => {
-                        response.client = client;
-                        setState(response);
-                    });
-                });
+    // useEffect(()  => {
+    //     const fetchReservationAndClient = async () => {
+    //         try {
+    //             setState(state);
+    //             const ref = await firebase.database().ref("reservations/"+ reservationId);
+    //             var response;
+    //             await ref.get().then(reservation => {   
+    //                 response = reservation.val();
+    //                 response.id = reservation.key;
+    //                 getClientData(clientId).then(client => {
+    //                     response.client = client;
+    //                     setState(response);
+    //                 });
+    //             });
                 
-            } catch (e) {
-                console.log(e);
-                setState(state);
-            }
-        };
-        fetchReservationAndClient();
-      }, []);
+    //         } catch (e) {
+    //             console.log(e);
+    //             setState(state);
+    //         }
+    //     };
+    //     fetchReservationAndClient();
+    //   }, []);
 
 
-    if(state.client) {
+    if(reservation.client) {
         return (
             <View>
-                <Text style={styles.label}>Client name: {state.client.fullName}</Text>
-                <Text style={styles.label}>Client mail: {state.client.email}</Text>
-                <Text style={styles.label}>Reservation Number: {state.id}</Text>
-                <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
+                <Text style={styles.label}>Client name: {reservation.client.fullName}</Text>
+                <Text style={styles.label}>Client mail: {reservation.client.email}</Text>
+                <Text style={styles.label}>Reservation Number: {reservation.id}</Text>
+                <Text style={styles.label}>Transaction Type: {reservation.transactionType}</Text>
                 <View style={styles.button}>
                     <View style={styles.button2}>
-                    <Button  color='red' title="Finish" disabled={state.status !== 1} onPress={() => endAlert(endSession(reservationId, () => {navigation.pop()} )) }/>
+                    <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession(reservation.id, () => {navigation.pop()} )) }/>
                     </View>
-                    <Button  color='green' title="Start" disabled={state.status !== 0} onPress={() => startAlert(startSession(reservationId, USER_ID, () => {navigation.pop()} )) }/>
+                    <Button  color='green' title="Start" disabled={reservation.status !== 0} onPress={() => startAlert(startSession(reservation.id, USER_ID, () => {navigation.pop()} )) }/>
                 </View>
                     
             </View>
@@ -55,6 +55,7 @@ const ClientDetails = ({ navigation }) => {
     else{
         return (
             <View>
+                <Text>NO DATA FOUND!</Text>
             </View>
         )
     }

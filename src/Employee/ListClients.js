@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'reac
 //import { Context as ImageContext } .....
 import { Feather, AntDesign } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
-import { getClientData } from './ClientDetails'
 
 
 const ListClients = ( {navigation} ) => {
@@ -13,13 +12,30 @@ const ListClients = ( {navigation} ) => {
 
   const USER_ID = navigation.getParam("uid");
   const QUEUE_ID = navigation.getParam('queueId');
-    
+
 
   /*async yazınca 1 tane geliyor, yazmayınca 5 tane geliyor */
 
+  const addClientData = async (reservations) => {
+    const ref = await firebase.database().ref("users");
+    const result = [];
+    await ref.once("value", function (users) {
+      users.forEach( user => {
+        let currentUser = user.val();
+        currentUser.id = user.key;
+        reservations.forEach( reservation => {
+          if (reservation.clientId === currentUser.id)
+              result.push({...reservation, client: currentUser})
+        });
+      });
+    });
+    return result;    
+  };
+
+
 
   useEffect(()  => {
-    const fetchReservationsAndClient = async  () => {
+    const fetchReservations = async  () => {
       try {
           //setState(state);
           const ref = await firebase.database().ref("reservations");
@@ -29,43 +45,52 @@ const ListClients = ( {navigation} ) => {
             reservationsSnapShot.forEach( reservationSnapShot =>  {
                 let currentReservation = reservationSnapShot.val();
                 currentReservation.id = reservationSnapShot.key;
-                if (currentReservation.queueId === QUEUE_ID) {
-                  //currentReservation.client = await getClientData(currentReservation.clientId);
-                  //console.log("THIS IS CLIENT DATA RETURNED: " + getClientData(currentReservation.clientId));
+                if (currentReservation.queueId === QUEUE_ID && currentReservation.status.toString() !== "2") {
                   response.push(currentReservation);
                 }
             });      
-            setState(response);
-        });   
-        setState(response);
-
+        });
+        addClientData(response).then(result => {
+          setState(result);
+        });
+        
       } catch (e) {
           console.log(e);
           setState(state);
       }
   };
-    fetchReservationsAndClient();
+    fetchReservations();
   }, [state]);
 
 
 
-  return (
-  <View style={styles.background}>
-    <FlatList
-      data={state}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({item}) => {
-        return (
-        <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservationId: item.id, clientId: item.client.id})}>
-          <View style={styles.row}>     
-            <Text style={styles.title}>{item.client} - {item.id}</Text>
-          </View>
-        </TouchableOpacity>
-        );
-      }}
-    />
-  </View>
-  );
+  if(state) {
+    return (
+      <View style={styles.background}>
+        <FlatList
+          data={state}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({item}) => {
+            return (
+            <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: item})}>
+              <View style={styles.row}>     
+                <Text style={styles.title}>{item.client.fullName} - {item.id}</Text>
+              </View>
+            </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+      );
+  }
+  else {
+    return (
+      <View>
+        <Text>QUEUE IS EMPTY!</Text>
+      </View>
+    )
+  }
+  
 };
 
 

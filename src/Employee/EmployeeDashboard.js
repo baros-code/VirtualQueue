@@ -30,27 +30,45 @@ const EmployeeDashboard = ( {navigation} ) => {
   const QUEUE_ID = "queueId1";    //findQueue metodu yazılacak
 
 
+  const findQueues = async () => {
+    const ref = await firebase.database().ref("queues");
+    let response = [];
+    await ref.once("value", function (queues) {
+      queues.forEach( queue => {
+        let currentQueue = queue.val();
+        currentQueue.id = queue.key;
+        if (currentQueue.employeeId == USER_ID) {
+          response.push(currentQueue.id);
+        }
+      });
+    });
+    return response;
+  }
+
 
   //orderby(date), getfirst one.
   useEffect(() => {
-    const fetchReservations= async () => { 
+    const fetchReservations= async (queues) => { 
       const reservationsReference=await firebase.database().ref("reservations")
       let response=[]; 
-      await reservationsReference.once("value",function (reservations) {
-          reservations.forEach( reservation => {
-              let currentReservation=reservation.val()
-              currentReservation.id=reservation.key
-              if (currentReservation.queueId === QUEUE_ID && currentReservation.status.toString() !== "2") {            //If the reservation is in the employee's queue
-                response.push(currentReservation);                
-              }
-          });
-          response.sort(function (r1, r2) {return compareTwoDate(r1,r2)});        //order by date ascending
-          setState(response);
+      reservationsReference.once("value",function (reservations) {
+        reservations.forEach( reservation => {
+            let currentReservation=reservation.val()
+            currentReservation.id=reservation.key;
+            if (queues.includes(currentReservation.queueId) && currentReservation.status.toString() !== "2") {            //If the reservation is in the employee's queue
+              response.push(currentReservation);             
+            }
+            
+        });
+        response.sort(function (r1, r2) {return compareTwoDate(r1,r2)});        //order by date ascending
+        setState(response);
       })
-     
-  }
-  fetchReservations()
-  },([state]));
+      
+    }
+    findQueues().then(queues => {
+      fetchReservations(queues);
+    });
+    },([state]));
 
 
   if(currentReservation) {
