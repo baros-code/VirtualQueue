@@ -38,6 +38,7 @@ export default function LoginScreen({navigation}) {
                          } else if(data.role === 1)
                             navigation.navigate('EmployeeDashboard', data);
                         else if(data.role === 2) {
+                            console.log(data)
                             navigation.navigate('AdminDashboard', data);
                             
                          } else

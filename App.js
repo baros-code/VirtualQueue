@@ -2,6 +2,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
+
 import LoginScreen from './src/Authentication/LoginScreen'
 import HomeScreen from './src/Authentication/HomeScreen'
 import RegistrationScreen from './src/Authentication/RegistrationScreen'
@@ -35,7 +36,7 @@ const navigator = createStackNavigator(
     QueueForm: {
       screen:QueueForm,
       navigationOptions: {
-        title:"Create Queue",
+        title:"Queue Settings",
       }
     },
     EditQueue: EditQueue,
@@ -90,6 +91,7 @@ const navigator = createStackNavigator(
 }
 
 );
+
 
 const App = createAppContainer(navigator);
 
