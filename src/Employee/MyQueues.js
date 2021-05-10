@@ -31,7 +31,8 @@ const MyQueues = ( {navigation} ) => {
 
 
 
-    return (  
+    if(state && state.length > 0) {
+      return (  
         <View>
             <FlatList
             data={state}
@@ -47,8 +48,17 @@ const MyQueues = ( {navigation} ) => {
             }}
             /> 
         </View>
-    );
-    };
+      );
+    }
+    else {
+      return (
+        <View>
+          <Text>THERE ARE NO QUEUES ASSIGNED TO YOU!</Text>
+        </View>
+      )
+    }
+ 
+  };
 
 
 
