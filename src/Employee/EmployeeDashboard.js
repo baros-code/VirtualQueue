@@ -27,6 +27,23 @@ const EmployeeDashboard = ( {navigation} ) => {
 
   const USER_ID = navigation.getParam("uid");
 
+
+  const addClientData = async (reservations) => {
+    const ref = await firebase.database().ref("users");
+    const result = [];
+    await ref.once("value", function (users) {
+      users.forEach( user => {
+        let currentUser = user.val();
+        currentUser.id = user.key;
+        reservations.forEach( reservation => {
+          if (reservation.clientId === currentUser.id)
+              result.push({...reservation, client: currentUser})
+        });
+      });
+    });
+    return result;    
+  };
+
   const findQueues = async () => {
     const ref = await firebase.database().ref("queues");
     let response = [];
@@ -57,9 +74,11 @@ const EmployeeDashboard = ( {navigation} ) => {
             }
             
         });
-        response.sort(function (r1, r2) {return compareTwoDate(r1,r2)});        //order by date ascending
-        setState(response);
-      })
+        addClientData(response).then(result => {
+          result.sort(function (r1, r2) {return compareTwoDate(r1,r2)});        //order by date ascending
+          setState(result);
+        });
+      });
       
     }
     findQueues().then(queues => {
@@ -71,7 +90,7 @@ const EmployeeDashboard = ( {navigation} ) => {
   if(currentReservation) {
     return (
       <View style={styles.background}>
-          <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservationId: currentReservation.id, clientId: currentReservation.clientId})}>
+          <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: currentReservation})}>
             <View style={styles.row}>     
               <View style={styles.content}>
                   <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date }  </Text> 

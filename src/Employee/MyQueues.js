@@ -8,6 +8,7 @@ const MyQueues = ( {navigation} ) => {
 
     const USER_ID =navigation.getParam("uid");
 
+    // state = queues[]
     const [state, setState] = useState([])
     
     useEffect(() => {
@@ -28,7 +29,6 @@ const MyQueues = ( {navigation} ) => {
         }
         fetchQueues()
     },([state]));
-
 
 
     if(state && state.length > 0) {
