@@ -32,12 +32,9 @@ const ListClients = ( {navigation} ) => {
     return result;    
   };
 
-
-
   useEffect(()  => {
     const fetchReservations = async  () => {
       try {
-          //setState(state);
           const ref = await firebase.database().ref("reservations");
           let response = [];
       
@@ -64,7 +61,7 @@ const ListClients = ( {navigation} ) => {
 
 
 
-  if(state) {
+  if(state && state.length > 0) {
     return (
       <View style={styles.background}>
         <FlatList
