@@ -70,6 +70,7 @@ const QueueForm = ( { navigation} ) => {
 
     
     const saveQueueHandler= async () => {
+        let dates;
         let adminId=navigation.getParam("adminId")
         let queueRef=undefined
         let queueId= navigation.getParam("queueId")
@@ -79,13 +80,22 @@ const QueueForm = ( { navigation} ) => {
         } else {
         queueRef = await firebase.database().ref("queues").push() //push sayesinde unique key'li branch olarak ekliyor.        
         }
+        if (!editPage) {
+            let d=getDates(getReservationTimes())
+            dates=d
+        } else {
+            await queueRef.get().then((data) => {
+                dates=data.val().dates
+            })
+        }
          // adding employee name
         let employeeName=undefined
         let employeeRef=await firebase.database().ref("users/"+ employeeId)
         await employeeRef.get().then((data) => {
             employeeName=data.val().fullName
         })
-        await queueRef.set({
+        await queueRef.set({    
+        dates:dates,
         adminId: adminId,
         organizationId: organizationId,
         transactionType: transactionType,
