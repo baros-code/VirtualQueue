@@ -27,9 +27,6 @@ const EmployeeDashboard = ( {navigation} ) => {
 
   const USER_ID = navigation.getParam("uid");
 
-  const QUEUE_ID = "queueId1";    //findQueue metodu yazılacak
-
-
   const findQueues = async () => {
     const ref = await firebase.database().ref("queues");
     let response = [];
