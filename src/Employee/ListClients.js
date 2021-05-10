@@ -42,7 +42,7 @@ const ListClients = ( {navigation} ) => {
             reservationsSnapShot.forEach( reservationSnapShot =>  {
                 let currentReservation = reservationSnapShot.val();
                 currentReservation.id = reservationSnapShot.key;
-                if (currentReservation.queueId === QUEUE_ID && currentReservation.status.toString() !== "2") {
+                if (currentReservation.queueId === QUEUE_ID && (currentReservation.status.toString() === "0" || currentReservation.status.toString() === "1") ) {
                   response.push(currentReservation);
                 }
             });      
