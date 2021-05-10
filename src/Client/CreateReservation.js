@@ -37,7 +37,7 @@ const CreateReservation = ({ navigation }) => {
                 ref.set({
                     date: date,
                     clientId: clientId,
-                    employeeId: null,
+                    employeeId: "",
                     estimatedRemainingTimeSec: "300",
                     organizationId: organizationId,
                     organizationName: organizationName,

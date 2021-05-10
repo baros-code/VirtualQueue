@@ -16,8 +16,7 @@ const ReservationDetails = ({ navigation }) => {
       
       }
  
-    
-    // const reservation = state.find((reservation) => reservation.id === id);
+
 
     useEffect(()  => {
         const fetchReservation = async () => {
@@ -28,8 +27,7 @@ const ReservationDetails = ({ navigation }) => {
                 var response = {};
                 await ref.get().then(reservation => {
                     response = reservation.val();
-                })
-                //console.log("RESERVATIONDETAILSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS: " + response);    
+                }) 
                 setState(response);
                 
             } catch (e) {

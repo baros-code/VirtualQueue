@@ -42,6 +42,7 @@ const ClientDetails = ({ navigation }) => {
                 <Text style={styles.label}>Client mail: {reservation.client.email}</Text>
                 <Text style={styles.label}>Reservation Number: {reservation.id}</Text>
                 <Text style={styles.label}>Transaction Type: {reservation.transactionType}</Text>
+                <Text style={styles.label}>Reservation Date: {reservation.date}</Text>
                 <View style={styles.button}>
                     <View style={styles.button2}>
                     <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession(reservation.id, () => {navigation.pop()} )) }/>
