@@ -14,6 +14,40 @@ const QueueForm = ( { navigation} ) => {
     const editPage=navigation.getParam("editPage")
     const [employees,setEmployees]= useState([])
 
+    const convertMinsToHrsMins = (mins) => {
+        let h = Math.floor(mins / 60);
+        let m = mins % 60;
+        h = h < 10 ? '0' + h : h;
+        m = m < 10 ? '0' + m : m;
+        return `${h}:${m}`;
+      }
+
+    const getDates =(reservationTimes) => {
+        let currentDate=new Date()
+        let finishDate=new Date()
+        finishDate.setDate(currentDate.getDate() + 7)
+        let datesObject={}
+        while (currentDate < finishDate) {
+            let cDay = currentDate.getDate();
+            let cMonth = currentDate.getMonth() + 1;
+            let cYear = currentDate.getFullYear();
+            let dateString=cDay + "-" + cMonth + "-" + cYear
+            datesObject[dateString]=reservationTimes
+            currentDate.setDate(currentDate.getDate() + 1)
+        }
+        return datesObject
+    }
+
+    const getReservationTimes=() => {
+        let reservationTimes=[]
+        let currentTime=startTime*60
+        let finalTime=finishTime*60
+        while (currentTime < finalTime) {
+            reservationTimes.push(convertMinsToHrsMins(currentTime))
+            currentTime += interval
+        }
+        return reservationTimes
+    }
 
     const getIntervals= (current,increment,adding,ending) => {
         let intervals=[]
@@ -62,6 +96,11 @@ const QueueForm = ( { navigation} ) => {
         startTime: startTime,
         finishTime: finishTime,
         }); 
+        if (!editPage) {
+        let reservationTimes=getReservationTimes()
+        let dates=getDates(reservationTimes)
+        await queueRef.update({Dates:dates})
+        }
         navigation.navigate("AdminDashboard",{uid:adminId})
     }
      
@@ -75,7 +114,6 @@ const QueueForm = ( { navigation} ) => {
             await usersReference.once("value",function (usersSnapShot) {
                 usersSnapShot.forEach( userSnapShot => {
                     let currentUser=userSnapShot.val()
-                    console.log(currentUser)
                     currentUser.value=userSnapShot.key
                     currentUser.label=currentUser.fullName
                     let currentOrganizationId=currentUser.organizationId
