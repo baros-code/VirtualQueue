@@ -109,7 +109,7 @@ const QueueForm = ( { navigation} ) => {
         if (!editPage) {
         let reservationTimes=getReservationTimes()
         let dates=getDates(reservationTimes)
-        await queueRef.update({Dates:dates})
+        await queueRef.update({dates:dates})
         }
         navigation.navigate("AdminDashboard",{uid:adminId})
     }
