@@ -7,7 +7,7 @@ import {View, Text, StyleSheet,TouchableOpacity} from 'react-native';
 
 function ScrollPickerComponent({editable,selectedValue,style,callback,data}) {
 
-  
+
   const findLabel= (value) => {
         let label=undefined
         let isFound=false
@@ -107,6 +107,3 @@ const styles = StyleSheet.create({
 });
 
 export default ScrollPickerComponent;
-
-
-
