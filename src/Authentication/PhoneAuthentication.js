@@ -100,7 +100,14 @@ export default function phoneAuthentication ({navigation}) {
               usersRef
                   .set(data)
                   .then(() => {
-                      navigation.navigate('AdminDashboard', data)
+                      if  (data.role === 0) 
+                        navigation.navigate('ClientDashboard', data)
+                     else if(data.role === 1)
+                        navigation.navigate('EmployeeDashboard', data);
+                      else if(data.role === 2) 
+                        navigation.navigate('AdminDashboard', data);      
+                     else
+                        alert("Undefined role!");
                   })
                   .catch((error) => {
                       alert(error)
