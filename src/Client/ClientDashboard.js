@@ -9,12 +9,61 @@ import { firebase } from '../firebase/config'
 
 const ClientDashboard = ( {navigation} ) => {
 
+
+  const isBigger = (date1,date2) => {
+      let dateList1=date1.split(":")
+      let dateList2=date2.split(":")
+      let d1=new Date()
+      let d2=new Date()
+      d1.setHours(dateList1[0],dateList1[1])
+      d2.setHours(dateList2[0],dateList2[1])
+      return (d1.getTime() > d2.getTime())
+  }
+
   const USER_ID = navigation.getParam("uid");
 
   const [state, setState] = useState([]);
 
+const findKey=async (time,date,queueId) => {
+  const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
+  let currentKey=0;
+  let timeKey=0;
+  await dateRef.get().then((data) => {
+    data.forEach((timeData) => {
+      let currentTime=timeData.val()
+      console.log(currentTime)
+      if (isBigger(currentTime,time)) {
+          timeKey=currentKey
+      } else {
+        currentKey += 1
+      }
+    })
+  })
+  return timeKey
+   
+}
 
-  const deleteReservation = (id) => {
+const addTimeToTheQueue = async (id) => {
+  const reservation=await firebase.database().ref("reservations/" + id)
+  await reservation.get().then((data) => {
+      let reservationData=data.val()
+      let date=reservationData.date.split("/").join("-")
+      let time=reservationData.time
+      let queueId=reservationData.queueId
+      findKey(time,date,queueId).then((key) => {
+        console.log(key)
+        let updates={}
+        updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
+        firebase.database().ref().update(updates);
+      })
+      
+     
+  })
+
+}
+
+  const deleteReservation = async (id) => {
+    await addTimeToTheQueue(id)
     const ref = firebase.database().ref("reservations");   
     ref.child(id).remove();         //if not found exception eklenmeli.
   
@@ -61,8 +110,8 @@ const ClientDashboard = ( {navigation} ) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName} - {`${item.date}`}</Text>
-                <TouchableOpacity onPress={() => deleteReservation(item.id)}>
+                <Text style={styles.organizationStyle}>{item.organizationName}  {item.date}   {item.time}</Text>
+                <TouchableOpacity onPress={async () => deleteReservation(item.id)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
               </View>
