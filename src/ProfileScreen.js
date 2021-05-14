@@ -24,13 +24,16 @@ const ProfileScreen = ( {navigation} ) => {
 
       if(callback)
         callback();
-        
-      auth.currentUser.delete().then(function() {
+
+      auth.currentUser.delete().then(function() {                       // Delete from firebase-auth
+          const ref = firebase.database().ref("users/"+ USER_ID);
+          ref.remove();                                                 // Delete from realtime database too.
           console.log("Account succesfully deleted.");
       }).catch(function(error) {
           console.log("Error while deleting: " + error);
       });
 
+    
   }
 
 
