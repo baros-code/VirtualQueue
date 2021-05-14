@@ -62,13 +62,15 @@ const addTimeToTheQueue = async (id) => {
 
 }
 
-  const deleteReservation = async (id) => {
+  const deleteReservation = async (id,popFlag) => {
     await addTimeToTheQueue(id)
     const ref = firebase.database().ref("reservations");   
     ref.child(id).remove();         //if not found exception eklenmeli.
   
     //setState(state.filter(reservation => {return reservation.id !== id} ) );
-    
+    if (popFlag) {
+      navigation.pop()
+    }
   
   }
 
@@ -108,10 +110,10 @@ const addTimeToTheQueue = async (id) => {
           keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
+            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id,deleteOperation:deleteReservation})}>
               <View style={styles.row}>     
                 <Text style={styles.organizationStyle}>{item.organizationName}  {item.date}   {item.time}</Text>
-                <TouchableOpacity onPress={async () => deleteReservation(item.id)}>
+                <TouchableOpacity onPress={async () => deleteReservation(item.id,false)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
               </View>
