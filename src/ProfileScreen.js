@@ -11,10 +11,10 @@ const ProfileScreen = ( {navigation} ) => {
   const USER_ID = navigation.getParam("uid");
 
   // state = userData[]
-  const [state, setState] = useState([]);
+  const [state, setState] = useState({});
 
 
-  const deleteAccount = (callback) => {
+  const deleteAccount = (callback) => {                                 // Eğer rezervasyonu varsa silemesin?
       var auth = firebase.auth();
       auth.signOut().then(function() {
         console.log("Sign Out succesful.");
@@ -69,16 +69,16 @@ const ProfileScreen = ( {navigation} ) => {
                 var ref_organization = firebase.database().ref("services/bank/"+ response.organizationId);
                 ref_organization.get().then(organization => {
                     if(organization.val()) {
-                        response.organizationName = organization.val().name;
-                        response.organizationLogo = images.find(image => image.name === response.organizationName).image; 
+                        response.organization = organization.val();
+                        response.organizationLogo = images.find(image => image.name === response.organization.name).image; 
                         setState(response);
                     }
                 });
                 ref_organization = firebase.database().ref("services/hospital/"+ response.organizationId);
                 ref_organization.get().then(organization => {
                     if(organization.val()) {
-                        response.organizationName = organization.val().name;
-                        response.organizationLogo = images.find(image => image.name === response.organizationName).image; 
+                        response.organization = organization.val();
+                        response.organizationLogo = images.find(image => image.name === response.organization.name).image; 
                         setState(response);
                     }
                 });
@@ -100,10 +100,12 @@ const ProfileScreen = ( {navigation} ) => {
 
     return (
         <View>
-            { <Image style={styles.logo} source={state.profilePhoto} /> }
+            <View style={{alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
+                { <Image style={styles.logo} source={state.profilePhoto} /> }
+                { state.organizationLogo !== undefined ? <Image style={styles.logo} source={state.organizationLogo} /> : null }
+            </View>
             <Text style={styles.label}>{state.fullName}</Text>
-            { state.organizationLogo !== undefined ? <Image style={styles.logo} source={state.organizationLogo} /> : null }
-            { state.organizationName !== undefined ? <Text style={styles.label}>{state.organizationName}</Text> : null }
+            { state.organization !== undefined ? <Text style={styles.label}>{state.organization.branch}</Text> : null }
             <Text style={styles.label}>{state.email}</Text>
             <Text style={styles.label}>{state.phone}</Text>
             <View style={styles.button}>
@@ -171,6 +173,8 @@ const styles = StyleSheet.create({
     logo: {
         width: 100,
         height: 100,
+        margin: 10,
+        borderRadius: 10
     }
 });
 

@@ -16,13 +16,13 @@ const ImageDetails = ({ imageSource,name, address, imageStyle }) => {
 const styles = StyleSheet.create({
   container: {
    flexDirection: 'row',
-   flex: 1
+   flex: 1,
   },
   image: {
     flex: 1,
     width: 150,
     height: 150,
-    borderWidth: 1,
+    borderWidth: 1
     }
 });
 
