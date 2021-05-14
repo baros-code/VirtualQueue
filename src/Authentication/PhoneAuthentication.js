@@ -100,7 +100,8 @@ export default function phoneAuthentication ({navigation}) {
               usersRef
                   .set(data)
                   .then(() => {
-                      navigation.navigate('AdminDashboard', data)
+                     const userData = {...data, uid: uid};
+                      navigation.navigate('ClientDashboard', userData)
                   })
                   .catch((error) => {
                       alert(error)
