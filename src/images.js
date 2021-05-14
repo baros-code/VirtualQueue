@@ -22,6 +22,10 @@ export const images = [
     {
         name: 'Batıgöz Hastanesi',
         image: require('../assets/images/batigoz.jpg')
+    },
+    {
+        name: 'profilePhoto',
+        image: require('../assets/images/profilePhoto.png')
     }
 
 ];

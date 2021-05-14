@@ -7,6 +7,7 @@ import HomeScreen from './src/Authentication/HomeScreen'
 import RegistrationScreen from './src/Authentication/RegistrationScreen'
 import PhoneVerification from './src/Authentication/PhoneAuthentication'
 
+import ProfileScreen from './src/ProfileScreen';
 import ClientDashboard from './src/Client/ClientDashboard';
 import CreateReservation from './src/Client/CreateReservation';
 import ReservationDetails from './src/Client/ReservationDetails';
@@ -72,6 +73,12 @@ const navigator = createStackNavigator(
       navigationOptions: {
         title: "My Queues"
       }
+    },
+    ProfileScreen: {
+      screen: ProfileScreen,
+      navigationOptions: {
+        title: "Account Settings"
+      }
     }
   },
 
@@ -85,9 +92,9 @@ const navigator = createStackNavigator(
       },
       headerStyle: {
            backgroundColor:"white",
-    },
+      },
+    }
   }
-}
 
 );
 

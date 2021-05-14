@@ -108,6 +108,7 @@ const EmployeeDashboard = ( {navigation} ) => {
           </TouchableOpacity>
           <View style={{margin: 20}}>
             <Button title="MY QUEUES" onPress={() => navigation.navigate("EmployeeMyQueues", {uid: USER_ID})}/>
+            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: USER_ID})}/>
           </View>
       </View>
       

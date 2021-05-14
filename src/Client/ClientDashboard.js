@@ -70,8 +70,11 @@ const ClientDashboard = ( {navigation} ) => {
             ); 
           }}
         /> : <Text style={styles.text}>No reservations found!</Text>}
+        <View style={{margin: 20}}>
+            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: USER_ID})}/>
+        </View>
       </View>
-      );
+    );
 
 };
 
