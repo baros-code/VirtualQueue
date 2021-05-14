@@ -77,8 +77,8 @@ const addTimeToTheQueue = async (id) => {
     
   useEffect(()  => {
     const fetchReservations = async  () => {
-      try {
-          setState(state);
+     
+        //  setState(state);
           const ref = await firebase.database().ref("reservations");
           var response = [];
           await ref.once("value",function (reservationsSnapShot) {
@@ -92,12 +92,8 @@ const addTimeToTheQueue = async (id) => {
                 }
             });
             setState(response);
-        });   
-          
-      } catch (e) {
-          console.log(e);
-          setState(state);
-      }
+        });       
+       
   };
     fetchReservations();
   }, [state]);

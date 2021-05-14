@@ -164,7 +164,7 @@ const CreateReservation = ({ navigation }) => {
             status: 0,
             transactionType : type
             });
-        navigation.navigate('ClientDashboard')
+        navigation.navigate('ClientDashboard',{uid:clientId})
            
         
     };
