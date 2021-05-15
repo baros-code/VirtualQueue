@@ -1,115 +1,29 @@
-import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import React, { useState } from 'react';
+import * as Font from 'expo-font';
+import { AppLoading } from 'expo';
+import Navigator from './routes/drawer';
 
-import LoginScreen from './src/Authentication/LoginScreen'
-import HomeScreen from './src/Authentication/HomeScreen'
-import RegistrationScreen from './src/Authentication/RegistrationScreen'
-import PhoneVerification from './src/Authentication/PhoneAuthentication'
+const getFonts = () => Font.loadAsync({
+  'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
+  'nunito-bold': require('./assets/fonts/Nunito-Bold.ttf'),
+});
 
-import ProfileScreen from './src/ProfileScreen';
-import ClientDashboard from './src/Client/ClientDashboard';
-import CreateReservation from './src/Client/CreateReservation';
-import ReservationDetails from './src/Client/ReservationDetails';
-import Organizations from './src/Client/Organizations';
-import Services from './src/Client/Services';
+export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
 
-import AdminDashboard from './src/Admin/AdminDashboard';
-import QueueForm from './src/Admin/QueueForm';
-import EditQueue from './src/Admin/EditQueue';
-
-import EmployeeDashboard from './src/Employee/EmployeeDashboard';
-import ListClients from './src/Employee/ListClients';
-import ClientDetails from './src/Employee/ClientDetails';
-import EmployeeMyQueues from './src/Employee/MyQueues';
-
-
-//deneme
-const navigator = createStackNavigator(
-
-  {
-    ClientDashboard: ClientDashboard,
-    CreateReservation : CreateReservation,
-    Details: ReservationDetails,
-    Organizations: Organizations,
-    AdminDashboard: AdminDashboard,
-    QueueForm: {
-      screen:QueueForm,
-      navigationOptions: {
-        title:"Create Queue",
-      }
-    },
-    EditQueue: EditQueue,
-    EmployeeDashboard: EmployeeDashboard,
-    ListClients : {
-      screen: ListClients,
-      navigationOptions: {
-        title: "Customers in the line"
-      }
-    },
-    ClientDetails: ClientDetails,
-    Login : {
-      screen: LoginScreen,
-      navigationOptions: {
-      title:"Virtual Queue"
-      }
-  },
-    Home: {
-      screen: HomeScreen,
-      navigationOptions: {
-        title:"Dashboard"
-        }
-    },
-    Register: RegistrationScreen,
-    PhoneVerification: PhoneVerification,
-    Services: {
-      screen: Services,
-      navigationOptions: {
-        title: "Choose a service"
-      }
-    },
-    EmployeeMyQueues: {
-      screen: EmployeeMyQueues,
-      navigationOptions: {
-        title: "My Queues"
-      }
-    },
-    ProfileScreen: {
-      screen: ProfileScreen,
-      navigationOptions: {
-        title: "Account Settings"
-      }
-    }
-  },
-
-  {
-    initialRouteName: 'Login',
-    defaultNavigationOptions: {
-      headerMode: 'screen',
-      headerTintColor:"#0e66d4",
-      cardStyle: {
-        backgroundColor:"#0e66d4"
-      },
-      headerStyle: {
-           backgroundColor:"white",
-      },
-    }
+  if (fontsLoaded) {
+    return (
+      <Navigator />
+    );
+  } else {
+    return (
+      <AppLoading 
+        startAsync={getFonts} 
+        onFinish={() => setFontsLoaded(true)} 
+      />
+    )
   }
 
-);
-
-const App = createAppContainer(navigator);
-
-export default () => {
-  return (
-        <App />
-  )
-};
-
-
-
-
-
-
+}
 
 
