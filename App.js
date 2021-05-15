@@ -24,7 +24,7 @@ import ClientDetails from './src/Employee/ClientDetails';
 import EmployeeMyQueues from './src/Employee/MyQueues';
 
 
-
+//deneme
 const navigator = createStackNavigator(
 
   {
