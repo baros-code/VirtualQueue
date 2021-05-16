@@ -1,20 +1,16 @@
-import { createStackNavigator } from 'react-navigation-stack';
+import React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
 import Profile from '../ProfileScreen';
 
-const screens = {
-  Profile: {
-    screen: Profile,
-    navigationOptions: {
-      title: 'Account Settings'
-    },
-  },
+
+
+const ProfileStack = createStackNavigator();
+
+export default function myStacks() {
+  return (
+    <ProfileStack.Navigator initialRouteName="Profile" headerMode="screen">
+      <ProfileStack.Screen name="Profile" component={Profile} options={{ title: "Settings" }} />
+    </ProfileStack.Navigator>
+  );
 }
 
-const ProfileStack = createStackNavigator(screens, {
-  defaultNavigationOptions: {
-    headerTintColor: '#444',
-    headerStyle: { backgroundColor: '#eee', height: 60 },
-  }
-});
-
-export default ProfileStack;

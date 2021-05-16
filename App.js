@@ -1,29 +1,20 @@
-import React, { useState } from 'react';
-import * as Font from 'expo-font';
-import { AppLoading } from 'expo';
-import Navigator from './routes/drawer';
-
-const getFonts = () => Font.loadAsync({
-  'nunito-regular': require('./assets/fonts/Nunito-Regular.ttf'),
-  'nunito-bold': require('./assets/fonts/Nunito-Bold.ttf'),
-});
+import React from 'react';
+import { useFonts } from "expo-font";
+import AppLoading from "expo-app-loading";
+import Navigator from "./src/routes/drawer";
 
 export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
+  const getFonts = () => {};
+  let [fontsLoaded, setFontsLoaded] = useFonts({
+    "nunito-regular": require("./assets/fonts/Nunito-Regular.ttf"),
+    "nunito-bold": require("./assets/fonts/Nunito-Bold.ttf"),
+  });
   if (fontsLoaded) {
-    return (
-      <Navigator />
-    );
+    console.log("fonts loaded");
+    return <Navigator />;
   } else {
-    return (
-      <AppLoading 
-        startAsync={getFonts} 
-        onFinish={() => setFontsLoaded(true)} 
-      />
-    )
+    console.log("loadingfonts");
+    return <AppLoading />;
   }
-
 }
-
 
