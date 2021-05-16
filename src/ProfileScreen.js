@@ -6,9 +6,9 @@ import { images } from './images'
 
 
 
-const ProfileScreen = ( {navigation} ) => {
+const ProfileScreen = ( {route, navigation} ) => {
 
-  const USER_ID = navigation.getParam("uid");
+  const { uid } = route.params;
 
   // state = userData[]
   const [state, setState] = useState({});
@@ -26,7 +26,7 @@ const ProfileScreen = ( {navigation} ) => {
         callback();
 
       auth.currentUser.delete().then(function() {                       // Delete from firebase-auth
-          const ref = firebase.database().ref("users/"+ USER_ID);
+          const ref = firebase.database().ref("users/"+ uid);
           ref.remove();                                                 // Delete from realtime database too.
           console.log("Account succesfully deleted.");
       }).catch(function(error) {
@@ -60,7 +60,7 @@ const ProfileScreen = ( {navigation} ) => {
   useEffect(()  => {
     const fetchUserData = async  () => {
       try {
-          const ref = await firebase.database().ref("users/"+ USER_ID);
+          const ref = await firebase.database().ref("users/"+ uid);
           var response;
           await ref.get().then(user => {
               response = user.val();

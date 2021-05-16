@@ -7,9 +7,9 @@ import { firebase } from '../firebase/config'
 
 
 
-const ClientDashboard = ( {navigation} ) => {
+const ClientDashboard = ( {route,navigation} ) => {
 
-  const USER_ID = navigation.getParam("uid");
+  const { uid } = route.params;
 
   const [state, setState] = useState([]);
 
@@ -35,7 +35,7 @@ const ClientDashboard = ( {navigation} ) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID) {
+                if (clientId === uid) {
                   response.push(currentReservation)
                     
                 }
@@ -71,7 +71,7 @@ const ClientDashboard = ( {navigation} ) => {
           }}
         /> : <Text style={styles.text}>No reservations found!</Text>}
         <View style={{margin: 20}}>
-            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: USER_ID})}/>
+            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: uid})}/>
         </View>
       </View>
     );
