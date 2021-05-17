@@ -18,6 +18,8 @@ const ClientDashboard = ( {navigation} ) => {
       return "Started"
     } else if (statusInteger == 0) {
       return "Not Started"
+    } else if (statusInteger == 3) {
+      return "It is ready"
     } else {
       return "Unknown condition"
     }
@@ -87,7 +89,6 @@ const addTimeToTheQueue = async (id) => {
     }
   
   }
-
     
   useEffect(()  => {
     const fetchReservations = async  () => {
@@ -106,14 +107,16 @@ const addTimeToTheQueue = async (id) => {
                 }
             });
             findCurrentReservation(response).then((reservation) => {
-              currentReservation=reservation
-              setState(response);
-            })
+              if (Object.keys(reservation).length !== 0) { // if not empty
+                currentReservation=reservation
+                currentReservation.status=3
+              // alert(currentReservation.transactionType + " reservation--time :"  + reservation.time + "  is active. Please approve yourself")
+              }
+              setState(response);             
             
         });          
-       
+      })
   };
-  
 
     fetchReservations();
 
