@@ -11,7 +11,7 @@ import { findCurrentReservation} from "../ExternalComponents/DateOperations"
 
 const ClientDashboard = ( {navigation} ) => {
 
-  const [currentReservation,setCurrent] = useState({})
+  let currentReservation= {}
 
   const getStatus = (statusInteger) =>{
     if (statusInteger == 1) {
@@ -105,11 +105,16 @@ const addTimeToTheQueue = async (id) => {
                     
                 }
             });
-            setCurrent(findCurrentReservation(response))
-            setState(response);
-        });       
+            findCurrentReservation(response).then((reservation) => {
+              currentReservation=reservation
+              setState(response);
+            })
+            
+        });          
        
   };
+  
+
     fetchReservations();
 
   }, [state]);

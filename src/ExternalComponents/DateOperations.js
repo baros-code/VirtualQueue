@@ -7,26 +7,37 @@ export const findCurrentReservation = async (reservations) => { // karşılaşt�
     let currentReservation={}
      reservations.forEach(reservation => {
          let date=reservation.date
-         let time=reservation.time
+         let time=reservation.estimatedTime
+         let comparing= "10:00"
         // if (compareCurrentDay(date,time) === 1) {
-        if (true) {
-            const ref=await firebase.database().ref("reservations/" + reservation.id);
+        if (compareTwoTime(time,comparing) === 1) {
+            calculateLatency(reservation).then((latency) => {
+            const ref=firebase.database().ref("reservations/" + reservation.id);
             reservation.startTime= ""
             reservation.finishTime=""
             reservation.expectedFinishTime=""
-            reservation.latencyTime= findLatency(reservation.queueId)  // estimated ile reservation time maksimumu alınıp hesaplanacak
-            await ref.set(reservation)
-            currentReservation=reservation
-            break
-         }
-         
+            reservation.latencyTime=latency  // estimated ile reservation time maksimumu alınıp hesaplanacak
+            ref.set(reservation)
+            
+           // console.log(currentReservation)
+         })
+         currentReservation=reservation
+        }
+                
      });
      return currentReservation
 
 }
 
-export const addTime =(adding,time) =>{
 
+
+
+export const addMinutes =(adding,time) =>{
+    let dateObject=new Date()
+    let timeList=time.split(":")
+    dateObject.setHours(timeList[0],timeList[1])
+    dateObject.setMinutes(dateObject.getMinutes() + adding)
+    return convertMinsToHrsMins(dateObject.getMinutes() + dateObject.getHours() * 60)
 
 }
 
@@ -34,9 +45,27 @@ export const findLatency = async (queueId) => {
     let latency=undefined
     const ref=await firebase.database().ref("queues/" + queueId);
     await ref.once("value", (queueSnapShot) => {
-        latency=queueSnapShot.val().latency 
+        let queueData=queueSnapShot.val()
+       latency=queueData.latency
     })
     return latency
+}
+
+
+export const calculateLatency = async (reservation) => {
+    let latency=await findLatency(reservation.queueId)
+    let estimatedTime=reservation.estimatedTime
+    let reservationTime=reservation.time
+    let compareFlag=compareTwoTime(estimatedTime,reservationTime)
+    let maxTime=undefined
+    if (compareFlag === 1) {
+        maxTime=estimatedTime
+    } else if (compareFlag === -1) {
+        maxTime=reservationTime
+    }  else {
+        maxTime=estimatedTime
+    }
+    return addMinutes(latency,maxTime)     
 }
 
 
