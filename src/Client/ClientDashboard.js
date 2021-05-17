@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
+import { findCurrentReservation} from "../ExternalComponents/DateOperations"
+
 
 
 
 
 const ClientDashboard = ( {navigation} ) => {
+
+  const [currentReservation,setCurrent] = useState({})
 
   const getStatus = (statusInteger) =>{
     if (statusInteger == 1) {
@@ -20,7 +24,7 @@ const ClientDashboard = ( {navigation} ) => {
 
   }
 
-  const isBigger = (date1,date2) => {
+  const isTimeBigger = (date1,date2) => {
       let dateList1=date1.split(":")
       let dateList2=date2.split(":")
       let d1=new Date()
@@ -42,7 +46,7 @@ const findKey=async (time,date,queueId) => {
     data.forEach((timeData) => {
       let currentTime=timeData.val()
       console.log(currentTime)
-      if (isBigger(currentTime,time)) {
+      if (isTimeBigger(currentTime,time)) {
           timeKey=currentKey
       } else {
         currentKey += 1
@@ -101,11 +105,13 @@ const addTimeToTheQueue = async (id) => {
                     
                 }
             });
+            setCurrent(findCurrentReservation(response))
             setState(response);
         });       
        
   };
     fetchReservations();
+
   }, [state]);
 
  
@@ -113,14 +119,14 @@ const addTimeToTheQueue = async (id) => {
       <View style={styles.background}>
         {state.length !== 0 ? <FlatList
           data={state}
-          keyExtractor={(reservation) => reservation.id.toString()}
+          keyExtractor={(reservation) => reservation.id}
           renderItem={({item}) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id,deleteOperation:deleteReservation})}>
-              <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName}  {item.date}   {item.time}  ({getStatus(item.status)})</Text>
+              <View style={styles.row}>
+                <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) ({item.estimatedTime})</Text>   
                 <TouchableOpacity onPress={async () => deleteReservation(item.id,false)}>
-                  <Feather style={styles.icon} name="trash" />
+                <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>
               </View>
             </TouchableOpacity>
@@ -160,7 +166,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray'
   },
   organizationStyle: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'white'
   },
   icon: {

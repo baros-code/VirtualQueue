@@ -162,7 +162,8 @@ const CreateReservation = ({ navigation }) => {
             organizationName: organizationName,
             queueId: queueId,
             status: 0,
-            transactionType : type
+            transactionType : type,
+            estimatedTime:time
             });
         navigation.navigate('ClientDashboard',{uid:clientId})
            

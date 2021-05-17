@@ -93,7 +93,7 @@ const EmployeeDashboard = ( {navigation} ) => {
           <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: currentReservation})}>
             <View style={styles.row}>     
               <View style={styles.content}>
-                  <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date }  </Text> 
+                  <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date } - {currentReservation.time} </Text> 
                   <View style={styles.buttons}>
                       <TouchableOpacity  onPress={() => endAlert(endSession(currentReservation.id))}>
                           <AntDesign size={10} color= "red" style={styles.icon}name="closecircleo" />
