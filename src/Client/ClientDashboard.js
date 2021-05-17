@@ -9,6 +9,16 @@ import { firebase } from '../firebase/config'
 
 const ClientDashboard = ( {navigation} ) => {
 
+  const getStatus = (statusInteger) =>{
+    if (statusInteger == 1) {
+      return "Started"
+    } else if (statusInteger == 0) {
+      return "Not Started"
+    } else {
+      return "Unknown condition"
+    }
+
+  }
 
   const isBigger = (date1,date2) => {
       let dateList1=date1.split(":")
@@ -86,7 +96,7 @@ const addTimeToTheQueue = async (id) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID) {
+                if (clientId === USER_ID && currentReservation.status != 2) {
                   response.push(currentReservation)
                     
                 }
@@ -108,7 +118,7 @@ const addTimeToTheQueue = async (id) => {
             return (
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id,deleteOperation:deleteReservation})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName}  {item.date}   {item.time}</Text>
+                <Text style={styles.organizationStyle}>{item.organizationName}  {item.date}   {item.time}  ({getStatus(item.status)})</Text>
                 <TouchableOpacity onPress={async () => deleteReservation(item.id,false)}>
                   <Feather style={styles.icon} name="trash" />
                 </TouchableOpacity>

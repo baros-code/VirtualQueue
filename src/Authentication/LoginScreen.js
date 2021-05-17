@@ -32,7 +32,6 @@ export default function LoginScreen({navigation}) {
                             return;
                         }
                         const data = {...userData.val(), uid: uid}; //add uid property to data object
-                        
                         if  (data.role === 0) {
                             navigation.navigate('ClientDashboard', data)
                          } else if(data.role === 1)
