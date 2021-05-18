@@ -3,14 +3,15 @@
 import { firebase } from "../firebase/config"
 
 
+
+
+
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     let currentReservation={}
      reservations.forEach(reservation => {
          let date=reservation.date
          let time=reservation.estimatedTime
          if (compareCurrentDay(date,time) === 0) {
-             console.log("woks")
-       // if (compareTwoTime(time,comparing) === 1) {
             calculateLatency(reservation).then((latency) => {
             const ref=firebase.database().ref("reservations/" + reservation.id);
             ref.update({
@@ -19,7 +20,6 @@ export const findCurrentReservation = async (reservations) => { // karşılaşt�
             expectedFinishTime:"",
             latencyTime:latency  // estimated ile reservation time maksimumu alınıp hesaplanacak
             })           
-           // console.log(currentReservation)
          })
          currentReservation=reservation
         }
@@ -29,9 +29,60 @@ export const findCurrentReservation = async (reservations) => { // karşılaşt�
 
 }
 
+
+
 export const isStarted= async (resId) => {
+    const ref=await firebase.database().ref("reservations/" + resId)
+    await ref.once("value", (reservation) => {
+        let data=reservation.val()
+        if (data.startTime !== "") {
+            return true
+        } else {
+            return false
+        }
+    })
+}
+
+
+
+
+export const incrementOtherReservations = async (resId, queueId,date,number) => {
+    const ref=await firebase.database().ref("reservations")   
+    ref.once("value", (reservations) => {
+        reservations.forEach(reservation => {
+            let reservationData=reservation.val()
+            let reservationId=reservation.key 
+            if (reservationId !== resId && reservationData.queueId === queueId && reservationData.status === 0
+                && reservationData.date === date) {
+                    let estimatedTime=reservationData.estimatedTime
+                    estimatedTime=addMinutes(number,estimatedTime)
+                    const ref= firebase.database().ref("reservations/" + reservationId)
+                    ref.update({
+                        estimatedTime:estimatedTime
+                    })
+                }
+        })
+    })
     
 }
+
+export const isLate= async (resId) => {
+    const ref=await firebase.database().ref("reservations/" + resId)
+    let result=await ref.once("value", (reservation) => {
+        let data=reservation.val()
+        let date=reservation.date
+        let latencyTime=data.latencyTime
+        let compareFlag=compareCurrentDay(date,latencyTime)
+        if (compareFlag === 1) {
+            return true
+        } else {
+            return false
+        }
+    })
+    return result
+}
+
+
 
 
 
@@ -115,17 +166,27 @@ export const convertMinsToHrsMins = (minutes) => {
 
 
 export const compareCurrentDay = (date,time)=> { // if 0 returns, current reservation is found
-    let today=new Date()
-    today.setTime(today.getTime() + 3 * 60 * 60 * 1000)
-    let  todayDate=today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear()
-    let todayTime=convertMinsToHrsMins(today.getMinutes() + today.getHours() * 60)
-    if (compareTwoDate(date,todayDate,"/") === 1 && compareTwoTime(time,todayTime) === 1) {
+    let  todayDate=getCurrentDate()
+    let todayTime=getCurrentTime()
+    if (compareTwoDate(date,todayDate,"/") === 1 ) {
         return 1;
 
-    } else if (compareTwoDate(date,todayDate,"/") === 0 && compareTwoTime(time,todayTime) === 0) {
-        return 0;
-    } else {
+    } else if (compareTwoDate(date,todayDate,"/") === 0) {
+       return compareTwoTime(time,todayTime)
+    }         
+     else {
         return -1;
     }
 
+}
+
+export const getCurrentTime = () => {
+    let today=new Date()
+    today.setTime(today.getTime() + 3 * 60 * 60 * 1000)
+    return convertMinsToHrsMins(today.getMinutes() + today.getHours() * 60)
+}
+
+export const getCurrentDate = () => {
+    let today=new Date()
+    return today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear()
 }

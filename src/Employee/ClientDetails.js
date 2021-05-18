@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
+import { getCurrentDate, getCurrentTime,findLatency} from '../ExternalComponents/DateOperations';
 import { firebase } from '../firebase/config'
 
 
@@ -100,18 +101,28 @@ export const getClientData = async (clientId) => {
 
 export const startSession = async (reservationId, userId, callback) => {
     const ref = await firebase.database().ref("reservations/" + reservationId);
-    ref.update({
-        status : 1,
-        employeeId: userId
-    });
+    ref.once("value" , (reservation) => {
+        let queueId=reservation.val().queueId
+        let currentTime=getCurrentTime()
+        let latency=await findLatency(queueId)
+        ref.update({
+            status : 1,
+            employeeId: userId,
+            startTime:currentTime,
+            expectedFinishTime:currentTime + latency
+            
+        });
+    })
     if(callback)
         callback();
 };
 
 export const endSession = async (reservationId, callback) => {
     const ref = await firebase.database().ref("reservations/" + reservationId);
+    let currentTime=getCurrentTime()
     ref.update({
         status : 2,
+        finishTime: currentTime
     });
     if(callback)
         callback();

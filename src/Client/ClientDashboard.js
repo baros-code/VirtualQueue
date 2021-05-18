@@ -106,15 +106,14 @@ const addTimeToTheQueue = async (id) => {
                     
                 }
             });
-            findCurrentReservation(response).then((reservation) => {
-              if (Object.keys(reservation).length !== 0) { // if not empty
-                currentReservation=reservation
-                currentReservation.status=3
+           // findCurrentReservation(response).then((reservation) => {
+            //  if (Object.keys(reservation).length !== 0) { // if not empty
+             //   currentReservation=reservation
+              //  currentReservation.status=3
               // alert(currentReservation.transactionType + " reservation--time :"  + reservation.time + "  is active. Please approve yourself")
-              }
-              setState(response);             
-            
-        });          
+              //}           
+        //});   
+        setState(response);             
       })
   };
 

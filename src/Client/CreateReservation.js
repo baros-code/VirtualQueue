@@ -157,7 +157,6 @@ const CreateReservation = ({ navigation }) => {
             time:time,
             clientId: clientId,
             employeeId: "",
-            estimatedRemainingTimeSec: "",
             organizationId: organizationId,
             organizationName: organizationName,
             queueId: queueId,
