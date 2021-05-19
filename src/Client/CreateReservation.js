@@ -3,6 +3,7 @@ import { StyleSheet, View,Text, TextInput,Button} from 'react-native';
 import { firebase } from '../firebase/config'
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
+import { addMinutes, calculateLatency, findLatency } from '../ExternalComponents/DateOperations';
 
 const CreateReservation = ({ navigation }) => {
 
@@ -152,6 +153,7 @@ const CreateReservation = ({ navigation }) => {
         await removeTimeFromQueue() 
         let type=getTransactionType()
         var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
+        let latency=await findLatency(queueId)
         await ref.set({
             date: date.split("-").join("/"),
             time:time,
@@ -162,7 +164,11 @@ const CreateReservation = ({ navigation }) => {
             queueId: queueId,
             status: 0,
             transactionType : type,
-            estimatedTime:time
+            estimatedTime:time,
+            startTime: "",
+            finishTime:"",
+            expectedFinishTime:"",
+            latencyTime:addMinutes(latency,time)
             });
         navigation.navigate('ClientDashboard',{uid:clientId})
            

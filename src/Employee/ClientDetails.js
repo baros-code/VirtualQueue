@@ -104,14 +104,13 @@ export const startSession = async (reservationId, userId, callback) => {
     ref.once("value" , (reservation) => {
         let queueId=reservation.val().queueId
         let currentTime=getCurrentTime()
-        let latency=await findLatency(queueId)
-        ref.update({
+        findLatency(queueId).then((latency)=> {ref.update({
             status : 1,
             employeeId: userId,
             startTime:currentTime,
             expectedFinishTime:currentTime + latency
             
-        });
+        });})
     })
     if(callback)
         callback();

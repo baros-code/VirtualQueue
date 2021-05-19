@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
-import { findCurrentReservation} from "../ExternalComponents/DateOperations"
+import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime} from "../ExternalComponents/DateOperations"
 
 
 
@@ -11,7 +11,7 @@ import { findCurrentReservation} from "../ExternalComponents/DateOperations"
 
 const ClientDashboard = ( {navigation} ) => {
 
-  let currentReservation= {}
+
 
   const getStatus = (statusInteger) =>{
     if (statusInteger == 1) {
@@ -101,18 +101,11 @@ const addTimeToTheQueue = async (id) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID && currentReservation.status != 2) {
+                if (clientId === USER_ID && currentReservation.status !== 2) {
                   response.push(currentReservation)
-                    
                 }
             });
-           // findCurrentReservation(response).then((reservation) => {
-            //  if (Object.keys(reservation).length !== 0) { // if not empty
-             //   currentReservation=reservation
-              //  currentReservation.status=3
-              // alert(currentReservation.transactionType + " reservation--time :"  + reservation.time + "  is active. Please approve yourself")
-              //}           
-        //});   
+        findCurrentReservation(response)   
         setState(response);             
       })
   };

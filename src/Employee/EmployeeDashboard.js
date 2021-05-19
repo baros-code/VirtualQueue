@@ -77,8 +77,9 @@ const EmployeeDashboard = ( {navigation} ) => {
             currentReservation.id=reservation.key;
             let date=currentReservation.date
             let today=getCurrentDate()
-            let isToday=(compareTwoDate(date,today) === 0) // check reservation time is today
-            if (queues.includes(currentReservation.queueId) && currentReservation.status.toString() !== "2" && isToday) {            //If the reservation is in the employee's queue
+            let isToday=(compareTwoDate(date,today,"/") === 0) // check reservation time is today
+            if (queues.includes(currentReservation.queueId) && currentReservation.status !== "2" && isToday) {            //If the reservation is in the employee's queue
+              console.log(currentReservation)
               response.push(currentReservation);             
             }
             

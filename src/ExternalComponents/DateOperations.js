@@ -7,24 +7,49 @@ import { firebase } from "../firebase/config"
 
 export const startRemainingTime = async (reservation) => {
     let resId=reservation.id
-    if (await isStarted(resId)) {
-        if (await isFinished(resId)) {
+    let isStart=await isStarted(resId)
+    console.log(isStart)
+    if (isStart) {
+        let finished=await isFinished(resId)
+        if (finished) { //will be update
             if (await isTakeShort(resId)) {
                 let subtractNumber=await findSubtractNumber(reservation)
                 await otherReservationsOperation(resId,reservation.queueId,reservation.date,subtractNumber,0) 
             }
         } else {
-            if (await isTakeLong(resId)) {
-                await otherReservationsOperation(resId,reservation.queueId,reservation.date,1,1)  //increment by 1 minute
+            let timeDiff=await isTakeLong(resId)
+            console.log(timeDiff)
+            if (timeDiff >= 1) {
+                await otherReservationsOperation(resId,reservation.queueId,reservation.date,timeDiff,1)  //increment by 1 minute
             }
         }
     } else {
-        if (await isLate(resId)) {
+        let lated=await isLate(resId)
+        if (lated) {
             await lateOperation(reservation)
         } else {
-            await otherReservationsOperation(resId,reservation.queueId,reservation.date,1,1)  //increment by 1 minute
+            let todayTime=getCurrentTime()
+            let resTime=reservation.estimatedTime
+            let diff=differenceBetweenTimes(todayTime,resTime)
+            console.log(diff)
+            if (diff >= 1) {
+                await otherReservationsOperation(resId,reservation.queueId,reservation.date,diff,1) //increment by 1 minute
+            } 
         }
     }
+   
+}
+
+
+export const differenceBetweenTimes = (time1,time2) => {
+    let time1Object=time1.split(":")
+    let time2Object=time2.split(":")
+    let d1=new Date()
+    let d2=new Date()
+    d1.setHours(time1Object[0],time1Object[1])
+    d2.setHours(time2Object[0],time2Object[1])
+    let diff=(d1-d2) / (1000*60)
+    return Math.round(diff)
 
 }
 
@@ -40,35 +65,48 @@ export const findSubtractNumber = async (resId) => {
 }
 
 
+
+
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
-    let currentReservation={}
      reservations.forEach(reservation => {
-         let date=reservation.date
-         let time=reservation.estimatedTime
-         if (compareCurrentDay(date,time) === 0) {
-            calculateLatency(reservation).then((latency) => {
-            const ref=firebase.database().ref("reservations/" + reservation.id);
-            ref.update({
-            startTime: "",
-            finishTime:"",
-            expectedFinishTime:"",
-            latencyTime:latency  // estimated ile reservation time maksimumu alınıp hesaplanacak
-            })           
-         })
-         currentReservation=reservation
+        isCurrent(reservation.id).then( flag => {
+            if (flag) {
+                console.log(reservation)
+                startRemainingTime(reservation)
+            }
         }
+        )
                 
      });
-     return currentReservation
 
 }
 
 
+export const isCurrent = async (resId) => {
+    const ref=await firebase.database().ref("reservations/" + resId);
+    let result=undefined
+    await ref.once("value", (reservation) => {
+        let data=reservation.val()
+        let todayTime=getCurrentTime()
+        let todayDate=getCurrentDate()
+        if (((compareTwoTime(data.estimatedTime,todayTime) === -1) || (compareTwoTime(data.estimatedTime,todayTime) === 0))
+        && compareTwoDate(data.date,todayDate,"/") === 0 && data.status !== 2) {
+            result=true
+            
+        } else {
+            result=false
+        }
+    })
+    return result
 
+}
 
 
 export const lateOperation= async (reservation) => {
     let nextResId=await findNextReservation(reservation) // finding next reservation
+    if (nextResId === -1) {
+        return
+    }
     const nextRef=firebase.database().ref("reservations/" + nextResId);
     const currentRef=firebase.database().ref("reservations/" + reservation.id);
     let interval=findSlotInterval(reservation.queueId)
@@ -97,7 +135,7 @@ export const findNextReservation = async (currentReservation) => {
             let date=reservation.val().date
             let qId=reservation.val().queueId
             let time=reservation.val().time
-            let isToday=(compareTwoDate(date,currentDate) === 0) // whether reservation belongs to today
+            let isToday=(compareTwoDate(date,currentDate,"/") === 0) // whether reservation belongs to today
             if (isToday && time === reservationTime && qId === queueId) {
                 resId=reservation.key 
             }
@@ -112,29 +150,32 @@ export const findNextReservation = async (currentReservation) => {
 
 export const isFinished= async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
+    let result=undefined
     await ref.once("value", (reservation) => {
         let data=reservation.val()
         if (data.finishTime !== "") {
-            return true
+            result= true
         } else {
-            return false
+            result= false
         }
     })
-
+    return result
 }
 
 
 
 export const isStarted= async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
+    let startFlag=undefined
     await ref.once("value", (reservation) => {
         let data=reservation.val()
         if (data.startTime !== "") {
-            return true
+           startFlag=true
         } else {
-            return false
+            startFlag=false
         }
     })
+    return startFlag
 }
 
 
@@ -176,39 +217,46 @@ export const subtractMinutes = (number,time) => {
 
 export const isLate= async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
-    let result=await ref.once("value", (reservation) => {
+    let result=undefined
+    await ref.once("value", (reservation) => {
         let data=reservation.val()
         let latencyTime=data.latencyTime
         let today=getCurrentTime()
         let compareFlag=compareTwoTime(today,latencyTime)
-        if (compareFlag === -1) { // if current time is bigger than latency time
-            return true
+        if (compareFlag === 1) { // if current time is bigger than latency time
+            result= true
         } else {
-            return false
+            result= false
         }
     })
+    console.log(result)
     return result
 }
 
 
 export const isTakeLong= async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
+    let result=0
     let currentTime=getCurrentTime()
     await ref.once("value", (reservation) => {
         let expectedFinishTime=reservation.val().expectedFinishTime
-        return (compareTwoTime(currentTime,expectedFinishTime) === 1)
+        if (compareTwoTime(currentTime,expectedFinishTime) === 1) {
+           result = differenceBetweenTimes(currentTime,expectedFinishTime)
+        }
     })
+    return result
     
 }
 
 export const isTakeShort= async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
+    let result=undefined
     await ref.once("value", (reservation) => {
         let expectedFinishTime=reservation.val().expectedFinishTime
         let finishTime=reservation.val().finishTime
-        return (compareTwoTime(expectedFinishTime,finishTime) === 1)
+        result= (compareTwoTime(expectedFinishTime,finishTime) === 1)
     })
-    
+    return result
 }
 
 
@@ -283,7 +331,7 @@ export const compareTwoTime = (time1,time2) => {
 export const compareTwoDate =(date1,date2,delimeter) => {
     let d1=date1.split(delimeter)
     let d2=date2.split(delimeter)
-    let date1Object=new Date(d1[2],d1[1]-1,d1[0],0,0,0);
+    let date1Object=new Date(d1[2],d1[1],d1[0],0,0,0);
     let date2Object=new Date(d2[2],d2[1],d2[0],0,0,0); // day -1 olmaz
     if (date1Object.getTime() > date2Object.getTime()) {
         return 1;
@@ -326,5 +374,6 @@ export const getCurrentTime = () => {
 
 export const getCurrentDate = () => {
     let today=new Date()
-    return today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear()
+    today.setTime(today.getTime() + 3 * 60 * 60 * 1000)
+    return today.getDate() + "/" + (today.getMonth() + 1)+ "/" + today.getFullYear()
 }
