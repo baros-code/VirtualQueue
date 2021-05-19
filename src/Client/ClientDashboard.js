@@ -18,8 +18,8 @@ const ClientDashboard = ( {navigation} ) => {
       return "Started"
     } else if (statusInteger == 0) {
       return "Not Started"
-    } else if (statusInteger == 3) {
-      return "It is ready"
+    } else if (statusInteger === 2) {
+      return "Finished"
     } else {
       return "Unknown condition"
     }
@@ -101,12 +101,14 @@ const addTimeToTheQueue = async (id) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID && currentReservation.status !== 2) {
+                if (clientId === USER_ID && currentReservation.status !== 3) {
                   response.push(currentReservation)
                 }
             });
-        findCurrentReservation(response)   
-        setState(response);             
+        findCurrentReservation(response).then(() => {
+          setState(response); 
+        })  
+                   
       })
   };
 

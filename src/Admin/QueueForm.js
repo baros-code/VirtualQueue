@@ -28,12 +28,12 @@ const QueueForm = ( { navigation} ) => {
         finishDate.setDate(currentDate.getDate() + 7)
         let datesObject={}
         while (currentDate < finishDate) {
-            currentDate.setDate(currentDate.getDate() + 1)
             let cDay = currentDate.getDate();
             let cMonth = currentDate.getMonth() + 1;
             let cYear = currentDate.getFullYear();
             let dateString=cDay + "-" + cMonth + "-" + cYear
             datesObject[dateString]=reservationTimes
+            currentDate.setDate(currentDate.getDate() + 1)
         }
         return datesObject
     }
@@ -167,9 +167,9 @@ const QueueForm = ( { navigation} ) => {
         <Text style={styles.label}>{editPage ? "Set Latency" : "Select the latency"}</Text>
         <ScrollPickerComponent style={getStyle(true)}  data={getIntervals(1,1," minutes",interval)} editable={true} selectedValue={latency} callback={(value) => setLatency(value)} />
         <Text style={styles.label}>{editPage ? "Start Time" : "Select the Start Time"}</Text>
-        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",23)} editable={!editPage} selectedValue={startTime} callback={(value) => setstartTime(value)} />
+        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",25)} editable={!editPage} selectedValue={startTime} callback={(value) => setstartTime(value)} />
         <Text style={styles.label}>{editPage ? "Finish Time" : "Select the Finish Time"}</Text>
-        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",23)} editable={!editPage} selectedValue={finishTime} callback={(value) => setFinishTime(value)} />
+        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",25)} editable={!editPage} selectedValue={finishTime} callback={(value) => setFinishTime(value)} />
         <View style={styles.button}>
             <Button title="Save Queue" onPress= {() => saveQueueHandler()} />
         </View>

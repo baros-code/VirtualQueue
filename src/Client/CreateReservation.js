@@ -3,7 +3,7 @@ import { StyleSheet, View,Text, TextInput,Button} from 'react-native';
 import { firebase } from '../firebase/config'
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
-import { addMinutes, calculateLatency, findLatency } from '../ExternalComponents/DateOperations';
+import { addMinutes, calculateLatency, findLatency, findSlotInterval, getCurrentDate,compareTwoDate } from '../ExternalComponents/DateOperations';
 
 const CreateReservation = ({ navigation }) => {
 
@@ -36,9 +36,12 @@ const CreateReservation = ({ navigation }) => {
     
     function biggerThanToday(date) {
             let dateFormat=date.split("-")
-            let compareDate=new Date(dateFormat[2],dateFormat[1]-1,dateFormat[0]);
-            let today=new Date()
-            return (compareDate.getTime() >= today.getTime())
+            let compareDate=dateFormat[0] + "/" + dateFormat[1] + "/" + dateFormat[2]
+            console.log(compareDate)
+            let today=getCurrentDate()
+            console.log(today)
+            let result=compareTwoDate(compareDate,today,"/")
+            return (result === 0 || result === 1)
     }
 
 
@@ -154,6 +157,7 @@ const CreateReservation = ({ navigation }) => {
         let type=getTransactionType()
         var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
         let latency=await findLatency(queueId)
+        let interval=await findSlotInterval(queueId)
         await ref.set({
             date: date.split("-").join("/"),
             time:time,
@@ -167,7 +171,7 @@ const CreateReservation = ({ navigation }) => {
             estimatedTime:time,
             startTime: "",
             finishTime:"",
-            expectedFinishTime:"",
+            expectedFinishTime:addMinutes(interval,time),
             latencyTime:addMinutes(latency,time)
             });
         navigation.navigate('ClientDashboard',{uid:clientId})
