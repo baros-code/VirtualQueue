@@ -184,12 +184,6 @@ const ProfileStackScreen = ({navigation}) => (
 );
 
 
-
-/*BOTTOM TAB NAVIGATOR */
-/* {userToken} parametre olarak alınacak, role = 0 , 1, 2 ise 
-ona göre tab'ler çıkarılacak aşağıda.
-ClientStack, EmployeeStack, AdminStack oluşturulacak Home'lara atanacak!
-*/ 
 const TabsScreen = () => {
     const { userToken } = useContext(AuthContext);
     return (
@@ -201,29 +195,12 @@ const TabsScreen = () => {
     barStyle={{ backgroundColor: "#ffff"}}
     tabBarOptions={{ showIcon: true, labelStyle: { fontSize: 12 }}}
     >
-      <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="black" />) }  }/> 
-      {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
-      {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
-      {userToken.role === 2 ? <Tabs.Screen name="Create Queue" component={CreateQueueStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
+      <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="#047DB9" />) }  }/> 
+      {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
+      {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
+      {userToken.role === 2 ? <Tabs.Screen name="Create Queue" component={CreateQueueStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
     </Tabs.Navigator>
     );
-  
-  // else if (userToken.role === 1) {
-  //   return (
-  //   <Tabs.Navigator>
-  //     <Tabs.Screen name="Home" component={HomeStackScreen} />
-  //     <Tabs.Screen name="My Queues" component={CreateReservationStackScreen} />
-  //   </Tabs.Navigator>
-  //   );
-  // }
-  // else if (userToken.role === 2) {
-  //   return (
-  //   <Tabs.Navigator>
-  //     <Tabs.Screen name="Home" component={HomeStackScreen} />
-  //     <Tabs.Screen name="My Queues" component={MyQueues} />
-  //   </Tabs.Navigator>
-  //   );
-  // }
 
 };
 
