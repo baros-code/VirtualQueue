@@ -61,7 +61,7 @@ const ClientDashboard = ( {navigation} ) => {
           keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
+            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
               <View style={styles.row}>     
                 <Text style={styles.organizationStyle}>{item.organizationName} - {`${item.date}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.id)}>
@@ -73,7 +73,7 @@ const ClientDashboard = ( {navigation} ) => {
           }}
         /> : <Text style={styles.text}>No reservations found!</Text>}
         <View style={{margin: 20}}>
-            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: userToken.uid})}/>
+            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen")}/>
         </View>
       </View>
     );

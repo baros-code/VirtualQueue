@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import { firebase } from '../firebase/config'
 
-const ReservationDetails = ({ navigation }) => {
+const ReservationDetails = ({ navigation, route }) => {
 
     const [state, setState] = useState({});
 
-    const id = navigation.getParam('id');
+    const id = route.params.id;
 
     const deleteReservation = (id, callback) => {
         const ref = firebase.database().ref("reservations");   

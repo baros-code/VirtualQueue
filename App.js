@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList, } from "@react-navigation/drawer";
 import { Ionicons } from '@expo/vector-icons'; 
-import { TouchableOpacity, Button } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 import { firebase } from './src/firebase/config'
 import  { AuthContext }  from "./src/Authentication/AuthContext";
@@ -26,6 +26,8 @@ import  ReservationDetails  from "./src/Client/ReservationDetails";
 import  EmployeeDashboard  from "./src/Employee/EmployeeDashboard";
 import  MyQueues  from "./src/Employee/MyQueues"
 import  ClientDetails  from "./src/Employee/ClientDetails"
+
+import AdminDashboard  from "./src/Admin/AdminDashboard"
 
 
 const AuthStack = createStackNavigator();
@@ -54,29 +56,51 @@ const Tabs = createBottomTabNavigator();
 
 const HomeStack = createStackNavigator();
 const CreateReservationStack = createStackNavigator();
+const MyQueuesStack = createStackNavigator();
 
 
-const HomeStackScreen = ({navigation}) => (
-  <HomeStack.Navigator>
-    <HomeStack.Screen name="Dashboard" 
-    component={ClientDashboard}
-    options={{headerTitle: "Dashboard", headerLeft: () => (
-      <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.openDrawer()}>
-        <Ionicons name="menu" size={24} color="black" />
-      </TouchableOpacity>
-    )}}
-    />
-    <HomeStack.Screen
-      name="ReservationDetails"
-      component={ReservationDetails}
-      options={({ route }) => ({
-        title: route.params.name
-      })}
-    />
+const HomeStackScreen = ({navigation}) => {
+  const { userToken } = useContext(AuthContext);
+  const getDashboard = () => {
+    if(userToken.role === 0)
+        return ClientDashboard;
+    else if(userToken.role === 1)
+        return EmployeeDashboard;
+    else if(userToken.role === 2)
+        return AdminDashboard;
+    else
+        return null;
+  };
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen name="Dashboard" 
+      component= {getDashboard()}
+      options={{headerTitle: "Dashboard", headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.openDrawer()}>
+          <Ionicons name="menu" size={24} color="black" />
+        </TouchableOpacity>
+      )}}
+      />
+      {/* {userToken.role === 1 ? <HomeStack.Screen name="Dashboard" 
+      component={EmployeeDashboard}
+      options={{headerTitle: "Dashboard", headerLeft: () => (
+        <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.openDrawer()}>
+          <Ionicons name="menu" size={24} color="black" />
+        </TouchableOpacity>
+      )}}
+      /> : null} */}
+      <HomeStack.Screen
+        name="ReservationDetails"
+        component={ReservationDetails}
+        options={({ route }) => ({
+          title: route.params.name
+        })}
+      />
   </HomeStack.Navigator>
-);
+  );
 
-/*route.params ile seçilen servis, organizasyon id geçirilecek. */
+};
+
 const CreateReservationStackScreen = ({navigation}) => (
   <CreateReservationStack.Navigator>
     <CreateReservationStack.Screen name="Services" component={Services}     
@@ -89,6 +113,20 @@ const CreateReservationStackScreen = ({navigation}) => (
     <CreateReservationStack.Screen name="Organizations" component={Organizations} />
     <CreateReservationStack.Screen name="CreateReservation" component={CreateReservation} />
   </CreateReservationStack.Navigator>
+);
+
+const MyQueuesStackScreen = ({navigation}) => (
+  <MyQueuesStack.Navigator>
+    <MyQueuesStack.Screen name="Services" component={Services}     
+    options={{ headerLeft: () => (
+      <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.navigate("Home",{screen: "Dashboard"}) }>
+        <Ionicons name="arrow-back-outline" size={24} color="black" />
+      </TouchableOpacity>
+    )}} 
+    />
+    <MyQueuesStack.Screen name="Organizations" component={Organizations} />
+    <MyQueuesStack.Screen name="CreateReservation" component={CreateReservation} />
+  </MyQueuesStack.Navigator>
 );
 
 const ProfileStack = createStackNavigator();
@@ -115,6 +153,7 @@ ona göre tab'ler çıkarılacak aşağıda.
 ClientStack, EmployeeStack, AdminStack oluşturulacak Home'lara atanacak!
 */ 
 const TabsScreen = () => {
+    const { userToken } = useContext(AuthContext);
     return (
     <Tabs.Navigator shifting={true} 
     labeled={false} 
@@ -124,8 +163,10 @@ const TabsScreen = () => {
     barStyle={{ backgroundColor: "#ffff"}}
     tabBarOptions={{ showIcon: true, labelStyle: { fontSize: 12 }}}
     >
-      <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="black" />) }  }/>
-      <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)}  }/>
+      <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="black" />) }  }/> 
+      {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
+      {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
+      {userToken.role === 2 ? <Tabs.Screen name="Manage Queues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
     </Tabs.Navigator>
     );
   
@@ -151,9 +192,9 @@ const TabsScreen = () => {
 const CustomDrawerContent = (props) => {
   const { signOut } = useContext(AuthContext);
   return (
-    <DrawerContentScrollView {...props}>
+    <DrawerContentScrollView {...props} contentContainerStyle={{justifyContent: 'space-between'}}>
       <DrawerItemList {...props} />
-      <DrawerItem label="Signout" onPress={() => signOut() } />
+      <DrawerItem label="Signout" style={{paddingVertical:480}} onPress={() => signOut() } />
     </DrawerContentScrollView>
   );
 }

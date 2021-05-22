@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
 import { Feather, AntDesign } from '@expo/vector-icons'; 
-import { firebase } from '../firebase/config'
 import { startSession, endSession, startAlert, endAlert } from './ClientDetails'
+import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext';
 
 const compareTwoDate = (r1,r2) => {
   const s1 = r1.date;
@@ -19,13 +20,16 @@ const compareTwoDate = (r1,r2) => {
 
 const EmployeeDashboard = ( {navigation} ) => {
 
+  const { userToken } = useContext(AuthContext);
+
+  const USER_ID = userToken.uid;
 
   // state = reservations[]
   const [ state, setState ] = useState([]);
 
   const currentReservation = state[0];
 
-  const USER_ID = navigation.getParam("uid");
+  
 
 
   const addClientData = async (reservations) => {
