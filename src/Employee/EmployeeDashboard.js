@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
 import { Feather, AntDesign } from '@expo/vector-icons'; 
-import { firebase } from '../firebase/config'
 import { startSession, endSession, startAlert, endAlert } from './ClientDetails'
+import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext';
 
 const compareTwoDate = (r1,r2) => {
   const s1 = r1.date;
@@ -19,13 +20,16 @@ const compareTwoDate = (r1,r2) => {
 
 const EmployeeDashboard = ( {navigation} ) => {
 
+  const { userToken } = useContext(AuthContext);
+
+  const USER_ID = userToken.uid;
 
   // state = reservations[]
   const [ state, setState ] = useState([]);
 
   const currentReservation = state[0];
 
-  const USER_ID = navigation.getParam("uid");
+  
 
 
   const addClientData = async (reservations) => {
@@ -90,7 +94,7 @@ const EmployeeDashboard = ( {navigation} ) => {
   if(currentReservation) {
     return (
       <View style={styles.background}>
-          <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: currentReservation})}>
+          <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: currentReservation})}>
             <View style={styles.row}>     
               <View style={styles.content}>
                   <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date }  </Text> 
@@ -106,17 +110,13 @@ const EmployeeDashboard = ( {navigation} ) => {
               </View>
             </View>
           </TouchableOpacity>
-          <View style={{margin: 20}}>
-            <Button title="MY QUEUES" onPress={() => navigation.navigate("EmployeeMyQueues", {uid: USER_ID})}/>
-          </View>
       </View>
-      
       );
   }
   else {
     return (
       <View style={styles.background}>
-        <Text style={styles.title}>NO RESERVATION FOUND!</Text>
+        <Text style={styles.title}>NO QUEUE FOUND!</Text>
       </View>
     );
   };

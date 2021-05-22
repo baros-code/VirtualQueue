@@ -1,20 +1,21 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Feather,AntDesign } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
-
+import { AuthContext } from '../Authentication/AuthContext'; 
 
 const AdminDashboard = ( {navigation} ) => {
 
-  const adminId=navigation.getParam("uid");
+  const { userToken } = useContext(AuthContext);
+
+  const USER_ID = userToken.uid;
+
   const [queues, setQueues] = useState([])
   const organizationId=navigation.getParam("organizationId")
 
   const deleteQueue = (id) => {
-    const ref = firebase.database().ref("queues");   
-    ref.child(id).remove();         //if not found exception eklenmeli.
-    
-    //setQueues(queues.filter(queue => {return id !== queue.id}))
+    // const ref = firebase.database().ref("queues");   
+    // ref.child(id).remove();         //if not found exception eklenmeli.
 
   }
 
@@ -28,7 +29,7 @@ const AdminDashboard = ( {navigation} ) => {
               let currentQueue=queueSnapShot.val()
               currentQueue.id=queueSnapShot.key
               let currentIdAdmin=currentQueue.adminId
-              if (currentIdAdmin === adminId) {
+              if (currentIdAdmin === USER_ID) {
                 newQueues.push(currentQueue)                 
               }
           });
@@ -47,12 +48,14 @@ const AdminDashboard = ( {navigation} ) => {
       keyExtractor={(queue) => queue.id}
       renderItem={({item}) => {
         return (
-        <TouchableOpacity onPress={() => navigation.navigate("QueueForm", {queueId: item.id,adminId:adminId,organizationId:organizationId,editPage:true})}>
+        <TouchableOpacity onPress={() => navigation.push("ListClients", {queueId: item.id})}>
           <View style={styles.row}>     
             <Text style={styles.title}>{item.transactionType} - {item.employeeName}</Text>
-            <TouchableOpacity onPress={() => deleteQueue(item.id)}>
-            <AntDesign name="delete" size={24} color="#0e66d4"  />
-            </TouchableOpacity>
+            <View style={{paddingRight: 25}}>
+              <TouchableOpacity onPress={() => navigation.push("QueueForm", {queueId: item.id}) }>
+                <Feather name="settings" size={32} color="black" />
+              </TouchableOpacity>
+            </View>
           </View>
         </TouchableOpacity>
         );
@@ -62,19 +65,6 @@ const AdminDashboard = ( {navigation} ) => {
   );
 };
 
-
-AdminDashboard.navigationOptions = ( {navigation} ) => {
-  const adminId=navigation.getParam("uid");
-  const organizationId=navigation.getParam("organizationId")
-  return {
-    headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('QueueForm',{queueId:"",adminId:adminId, organizationId:organizationId,editPage:false})}>
-        <Feather  name="plus" size={30} color="#0e66d4" />
-      </TouchableOpacity>
-    ),
-    title: "Hello " + navigation.getParam("fullName")
-  };
-};
 
 const styles = StyleSheet.create({
   background: {
@@ -96,9 +86,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     color:"#0e66d4"
-  },
-  icon: {
-    fontSize: 24
   },
   link: {
     color:"red",

@@ -1,9 +1,10 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native';
 import {firebase} from "../firebase/config"
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
+import { AuthContext } from '../Authentication/AuthContext';
 
-const QueueForm = ( { navigation} ) => {
+const QueueForm = ( { navigation, route} ) => {
 
     const [transactionType, setTransactionType] = useState("");
     const [employeeId, setEmployeeId] = useState("Employee Option");
@@ -13,6 +14,13 @@ const QueueForm = ( { navigation} ) => {
     const [finishTime, setFinishTime] = useState("Finish Time Option");
     const editPage=navigation.getParam("editPage")
     const [employees,setEmployees]= useState([])
+
+    const { userToken } = useContext(AuthContext);
+
+    const USER_ID = userToken.uid;
+    const queueId = route.params.queueId;
+    const organizationId = userToken.organizationId;
+
 
     const convertMinsToHrsMins = (mins) => {
         let h = Math.floor(mins / 60);
@@ -71,10 +79,7 @@ const QueueForm = ( { navigation} ) => {
     
     const saveQueueHandler= async () => {
         let dates;
-        let adminId=navigation.getParam("adminId")
         let queueRef=undefined
-        let queueId= navigation.getParam("queueId")
-        let organizationId=navigation.getParam("organizationId")
         if (queueId !== "") {
             queueRef=await firebase.database().ref("queues/"+ queueId)
         } else {
@@ -96,7 +101,7 @@ const QueueForm = ( { navigation} ) => {
         })
         await queueRef.set({    
         dates:dates,
-        adminId: adminId,
+        adminId: USER_ID,
         organizationId: organizationId,
         transactionType: transactionType,
         employeeId: employeeId,
@@ -111,14 +116,13 @@ const QueueForm = ( { navigation} ) => {
         let dates=getDates(reservationTimes)
         await queueRef.update({Dates:dates})
         }
-        navigation.navigate("AdminDashboard",{uid:adminId})
+        navigation.navigate("AdminDashboard")
     }
      
     
   useEffect(() => {
 
         async function getEmployees() {
-            let organizationId=navigation.getParam("organizationId")
             let employeesList=[]
             const usersReference=await firebase.database().ref("users/")
             await usersReference.once("value",function (usersSnapShot) {
@@ -137,7 +141,7 @@ const QueueForm = ( { navigation} ) => {
         }
 
       if (editPage) {
-        firebase.database().ref("queues/" + navigation.getParam("queueId"))
+        firebase.database().ref("queues/" + queueId)
          .get().then( (queueData) => {
            queueData=queueData.val()
             setTransactionType(queueData.transactionType)

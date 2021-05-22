@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
-
+import { AuthContext } from '../Authentication/AuthContext';
 
 
 
 const ClientDashboard = ( {navigation} ) => {
 
-  const USER_ID = navigation.getParam("uid");
+  const { userToken } = useContext(AuthContext);
+
+  //console.log("OKUNAN UID : +" + userToken.uid);
 
   const [state, setState] = useState([]);
 
@@ -35,7 +37,7 @@ const ClientDashboard = ( {navigation} ) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID) {
+                if (clientId === userToken.uid) {
                   response.push(currentReservation)
                     
                 }
@@ -59,7 +61,7 @@ const ClientDashboard = ( {navigation} ) => {
           keyExtractor={(reservation) => reservation.id.toString()}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id})}>
+            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
               <View style={styles.row}>     
                 <Text style={styles.organizationStyle}>{item.organizationName} - {`${item.date}`}</Text>
                 <TouchableOpacity onPress={() => deleteReservation(item.id)}>
@@ -71,7 +73,7 @@ const ClientDashboard = ( {navigation} ) => {
           }}
         /> : <Text style={styles.text}>No reservations found!</Text>}
       </View>
-      );
+    );
 
 };
 

@@ -1,14 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
-import { firebase } from '../firebase/config'
+import { AuthContext } from './AuthContext';
+
 import { LogBox } from 'react-native';
+
 
 export default function LoginScreen({navigation}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-
+    const { onLoginPress } = useContext(AuthContext);
 
 
     LogBox.ignoreLogs(['Setting a timer']); 
@@ -18,40 +20,6 @@ export default function LoginScreen({navigation}) {
        //navigation.navigate("AdminDashboard")
     }
 
-    const onLoginPress = () => {
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then((response) => {
-                const uid = response.user.uid
-                const usersRef =firebase.database().ref("users/" + uid)
-                usersRef.get()
-                    .then((userData) => {
-                        if (!userData.exists) {
-                            alert("User does not exist anymore.");
-                            return;
-                        }
-                        const data = {...userData.val(), uid: uid}; //add uid property to data object
-                        
-                        if  (data.role === 0) {
-                            navigation.navigate('ClientDashboard', data)
-                         } else if(data.role === 1)
-                            navigation.navigate('EmployeeDashboard', data);
-                        else if(data.role === 2) {
-                            console.log(data)
-                            navigation.navigate('AdminDashboard', data);
-                            
-                         } else
-                            alert("Undefined role!");
-                    })
-                    .catch(error => {
-                        alert(error);
-                    });
-            })
-            .catch(error => {
-                alert(error);
-            })
-    }
 
     return (
         <View style={styles.container}>
@@ -83,7 +51,7 @@ export default function LoginScreen({navigation}) {
                 />
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => onLoginPress()}>
+                    onPress={() => onLoginPress(email,password)}>
                     <Text style={styles.buttonTitle}>Log in</Text>
                 </TouchableOpacity>
                 <View style={styles.footerView}>

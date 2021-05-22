@@ -60,7 +60,7 @@ export default function RegistrationScreen({navigation}) {
             return
         }
         const item={email:email,password:password,fullName:fullName};
-        navigation.navigate("PhoneVerification",item)
+        navigation.navigate("Verification",item)
     }
         
   

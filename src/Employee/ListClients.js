@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
 //import { Context as ImageContext } .....
 import { Feather, AntDesign } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext'; 
 
 
-const ListClients = ( {navigation} ) => {
+const ListClients = ( {navigation, route} ) => {
 
   // [] reservations
   const [state, setState] = useState([]);
 
-  const USER_ID = navigation.getParam("uid");
-  const QUEUE_ID = navigation.getParam('queueId');
+  const QUEUE_ID = route.params.queueId;
 
 
   /*async yazınca 1 tane geliyor, yazmayınca 5 tane geliyor */
@@ -69,7 +69,7 @@ const ListClients = ( {navigation} ) => {
           keyExtractor={(item) => item.id.toString()}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: item})}>
+            <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: item})}>
               <View style={styles.row}>     
                 <Text style={styles.title}>{item.client.fullName} - {item.id}</Text>
               </View>
