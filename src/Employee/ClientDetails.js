@@ -1,39 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
 import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext'; 
 
+const ClientDetails = ({ navigation, route }) => {
 
-const ClientDetails = ({ navigation }) => {
-    //const [state, setState]= useState({});
+    const { userToken } = useContext(AuthContext);
 
+    const USER_ID = userToken.uid;
 
-    const USER_ID = navigation.getParam("uid");
-    //const reservationId = navigation.getParam('reservationId');
-    const reservation = navigation.getParam('reservation'); 
-
-    // useEffect(()  => {
-    //     const fetchReservationAndClient = async () => {
-    //         try {
-    //             setState(state);
-    //             const ref = await firebase.database().ref("reservations/"+ reservationId);
-    //             var response;
-    //             await ref.get().then(reservation => {   
-    //                 response = reservation.val();
-    //                 response.id = reservation.key;
-    //                 getClientData(clientId).then(client => {
-    //                     response.client = client;
-    //                     setState(response);
-    //                 });
-    //             });
-                
-    //         } catch (e) {
-    //             console.log(e);
-    //             setState(state);
-    //         }
-    //     };
-    //     fetchReservationAndClient();
-    //   }, []);
-
+    const reservation = route.params.reservation;
 
     if(reservation.client) {
         return (
@@ -43,13 +19,12 @@ const ClientDetails = ({ navigation }) => {
                 <Text style={styles.label}>Reservation Number: {reservation.id}</Text>
                 <Text style={styles.label}>Transaction Type: {reservation.transactionType}</Text>
                 <Text style={styles.label}>Reservation Date: {reservation.date}</Text>
-                <View style={styles.button}>
+                {userToken.role === 1 ? <View style={styles.button}>
                     <View style={styles.button2}>
                     <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession(reservation.id, () => {navigation.pop()} )) }/>
                     </View>
                     <Button  color='green' title="Start" disabled={reservation.status !== 0} onPress={() => startAlert(startSession(reservation.id, USER_ID, () => {navigation.pop()} )) }/>
-                </View>
-                    
+                </View> : <Text style={styles.label}>Assigned Employee: {reservation.employeeId}</Text>}                    
             </View>
             );
     }

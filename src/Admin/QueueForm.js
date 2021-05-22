@@ -1,8 +1,9 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native';
 import {firebase} from "../firebase/config"
+import { AuthContext } from '../Authentication/AuthContext';
 
-const QueueForm = ( { navigation} ) => {
+const QueueForm = ( { navigation, route} ) => {
 
     const [transactionType, setTransactionType] = useState("");
     const [employee, setEmployee] = useState("");
@@ -11,19 +12,24 @@ const QueueForm = ( { navigation} ) => {
     const [startTime, setstartTime] = useState("");
     const [finishTime, setFinishTime] = useState("");
 
+    const { userToken } = useContext(AuthContext);
+
+    const queueId = route.params.queueId;
+    const isEditable = route.params.editable;
+
+    const USER_ID = userToken.uid;
+
 
     
     const saveQueueHandler= async () => {
-        let adminId=navigation.getParam("adminId")
         let queueRef=undefined
-        let queueId= navigation.getParam("queueId")
         if (queueId !== "") {
             queueRef=await firebase.database().ref("queues/"+ queueId)
         } else {
         queueRef = await firebase.database().ref("queues").push() //push sayesinde unique key'li branch olarak ekliyor.
         }      
         await queueRef.set({
-        adminId: adminId,
+        adminId: USER_ID,
         transactionType: transactionType,
         employee: employee,
         latency:latency,
@@ -31,21 +37,21 @@ const QueueForm = ( { navigation} ) => {
         startTime: startTime,
         finishTime: finishTime,
         }); 
-        navigation.navigate("AdminDashboard",{uid:adminId})
+        navigation.navigate("AdminDashboard")
     }
      
     
   useEffect(() => {
-      if (navigation.getParam("editable")) {
-        firebase.database().ref("queues/" + navigation.getParam("queueId"))
+      if (isEditable) {
+        firebase.database().ref("queues/" + queueId)
          .get().then( (queueData) => {
            queueData=queueData.val()
             setTransactionType(queueData.transactionType)
-            setEmployee(queueData.employee)
-            setInterval(queueData.interval)
-            setstartTime(queueData.startTime)
-            setFinishTime(queueData.finishTime)
-            setLatency(queueData.latency)
+            setEmployee(queueData.employeeName)
+            setInterval(queueData.interval.toString())
+            setstartTime(queueData.startTime.toString())
+            setFinishTime(queueData.finishTime.toString())
+            setLatency(queueData.latency.toString())
        })
         
       }

@@ -8,23 +8,15 @@ import { AuthContext } from './Authentication/AuthContext';
 
 const ProfileScreen = ( {navigation} ) => {
 
-    const { userToken } = useContext(AuthContext);
+    const { userToken, signOut } = useContext(AuthContext);
 
   // state = userData[]
   const [state, setState] = useState({});
 
 
-  const deleteAccount = (callback) => {                                 // Eğer rezervasyonu varsa silemesin?
+  const deleteAccount = () => {                                 // Eğer rezervasyonu varsa silemesin?
       var auth = firebase.auth();
-      auth.signOut().then(function() {
-        console.log("Sign Out succesful.");
-      }).catch(function(error) {
-        console.log("Error while signing out: " + error);
-      });
-
-      if(callback)
-        callback();
-
+      signOut();
       auth.currentUser.delete().then(function() {                       // Delete from firebase-auth
           const ref = firebase.database().ref("users/"+ userToken.uid);
           ref.remove();                                                 // Delete from realtime database too.
@@ -38,7 +30,7 @@ const ProfileScreen = ( {navigation} ) => {
 
 
 
-  const changePassword = (email, callback) => {
+  const changePassword = (email) => {
       var auth = firebase.auth();
 
       auth.sendPasswordResetEmail(email).then(function() {
@@ -46,14 +38,7 @@ const ProfileScreen = ( {navigation} ) => {
       }).catch(function(error) {
         console.log("ERROR HAPPENED: " + error);
       });
-      auth.signOut().then(function() {
-          console.log("Sign Out succesful.");
-      }).catch(function(error) {
-          console.log("Error while signing out: " + error);
-      });
-
-      if(callback)
-        callback();     //navigate to loginpage
+      signOut();     //signout and navigate to login page
   }
 
     
@@ -111,7 +96,7 @@ const ProfileScreen = ( {navigation} ) => {
             <Text style={styles.label}>{state.phone}</Text>
             <View style={styles.button}>
                 <View style={{paddingRight: 110}}>
-                    <Button title="Change password" onPress={() => changePasswordAlert(changePassword(state.email, () => navigation.navigate("Login") ) ) }/>
+                    <Button title="Change password" onPress={() => changePasswordAlert(changePassword(state.email) ) }/>
                 </View>
                 <Button color="red" title="Delete Account" onPress={() => deleteAccountAlert(deleteAccount, navigation) }/>
             </View>
@@ -135,8 +120,8 @@ Alert.alert(
 "Confirmation",
 "Are you sure you want to delete your account?",
 [
-    { text: "Cancel", onPress: () => navigation.navigate('ProfileScreen') },
-    { text: "OK", onPress: () => action(() => navigation.navigate('Login'))}
+    { text: "Cancel", onPress: () => navigation.navigate('Profile') },
+    { text: "OK", onPress: () => action() }
 ]
 );
 

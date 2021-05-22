@@ -94,7 +94,7 @@ const EmployeeDashboard = ( {navigation} ) => {
   if(currentReservation) {
     return (
       <View style={styles.background}>
-          <TouchableOpacity onPress={() => navigation.navigate("ClientDetails", {uid: USER_ID, reservation: currentReservation})}>
+          <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: currentReservation})}>
             <View style={styles.row}>     
               <View style={styles.content}>
                   <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date }  </Text> 
@@ -110,18 +110,13 @@ const EmployeeDashboard = ( {navigation} ) => {
               </View>
             </View>
           </TouchableOpacity>
-          <View style={{margin: 20}}>
-            <Button title="MY QUEUES" onPress={() => navigation.navigate("EmployeeMyQueues", {uid: USER_ID})}/>
-            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: USER_ID})}/>
-          </View>
       </View>
-      
       );
   }
   else {
     return (
       <View style={styles.background}>
-        <Text style={styles.title}>NO RESERVATION FOUND!</Text>
+        <Text style={styles.title}>NO QUEUE FOUND!</Text>
       </View>
     );
   };

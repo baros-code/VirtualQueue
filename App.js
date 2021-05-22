@@ -25,9 +25,11 @@ import  ReservationDetails  from "./src/Client/ReservationDetails";
 
 import  EmployeeDashboard  from "./src/Employee/EmployeeDashboard";
 import  MyQueues  from "./src/Employee/MyQueues"
+import ListClients  from "./src/Employee/ListClients"
 import  ClientDetails  from "./src/Employee/ClientDetails"
 
 import AdminDashboard  from "./src/Admin/AdminDashboard"
+import QueueForm from "./src/Admin/QueueForm"
 
 
 const AuthStack = createStackNavigator();
@@ -57,6 +59,7 @@ const Tabs = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
 const CreateReservationStack = createStackNavigator();
 const MyQueuesStack = createStackNavigator();
+const CreateQueueStack = createStackNavigator();
 
 
 const HomeStackScreen = ({navigation}) => {
@@ -96,6 +99,29 @@ const HomeStackScreen = ({navigation}) => {
           title: route.params.name
         })}
       />
+      <HomeStack.Screen
+        name="ClientDetails"
+        component={ClientDetails}
+        options={({ route }) => ({
+          title: route.params.name
+        })}
+      />
+      <HomeStack.Screen
+        name="QueueForm"
+        component={QueueForm}
+        initialParams={{editable: true}}
+        options={({ route }) => ({
+          title: route.params.name
+        })}
+      />
+      <HomeStack.Screen
+        name="ListClients"
+        component={ListClients}
+        initialParams={{editable: true}}
+        options={({ route }) => ({
+          title: route.params.name
+        })}
+      />
   </HomeStack.Navigator>
   );
 
@@ -117,16 +143,28 @@ const CreateReservationStackScreen = ({navigation}) => (
 
 const MyQueuesStackScreen = ({navigation}) => (
   <MyQueuesStack.Navigator>
-    <MyQueuesStack.Screen name="Services" component={Services}     
+    <MyQueuesStack.Screen name="MyQueues" component={MyQueues}     
     options={{ headerLeft: () => (
       <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.navigate("Home",{screen: "Dashboard"}) }>
         <Ionicons name="arrow-back-outline" size={24} color="black" />
       </TouchableOpacity>
     )}} 
     />
-    <MyQueuesStack.Screen name="Organizations" component={Organizations} />
-    <MyQueuesStack.Screen name="CreateReservation" component={CreateReservation} />
+    <MyQueuesStack.Screen name="ListClients" component={ListClients} />
+    <MyQueuesStack.Screen name="ClientDetails" component={ClientDetails} />
   </MyQueuesStack.Navigator>
+);
+
+const CreateQueueStackScreen = ({navigation}) => (
+  <CreateQueueStack.Navigator>
+    <CreateQueueStack.Screen name="CreateQueue" component={QueueForm} initialParams={{editable: false}}     
+    options={{ headerLeft: () => (
+      <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.navigate("Home",{screen: "Dashboard"}) }>
+        <Ionicons name="arrow-back-outline" size={24} color="black" />
+      </TouchableOpacity>
+    )}} 
+    />
+  </CreateQueueStack.Navigator>
 );
 
 const ProfileStack = createStackNavigator();
@@ -166,7 +204,7 @@ const TabsScreen = () => {
       <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="black" />) }  }/> 
       {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
       {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
-      {userToken.role === 2 ? <Tabs.Screen name="Manage Queues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
+      {userToken.role === 2 ? <Tabs.Screen name="Create Queue" component={CreateQueueStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="black" />)} }/> : null}
     </Tabs.Navigator>
     );
   
