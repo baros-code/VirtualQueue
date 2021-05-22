@@ -172,7 +172,8 @@ const CreateReservation = ({ navigation }) => {
             startTime: "",
             finishTime:"",
             expectedFinishTime:addMinutes(interval,time),
-            latencyTime:addMinutes(latency,time)
+           // latencyTime:addMinutes(latency,time)
+            latencyTime:""
             });
         navigation.navigate('ClientDashboard',{uid:clientId})
            
