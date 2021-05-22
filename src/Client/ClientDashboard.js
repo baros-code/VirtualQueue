@@ -20,7 +20,9 @@ const ClientDashboard = ( {navigation} ) => {
       return "Not Started"
     } else if (statusInteger === 2) {
       return "Finished"
-    } else {
+    } else if (statusInteger === 3) {
+      return "Cancelled"
+    } else  {
       return "Unknown condition"
     }
 
@@ -92,8 +94,6 @@ const addTimeToTheQueue = async (id) => {
     
   useEffect(()  => {
     const fetchReservations = async  () => {
-     
-        //  setState(state);
           const ref = await firebase.database().ref("reservations");
           var response = [];
           await ref.once("value",function (reservationsSnapShot) {
@@ -127,9 +127,6 @@ const addTimeToTheQueue = async (id) => {
             <TouchableOpacity onPress={() => navigation.navigate("Details", {id: item.id,deleteOperation:deleteReservation})}>
               <View style={styles.row}>
                 <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) ({item.estimatedTime})</Text>   
-                <TouchableOpacity onPress={async () => deleteReservation(item.id,false)}>
-                <Feather style={styles.icon} name="trash" />
-                </TouchableOpacity>
               </View>
             </TouchableOpacity>
             ); 

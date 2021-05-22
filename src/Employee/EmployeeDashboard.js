@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'reac
 import { Feather, AntDesign } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { startSession, endSession, startAlert, endAlert } from './ClientDetails'
-import { compareTwoDate, compareTwoTime, getCurrentDate } from '../ExternalComponents/DateOperations';
+import { compareTwoDate, compareTwoTime, findCurrentReservation, getCurrentDate } from '../ExternalComponents/DateOperations';
 
 const dateComparison = (r1,r2) => {
   let time1=r1.estimatedTime
@@ -78,15 +78,18 @@ const EmployeeDashboard = ( {navigation} ) => {
             let date=currentReservation.date
             let today=getCurrentDate()
             let isToday=(compareTwoDate(date,today,"/") === 0) // check reservation time is today
-            if (queues.includes(currentReservation.queueId) && (currentReservation.status === "1" || currentReservation.status === "0") && isToday) {            //If the reservation is in the employee's queue
-              console.log(currentReservation)
+            if (queues.includes(currentReservation.queueId) && (currentReservation.status !== 3) && isToday) {            //If the reservation is in the employee's queue
+              //console.log(currentReservation)
               response.push(currentReservation);             
             }
             
         });
         addClientData(response).then(result => {
-          result.sort(function (r1, r2) {return dateComparison(r1,r2)});        //order by date ascending
-          setState(result);
+          findCurrentReservation(result).then(() => {
+            result.sort(function (r1, r2) {return dateComparison(r1,r2)});        //order by date ascending
+            setState(result);
+          })
+          
         });
       });
       

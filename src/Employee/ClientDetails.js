@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert, TouchableOpacity } from 'react-native';
-import { getCurrentDate, getCurrentTime,findLatency, addMinutes, findSlotInterval} from '../ExternalComponents/DateOperations';
+import { isAllowedRemaining, getCurrentTime,lockTheRemaining, addMinutes, findSlotInterval, unLockTheRemaining, lockForEmployee, unLockForEmployee} from '../ExternalComponents/DateOperations';
 import { firebase } from '../firebase/config'
 
 
@@ -100,6 +100,10 @@ export const getClientData = async (clientId) => {
 };
 
 export const startSession = async (reservationId, userId, callback) => {
+    //await lockForEmployee(reservationId);
+    let allowed=await isAllowedRemaining(reservationId)
+    while (!allowed) {};
+    await lockTheRemaining(reservationId);
     const ref = await firebase.database().ref("reservations/" + reservationId);
     ref.once("value" , (reservation) => {
         let queueId=reservation.val().queueId
@@ -112,17 +116,25 @@ export const startSession = async (reservationId, userId, callback) => {
             
         });})
     })
+    await unLockTheRemaining(reservationId)
+    //await unLockForEmployee(reservationId)
     if(callback)
         callback();
 };
 
 export const endSession = async (reservationId, callback) => {
+   // await lockForEmployee(reservationId);
+    let allowed=await isAllowedRemaining(reservationId)
+    while (!allowed) {};
+    await lockTheRemaining(reservationId);
     const ref = await firebase.database().ref("reservations/" + reservationId);
     let currentTime=getCurrentTime()
     ref.update({
         status : 2,
         finishTime: currentTime
     });
+    await unLockTheRemaining(reservationId)
+  //  await unLockForEmployee(reservationId)
     if(callback)
         callback();
 };

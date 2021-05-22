@@ -1,5 +1,6 @@
 
 
+import { SliderComponent } from "react-native";
 import { firebase } from "../firebase/config"
 
 
@@ -17,34 +18,45 @@ export const isAllowedRemaining= async (resId) => {
     return result
 }
 
+
+
+
+
+export const dateComparison = (r1,r2) => {
+    let time1=r1.estimatedTime
+    let time2=r2.estimatedTime
+    return (compareTwoTime(time1,time2)) }
+
+
+
 export const getQueueId = async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId);
+    console.log("ref :" + ref)
     let result=undefined
     await ref.once("value", reservation => {
         let queueId=reservation.val().queueId
         result=queueId
     })
+    console.log("queue Id ----:" + result)
     return result
 }
 
 
 export const startRemainingTime = async (reservation) => {
     let resId=reservation.id
-    let allowed=await isAllowedRemaining(resId)
-    if (!allowed) {
-       // console.log("Current check prevented by locking");
-        return false
-    }
-    await lockTheRemaining(resId);
     console.log("race condition code")
+    console.log("current res" + reservation)
     await latencyChecker(reservation)
     let isStart=await isStarted(resId)
     console.log("is Started:" + isStart)
     if (isStart) {
         let finished=await isFinished(resId)
+        console.log("is Finished:" + finished)
         if (finished) { //will be update
             if (await isTakeShort(resId)) {
-                let subtractNumber=await findSubtractNumber(reservation)
+                console.log("it is short")
+                let subtractNumber=await findSubtractNumber(resId)
+                console.log("subtract number :" + subtractNumber)
                 await otherReservationsOperation(reservation.queueId,reservation.date,subtractNumber,0) 
             }
             await finishReservation(resId)
@@ -72,7 +84,8 @@ export const startRemainingTime = async (reservation) => {
 
         }
     }
-    await unLockTheRemaining(resId);
+    await unLockTheRemaining(resId)
+    
 }
 
 
@@ -140,29 +153,38 @@ export const differenceBetweenTimes = (time1,time2) => {
 
 }
 
+
+
 export const findSubtractNumber = async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId)
     let result=undefined
     await ref.once("value", (reservation) => {
         let expectedFinishTime=reservation.val().expectedFinishTime
         let finishTime=reservation.val().finishTime
-        result=expectedFinishTime -finishTime
+        result=differenceBetweenTimes(expectedFinishTime,finishTime)
     })
     return result
 }
 
 
+function sleep(milliseconds) {
+    let timeStart = new Date().getTime();
+    while (true) {
+      let elapsedTime = new Date().getTime() - timeStart;
+      if (elapsedTime > milliseconds) {
+        break;
+      }
+    }
+  }
+
+
 
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     reservations.forEach(reservation => {
-        isCurrent(reservation.id).then( flag => {
-            if (flag) {
-                console.log(reservation)
-                startRemainingTime(reservation)
-            }
-        }
-        )
-                
+        sleep(100)
+        let id=reservation.id
+        remainingExecution(id)
+                       
      });
 
 }
@@ -176,30 +198,58 @@ export const finishReservation = async (resId) => {
 }
 
 
-export const isCurrent = async (resId) => {
-    let isAllowedCheck=await isAllowedRemaining(resId)
-    if (!isAllowedCheck) {
-       // console.log("Current check prevented by locking");
+export const findReservations = async (queueId) => {
+        let resList=[]
+        const ref=await firebase.database().ref("reservations")
+        await ref.once("value", reservations => {
+            reservations.forEach((reservation) => {
+                    let data=reservation.val()
+                    data.id=reservation.key
+                    if (data.queueId === queueId) {
+                        resList.push(data)
+                    }
+                     
+            })
+        })
+        return resList
+}
+
+export const findCurrent =  (reservations) => {
+    let found=false
+    let res={}
+    let todayTime=getCurrentTime()
+    let todayDate=getCurrentDate()
+    reservations.sort(function (r1, r2) {return dateComparison(r1,r2)});
+    reservations.forEach((reservation) => {
+        if (((compareTwoTime(reservation.estimatedTime,todayTime) === -1) || (compareTwoTime(reservation.estimatedTime,todayTime) === 0))
+        && compareTwoDate(reservation.date,todayDate,"/") === 0 && reservation.status !== 3) { 
+            if (!found) {
+                res=reservation
+                found=true
+            }
+    }
+    })
+    return res
+}
+
+export const remainingExecution = async (resId) => {
+    let allowed=await isAllowedRemaining(resId)
+    if (!allowed) {
         return false
     }
-    const ref=await firebase.database().ref("reservations/" + resId);
-    let result=undefined
-    //console.log("deneme")
-    await ref.once("value", (reservation) => {
-        let data=reservation.val()
-        let queueId=reservation.queueId;
-        let todayTime=getCurrentTime()
-        let todayDate=getCurrentDate()
-        if (((compareTwoTime(data.estimatedTime,todayTime) === -1) || (compareTwoTime(data.estimatedTime,todayTime) === 0))
-        && compareTwoDate(data.date,todayDate,"/") === 0 && data.status !== 3) {
-            result=true
-            
-        } else {
-            result=false
-        }
-    })
-    return result
-
+    await lockTheRemaining(resId);
+    let queueId=await getQueueId(resId)
+    console.log("queue Id" + queueId)
+    let reservations=await findReservations(queueId)
+    let res=findCurrent(reservations)
+    if (res === {}) {
+        return false
+        unLockTheRemaining(resId)
+    }
+    console.log("res :" + res)
+    await startRemainingTime(res)
+    unLockTheRemaining(resId)
+    
 }
 
 
@@ -322,6 +372,16 @@ export const otherReservationsOperation = async (queueId,date,number,operationFl
     
 }
 
+export const addMinutes =(adding,time) =>{
+    let dateObject=new Date()
+    let timeList=time.split(":")
+    dateObject.setHours(timeList[0],timeList[1],0,0)
+    dateObject.setMinutes(dateObject.getMinutes() + adding,0,0)
+
+    return convertMinsToHrsMins(dateObject.getMinutes() + dateObject.getHours() * 60)
+
+}
+
 
 export const subtractMinutes = (number,time) => {
     let dateObject=new Date()
@@ -377,15 +437,6 @@ export const isTakeShort= async (resId) => {
 
 
 
-export const addMinutes =(adding,time) =>{
-    let dateObject=new Date()
-    let timeList=time.split(":")
-    dateObject.setHours(timeList[0],timeList[1],0,0)
-    dateObject.setMinutes(dateObject.getMinutes() + adding,0,0)
-
-    return convertMinsToHrsMins(dateObject.getMinutes() + dateObject.getHours() * 60)
-
-}
 
 export const findLatency = async (queueId) => {
     let latency=undefined
