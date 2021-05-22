@@ -4,9 +4,40 @@ import { firebase } from "../firebase/config"
 
 
 
+export const isAllowedRemaining= async (resId) => {
+    let queueId= await getQueueId(resId)
+    const ref=await firebase.database().ref("queues/" + queueId);
+    let result=undefined;
+    await ref.once("value", queueSnapShot => {
+        let data=queueSnapShot.val();
+        let remainingFlag=data.remainingIsAllowed;
+        result=remainingFlag;
+        
+    })
+    return result
+}
+
+export const getQueueId = async (resId) => {
+    const ref=await firebase.database().ref("reservations/" + resId);
+    let result=undefined
+    await ref.once("value", reservation => {
+        let queueId=reservation.val().queueId
+        result=queueId
+    })
+    return result
+}
+
 
 export const startRemainingTime = async (reservation) => {
     let resId=reservation.id
+    let allowed=await isAllowedRemaining(resId)
+    if (!allowed) {
+       // console.log("Current check prevented by locking");
+        return false
+    }
+    await lockTheRemaining(resId);
+    console.log("race condition code")
+    await latencyChecker(reservation)
     let isStart=await isStarted(resId)
     console.log("is Started:" + isStart)
     if (isStart) {
@@ -41,15 +72,55 @@ export const startRemainingTime = async (reservation) => {
 
         }
     }
-   
+    await unLockTheRemaining(resId);
+}
+
+
+export const latencyChecker = async (reservation) => {
+    const ref=await firebase.database().ref("reservations/" + reservation.id)
+    console.log(ref)
+    ref.once("value", reservationSnap => {
+        let data=reservationSnap.val()
+        let latency=data.latencyTime
+        console.log("old latency" + latency);
+        if (latency === "") {
+            console.log("buraya girmeli")
+             calculateLatency(reservation).then((newLatency) => {
+                console.log("new latency :" + newLatency)
+                ref.update({
+                    latencyTime:newLatency
+                })
+            })
+        }
+    })
 }
 
 
 
+export const lockTheRemaining = async (resId) => {
+    let queueId=await getQueueId(resId);
+    const ref=await firebase.database().ref("queues/" + queueId)
+    await ref.update({
+        remainingIsAllowed:false // lock the remaining time
+        
+    })
+    console.log("Race condition is locked.")
+}
+
+export const unLockTheRemaining = async (resId) => {
+    let queueId=await getQueueId(resId);
+    const ref=await firebase.database().ref("queues/" + queueId)
+    await ref.update({
+        remainingIsAllowed:true // lock the remaining time
+        
+    })
+    console.log("Race condition is unlocked.")
+}
+
 export const getEstimatedTime = async (resId) => {
     let result=undefined
     const ref=await firebase.database().ref("reservations/" + resId)
-    await ref.on("value", (reservation) => {
+    await ref.once("value", (reservation) => {
         let estimate=reservation.val().estimatedTime
         result=estimate
     })
@@ -82,7 +153,6 @@ export const findSubtractNumber = async (resId) => {
 
 
 
-
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     reservations.forEach(reservation => {
         isCurrent(reservation.id).then( flag => {
@@ -107,10 +177,17 @@ export const finishReservation = async (resId) => {
 
 
 export const isCurrent = async (resId) => {
+    let isAllowedCheck=await isAllowedRemaining(resId)
+    if (!isAllowedCheck) {
+       // console.log("Current check prevented by locking");
+        return false
+    }
     const ref=await firebase.database().ref("reservations/" + resId);
     let result=undefined
+    //console.log("deneme")
     await ref.once("value", (reservation) => {
         let data=reservation.val()
+        let queueId=reservation.queueId;
         let todayTime=getCurrentTime()
         let todayDate=getCurrentDate()
         if (((compareTwoTime(data.estimatedTime,todayTime) === -1) || (compareTwoTime(data.estimatedTime,todayTime) === 0))
@@ -148,7 +225,8 @@ export const lateOperation= async (reservation) => {
     })
     await currentRef.update({
         estimatedTime:nextEstimatedTime, // swap operation
-        expectedFinishTime:addMinutes(interval,nextEstimatedTime)
+        expectedFinishTime:addMinutes(interval,nextEstimatedTime),
+        latencyTime:"" // make latency empty to recalculate
     })  
 }
 
@@ -314,6 +392,7 @@ export const findLatency = async (queueId) => {
     const ref=await firebase.database().ref("queues/" + queueId);
     await ref.once("value", (queueSnapShot) => {
         let queueData=queueSnapShot.val()
+        console.log(queueData)
        latency=queueData.latency
     })
     return latency
@@ -332,10 +411,13 @@ export const findSlotInterval = async (queueId) => {
 
 
 export const calculateLatency = async (reservation) => {
-    let latency=await findLatency(reservation.queueId)
+    let queueId=reservation.queueId
+    let latency=await findLatency(queueId)
+    console.log("latency" + latency)
     let estimatedTime=reservation.estimatedTime
     let reservationTime=reservation.time
     let compareFlag=compareTwoTime(estimatedTime,reservationTime)
+    console.log("compare flag :" + compareFlag)
     let maxTime=undefined
     if (compareFlag === 1) {
         maxTime=estimatedTime

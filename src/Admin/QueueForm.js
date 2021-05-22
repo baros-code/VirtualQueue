@@ -70,6 +70,7 @@ const QueueForm = ( { navigation} ) => {
 
     
     const saveQueueHandler= async () => {
+        let remainingIsAllowed;
         let dates;
         let adminId=navigation.getParam("adminId")
         let queueRef=undefined
@@ -83,9 +84,11 @@ const QueueForm = ( { navigation} ) => {
         if (!editPage) {
             let d=getDates(getReservationTimes())
             dates=d
+            remainingIsAllowed=true;
         } else {
             await queueRef.get().then((data) => {
                 dates=data.val().dates
+                remainingIsAllowed=data.val().remainingIsAllowed
             })
         }
          // adding employee name
@@ -105,6 +108,7 @@ const QueueForm = ( { navigation} ) => {
         interval: interval,
         startTime: startTime,
         finishTime: finishTime,
+        remainingIsAllowed:remainingIsAllowed
         }); 
         if (!editPage) {
         let reservationTimes=getReservationTimes()
