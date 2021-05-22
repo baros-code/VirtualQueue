@@ -8,15 +8,7 @@ const ReservationDetails = ({ navigation, route }) => {
 
     const id = route.params.id;
 
-    const deleteReservation = (id, callback) => {
-        const ref = firebase.database().ref("reservations");   
-        ref.child(id).remove();         //if not found exception eklenmeli.
-        
-        callback();     //navigate to dashboard
-      
-      }
- 
-
+    
 
     useEffect(()  => {
         const fetchReservation = async () => {
@@ -43,11 +35,12 @@ const ReservationDetails = ({ navigation, route }) => {
         return (
             <View>
                 <Text style={styles.label}>Organization: {state.organizationName}</Text>
-                <Text style={styles.label}>Date and Time: {state.date}</Text>
+                <Text style={styles.label}>Reservation Date: {state.date}</Text>
+                <Text style={styles.label}>Reservation Time: {state.time}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
                 <View style={styles.button}>
-                    <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation, navigation) }/>
+                    <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(navigation.getParam("deleteOperation"), navigation) }/>
                 </View>
             </View>
             );
@@ -72,7 +65,7 @@ const createTwoButtonAlert = ( action, navigation ) =>
     "Are you sure you want to cancel the reservation?",
     [
         { text: "Cancel", onPress: () => navigation.navigate('Details',{id: navigation.getParam('id')}) },
-        { text: "OK", onPress: () => action(navigation.getParam('id'), () => navigation.navigate('ClientDashboard'))}
+        { text: "OK", onPress:  async () => action(navigation.getParam('id'),true)}
     ]
     );
 

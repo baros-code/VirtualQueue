@@ -78,6 +78,8 @@ const QueueForm = ( { navigation, route} ) => {
 
     
     const saveQueueHandler= async () => {
+        let employeeLocker;
+        let remainingIsAllowed;
         let dates;
         let queueRef=undefined
         if (queueId !== "") {
@@ -88,9 +90,11 @@ const QueueForm = ( { navigation, route} ) => {
         if (!editPage) {
             let d=getDates(getReservationTimes())
             dates=d
+            remainingIsAllowed=true;
         } else {
             await queueRef.get().then((data) => {
                 dates=data.val().dates
+                remainingIsAllowed=data.val().remainingIsAllowed
             })
         }
          // adding employee name
@@ -110,11 +114,12 @@ const QueueForm = ( { navigation, route} ) => {
         interval: interval,
         startTime: startTime,
         finishTime: finishTime,
+        remainingIsAllowed:remainingIsAllowed
         }); 
         if (!editPage) {
         let reservationTimes=getReservationTimes()
         let dates=getDates(reservationTimes)
-        await queueRef.update({Dates:dates})
+        await queueRef.update({dates:dates})
         }
         navigation.navigate("AdminDashboard")
     }
@@ -169,11 +174,11 @@ const QueueForm = ( { navigation, route} ) => {
         <Text style={styles.label}>{editPage ? "Slot Interval" : "Select the Slot Interval"}</Text>
         <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(5,5," minutes",50)} editable={!editPage} selectedValue={interval} callback={(value) => setInterval(value)} />
         <Text style={styles.label}>{editPage ? "Set Latency" : "Select the latency"}</Text>
-        <ScrollPickerComponent style={getStyle(true)}  data={getIntervals(1,1," minutes",16)} editable={true} selectedValue={latency} callback={(value) => setLatency(value)} />
+        <ScrollPickerComponent style={getStyle(true)}  data={getIntervals(1,1," minutes",interval)} editable={true} selectedValue={latency} callback={(value) => setLatency(value)} />
         <Text style={styles.label}>{editPage ? "Start Time" : "Select the Start Time"}</Text>
-        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(8,1,".00",18)} editable={!editPage} selectedValue={startTime} callback={(value) => setstartTime(value)} />
+        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",25)} editable={!editPage} selectedValue={startTime} callback={(value) => setstartTime(value)} />
         <Text style={styles.label}>{editPage ? "Finish Time" : "Select the Finish Time"}</Text>
-        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(8,1,".00",18)} editable={!editPage} selectedValue={finishTime} callback={(value) => setFinishTime(value)} />
+        <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(0,1,".00",25)} editable={!editPage} selectedValue={finishTime} callback={(value) => setFinishTime(value)} />
         <View style={styles.button}>
             <Button title="Save Queue" onPress= {() => saveQueueHandler()} />
         </View>

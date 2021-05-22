@@ -43,7 +43,7 @@ const AdminDashboard = ( {navigation} ) => {
     
   <View>
     {queues.length !== 0 ? 
-    (<FlatList
+    <FlatList
       data={queues}
       keyExtractor={(queue) => queue.id}
       renderItem={({item}) => {
@@ -60,7 +60,7 @@ const AdminDashboard = ( {navigation} ) => {
         </TouchableOpacity>
         );
       }}
-    /> ) : (<Text>No queues found </Text>)}
+    />  : <Text style={styles.text}>No queues found </Text>}
   </View>
   );
 };
@@ -70,6 +70,10 @@ const styles = StyleSheet.create({
   background: {
     backgroundColor: 'white',
     color:"white"
+  },
+  text: {
+    color:"white",
+    fontSize:25
   },
   row: {
     flexDirection: 'row',

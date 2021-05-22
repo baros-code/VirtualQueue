@@ -4,6 +4,9 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'reac
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
+import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime} from "../ExternalComponents/DateOperations"
+
+
 
 
 
@@ -11,25 +14,86 @@ const ClientDashboard = ( {navigation} ) => {
 
   const { userToken } = useContext(AuthContext);
 
-  //console.log("OKUNAN UID : +" + userToken.uid);
+  const USER_ID = userToken.uid;
 
   const [state, setState] = useState([]);
 
+  const getStatus = (statusInteger) =>{
+    if (statusInteger == 1) {
+      return "Started"
+    } else if (statusInteger == 0) {
+      return "Not Started"
+    } else if (statusInteger === 2) {
+      return "Finished"
+    } else if (statusInteger === 3) {
+      return "Cancelled"
+    } else  {
+      return "Unknown condition"
+    }
 
-  const deleteReservation = (id) => {
+  }
+
+  const isTimeBigger = (date1,date2) => {
+      let dateList1=date1.split(":")
+      let dateList2=date2.split(":")
+      let d1=new Date()
+      let d2=new Date()
+      d1.setHours(dateList1[0],dateList1[1])
+      d2.setHours(dateList2[0],dateList2[1])
+      return (d1.getTime() > d2.getTime())
+  }
+
+
+
+const findKey=async (time,date,queueId) => {
+  const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
+  let currentKey=0;
+  let timeKey=0;
+  await dateRef.get().then((data) => {
+    data.forEach((timeData) => {
+      let currentTime=timeData.val()
+      console.log(currentTime)
+      if (isTimeBigger(currentTime,time)) {
+          timeKey=currentKey
+      } else {
+        currentKey += 1
+      }
+    })
+  })
+  return timeKey
+   
+}
+
+const addTimeToTheQueue = async (id) => {
+  const reservation=await firebase.database().ref("reservations/" + id)
+  await reservation.get().then((data) => {
+      let reservationData=data.val()
+      let date=reservationData.date.split("/").join("-")
+      let time=reservationData.time
+      let queueId=reservationData.queueId
+      findKey(time,date,queueId).then((key) => {
+        console.log(key)
+        let updates={}
+        updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
+        firebase.database().ref().update(updates);
+      })
+      
+     
+  })
+
+}
+
+  const deleteReservation = async (id) => {
+    await addTimeToTheQueue(id)
     const ref = firebase.database().ref("reservations");   
     ref.child(id).remove();         //if not found exception eklenmeli.
   
     //setState(state.filter(reservation => {return reservation.id !== id} ) );
-    
-  
+    navigation.pop();
   }
-
     
   useEffect(()  => {
     const fetchReservations = async  () => {
-      try {
-          setState(state);
           const ref = await firebase.database().ref("reservations");
           var response = [];
           await ref.once("value",function (reservationsSnapShot) {
@@ -37,20 +101,19 @@ const ClientDashboard = ( {navigation} ) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === userToken.uid) {
+                if (clientId === USER_ID && currentReservation.status !== 3) {
                   response.push(currentReservation)
-                    
                 }
             });
-            setState(response);
-        });   
-          
-      } catch (e) {
-          console.log(e);
-          setState(state);
-      }
+        findCurrentReservation(response).then(() => {
+          setState(response); 
+        })  
+                   
+      })
   };
+
     fetchReservations();
+
   }, [state]);
 
  
@@ -58,15 +121,12 @@ const ClientDashboard = ( {navigation} ) => {
       <View style={styles.background}>
         {state.length !== 0 ? <FlatList
           data={state}
-          keyExtractor={(reservation) => reservation.id.toString()}
+          keyExtractor={(reservation) => reservation.id}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
+            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id, deleteOperation: deleteReservation(item.id)})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName} - {`${item.date}`}</Text>
-                <TouchableOpacity onPress={() => deleteReservation(item.id)}>
-                  <Feather style={styles.icon} name="trash" />
-                </TouchableOpacity>
+                <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) ({item.estimatedTime})</Text>  
               </View>
             </TouchableOpacity>
             ); 
@@ -105,7 +165,7 @@ const styles = StyleSheet.create({
     borderColor: 'gray'
   },
   organizationStyle: {
-    fontSize: 18,
+    fontSize: 16,
     color: 'white'
   },
   icon: {

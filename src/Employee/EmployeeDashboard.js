@@ -4,8 +4,13 @@ import { Feather, AntDesign } from '@expo/vector-icons';
 import { startSession, endSession, startAlert, endAlert } from './ClientDetails'
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
+import { compareTwoDate, compareTwoTime, findCurrentReservation, getCurrentDate } from '../ExternalComponents/DateOperations';
 
-const compareTwoDate = (r1,r2) => {
+const dateComparison = (r1,r2) => {
+  let time1=r1.estimatedTime
+  let time2=r2.estimatedTime
+  return (compareTwoTime(time1,time2))
+  /** 
   const s1 = r1.date;
   const s2 = r2.date;
   const d1 = new Date(s1);
@@ -15,6 +20,7 @@ const compareTwoDate = (r1,r2) => {
   if(d1.valueOf() < d2.valueOf())
       return -1;
   return 0;
+  */
 };
 
 
@@ -73,14 +79,21 @@ const EmployeeDashboard = ( {navigation} ) => {
         reservations.forEach( reservation => {
             let currentReservation=reservation.val()
             currentReservation.id=reservation.key;
-            if (queues.includes(currentReservation.queueId) && currentReservation.status.toString() !== "2") {            //If the reservation is in the employee's queue
+            let date=currentReservation.date
+            let today=getCurrentDate()
+            let isToday=(compareTwoDate(date,today,"/") === 0) // check reservation time is today
+            if (queues.includes(currentReservation.queueId) && (currentReservation.status !== 3) && isToday) {            //If the reservation is in the employee's queue
+              //console.log(currentReservation)
               response.push(currentReservation);             
             }
             
         });
         addClientData(response).then(result => {
-          result.sort(function (r1, r2) {return compareTwoDate(r1,r2)});        //order by date ascending
-          setState(result);
+          findCurrentReservation(result).then(() => {
+            result.sort(function (r1, r2) {return dateComparison(r1,r2)});        //order by date ascending
+            setState(result);
+          })
+          
         });
       });
       
@@ -97,7 +110,7 @@ const EmployeeDashboard = ( {navigation} ) => {
           <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: currentReservation})}>
             <View style={styles.row}>     
               <View style={styles.content}>
-                  <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date }  </Text> 
+                  <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date } - {currentReservation.time} </Text> 
                   <View style={styles.buttons}>
                       <TouchableOpacity  onPress={() => endAlert(endSession(currentReservation.id))}>
                           <AntDesign size={10} color= "red" style={styles.icon}name="closecircleo" />
