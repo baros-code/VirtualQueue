@@ -2,7 +2,7 @@ import React, {useEffect, useState, useMemo, useContext } from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList, } from "@react-navigation/drawer";
 import { Ionicons } from '@expo/vector-icons'; 
 import { TouchableOpacity, Button } from 'react-native';
 
@@ -148,16 +148,18 @@ const TabsScreen = () => {
 
 };
 
-const CustomDrawerContent = ({navigation}) => {
+const CustomDrawerContent = (props) => {
   const { signOut } = useContext(AuthContext);
   return (
-    <DrawerContentScrollView>
-      <DrawerItem label="Signout" onPress={() => signOut(navigation.navigate("Auth",{screen: "SignIn"})) } />
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <DrawerItem label="Signout" onPress={() => signOut() } />
     </DrawerContentScrollView>
   );
 }
 
 const Drawer = createDrawerNavigator();
+
 const DrawerScreen = () => (
   <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />} >
     <Drawer.Screen name="Home" component={TabsScreen}  />
@@ -225,7 +227,7 @@ export default () => {
         setIsLoading(false);
         setUserToken("asdf");
       },
-      signOut: (callback) => {
+      signOut: () => {
         setIsLoading(false);
         var auth = firebase.auth();
         auth.signOut().then(function() {
@@ -234,8 +236,6 @@ export default () => {
         }).catch(function(error) {
           console.log("Error while signing out: " + error);
         });
-        if(callback)
-          callback();
       },
       userToken: userToken
     };
