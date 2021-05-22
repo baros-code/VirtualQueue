@@ -2,15 +2,18 @@ import React, { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import ReservationForm from '../components/ReservationForm';
 import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext';
 
-const CreateReservation = ({ navigation }) => {
 
-    const serviceType = navigation.getParam('serviceType');
-    const organizationId = navigation.getParam('organizationId');       //selected organization to enqueue
-    const organizationName = navigation.getParam('organizationName');       
-    const clientId = navigation.getParam('clientId');
+const CreateReservation = ({ navigation, route}) => {
 
-    console.log("From CreateReservation: " + clientId, organizationId, organizationName);
+    const { userToken } = useContext(AuthContext);
+
+    const serviceType = route.params.serviceType;
+    const organizationId = route.params.organizationId;       //selected organization to enqueue
+    const organizationName = route.params.organizationName;    
+
+    console.log("From CreateReservation: " + userToken.uid, organizationId, organizationName);
 
     const findQueue = async (transactionType) => {
         var ref = await firebase.database().ref("queues");   
@@ -29,14 +32,14 @@ const CreateReservation = ({ navigation }) => {
       return response;
     }
 
-    const addReservation = async (clientId, transactionType, date, callback) => {
+    const addReservation = async (transactionType, date, callback) => {
 
         var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
         findQueue(transactionType).then(response => {
             if(response) {
                 ref.set({
                     date: date,
-                    clientId: clientId,
+                    clientId: userToken.uid,
                     employeeId: "",
                     estimatedRemainingTimeSec: "300",
                     organizationId: organizationId,
@@ -55,7 +58,7 @@ const CreateReservation = ({ navigation }) => {
     return (
         <ReservationForm
         initialValues={{organizationName: organizationName, transactionType: ''}} 
-        onSubmit={(transactionType, date) => { addReservation(clientId, transactionType, date, () => navigation.navigate('ClientDashboard'))}}
+        onSubmit={(transactionType, date) => { addReservation(transactionType, date, () => navigation.navigate('Home', {screen: 'Dashboard'}) )}}
         type={serviceType}
         />
     );

@@ -8,8 +8,6 @@ const Services = ( {navigation} ) => {
 
     const [state, setState] = useState([]);
 
-    const clientId = navigation.getParam('clientId');
-
     useEffect(()  => {
         const fetchServices = async  () => {
           try {
@@ -42,7 +40,7 @@ const Services = ( {navigation} ) => {
             keyExtractor={(service) => service.name.toString()}
             renderItem={({item}) => {
             return (
-                    <TouchableOpacity onPress={() => navigation.navigate("Organizations", {serviceType: item.name, clientId: clientId})}>
+                    <TouchableOpacity onPress={() => navigation.push("Organizations", {serviceType: item.name} ) }>
                         <View style={styles.row}>
                             <ImageDetails
                             imageSource={item.logo}

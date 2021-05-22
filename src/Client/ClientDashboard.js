@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
+import { AuthContext } from '../Authentication/AuthContext';
 
 
 
+const ClientDashboard = ( {navigation} ) => {
 
-const ClientDashboard = ( {route,navigation} ) => {
+  const { userToken } = useContext(AuthContext);
 
-  const { uid } = route.params;
+  //console.log("OKUNAN UID : +" + userToken.uid);
 
   const [state, setState] = useState([]);
 
@@ -35,7 +37,7 @@ const ClientDashboard = ( {route,navigation} ) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === uid) {
+                if (clientId === userToken.uid) {
                   response.push(currentReservation)
                     
                 }
@@ -71,7 +73,7 @@ const ClientDashboard = ( {route,navigation} ) => {
           }}
         /> : <Text style={styles.text}>No reservations found!</Text>}
         <View style={{margin: 20}}>
-            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: uid})}/>
+            <Button title="PROFILE" onPress={() => navigation.navigate("ProfileScreen", {uid: userToken.uid})}/>
         </View>
       </View>
     );

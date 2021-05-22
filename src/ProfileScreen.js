@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, Image, Button, Alert } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from './firebase/config'
 import { images } from './images'
+import { AuthContext } from './Authentication/AuthContext';
 
 
+const ProfileScreen = ( {navigation} ) => {
 
-const ProfileScreen = ( {route, navigation} ) => {
-
-  const { uid } = route.params;
+    const { userToken } = useContext(AuthContext);
 
   // state = userData[]
   const [state, setState] = useState({});
@@ -26,7 +26,7 @@ const ProfileScreen = ( {route, navigation} ) => {
         callback();
 
       auth.currentUser.delete().then(function() {                       // Delete from firebase-auth
-          const ref = firebase.database().ref("users/"+ uid);
+          const ref = firebase.database().ref("users/"+ userToken.uid);
           ref.remove();                                                 // Delete from realtime database too.
           console.log("Account succesfully deleted.");
       }).catch(function(error) {
@@ -60,7 +60,8 @@ const ProfileScreen = ( {route, navigation} ) => {
   useEffect(()  => {
     const fetchUserData = async  () => {
       try {
-          const ref = await firebase.database().ref("users/"+ uid);
+          //console.log("HEYYYYYYYYYYYYYYYYYYY USEEFFECT CAGRILDI..........................")
+          const ref = await firebase.database().ref("users/"+ userToken.uid);
           var response;
           await ref.get().then(user => {
               response = user.val();
@@ -99,7 +100,7 @@ const ProfileScreen = ( {route, navigation} ) => {
 
 
     return (
-        <View>
+        <View style={styles.background}>
             <View style={{alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-between'}}>
                 { <Image style={styles.logo} source={state.profilePhoto} /> }
                 { state.organizationLogo !== undefined ? <Image style={styles.logo} source={state.organizationLogo} /> : null }
@@ -134,7 +135,7 @@ Alert.alert(
 "Confirmation",
 "Are you sure you want to delete your account?",
 [
-    { text: "Cancel", onPress: () => navigation.navigate('ProfileScreen',{id: navigation.getParam('uid')} ) },
+    { text: "Cancel", onPress: () => navigation.navigate('ProfileScreen') },
     { text: "OK", onPress: () => action(() => navigation.navigate('Login'))}
 ]
 );
@@ -175,6 +176,9 @@ const styles = StyleSheet.create({
         height: 100,
         margin: 10,
         borderRadius: 10
+    },
+    background: {
+        backgroundColor: '#0e66d4'
     }
 });
 

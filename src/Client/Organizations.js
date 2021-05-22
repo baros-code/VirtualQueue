@@ -5,17 +5,15 @@ import { firebase } from '../firebase/config'
 import { images } from '../images'
 
 
-const Organizations = ( {navigation} ) => {
+const Organizations = ( {navigation, route} ) => {
 
     const [state, setState] = useState([]);
 
-    const serviceType = navigation.getParam('serviceType');
-    const clientId = navigation.getParam('clientId');
+    const serviceType = route.params.serviceType;
 
     //console.log("this is service type: " + serviceType);
 
     useEffect(()  => {
-        const serviceType = navigation.getParam('serviceType');
         const fetchServices = async  () => {
           try {
               setState(state);
@@ -46,7 +44,7 @@ const Organizations = ( {navigation} ) => {
             keyExtractor={(organization) => organization.id.toString()}
             renderItem={({item}) => {
             return (
-                <TouchableOpacity onPress={() => navigation.navigate("CreateReservation", {serviceType: serviceType, organizationId: item.id, organizationName: item.name, clientId: clientId})}>
+                <TouchableOpacity onPress={() => navigation.push("CreateReservation", {serviceType: serviceType, organizationId: item.id, organizationName: item.name})}>
                     <View style={styles.row}>
                         <ImageDetails
                         imageSource={item.logo}
