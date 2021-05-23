@@ -82,7 +82,7 @@ const EmployeeDashboard = ( {navigation} ) => {
             let date=currentReservation.date
             let today=getCurrentDate()
             let isToday=(compareTwoDate(date,today,"/") === 0) // check reservation time is today
-            if (queues.includes(currentReservation.queueId) && (currentReservation.status !== 3) && isToday) {            //If the reservation is in the employee's queue
+            if (queues.includes(currentReservation.queueId) && (currentReservation.status !== 3 || currentReservation !== 4) && isToday) {            //If the reservation is in the employee's queue
               //console.log(currentReservation)
               response.push(currentReservation);             
             }
@@ -112,10 +112,10 @@ const EmployeeDashboard = ( {navigation} ) => {
               <View style={styles.content}>
                   <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date } - {currentReservation.time} </Text> 
                   <View style={styles.buttons}>
-                      <TouchableOpacity  onPress={() => endAlert(endSession(currentReservation.id))}>
+                      <TouchableOpacity  onPress={ async ()  => {await startSession(currentReservation.id)}}>
                           <AntDesign size={10} color= "red" style={styles.icon}name="closecircleo" />
                       </TouchableOpacity>
-                      <TouchableOpacity style={{paddingLeft: 20}} onPress={() => startAlert(startSession(currentReservation.id, USER_ID ))}>
+                      <TouchableOpacity style={{paddingLeft: 20}} onPress={ async () => {await endSession(currentReservation.id,USER_ID)}}>
                           <Feather size={5} color= "green" style={styles.icon} name="check-circle" />
                       </TouchableOpacity>
                   </View>
