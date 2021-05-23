@@ -68,7 +68,12 @@ const createTwoButtonAlert = ( action, navigation, route ) =>
     "Are you sure you want to cancel the reservation?",
     [
         { text: "Cancel", onPress: () => navigation.navigate('ReservationDetails',{id: route.params.id }) },
-        { text: "OK", onPress: async () => {await action(route.params.id, navigation)} }
+        { text: "OK", onPress: async () => {
+            let checker=await action(route.params.id)
+            while (!checker) {
+                checker=await action(route.params.id)  
+            }
+            navigation.pop()} }
     ]
     );
 

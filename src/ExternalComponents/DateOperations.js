@@ -5,8 +5,13 @@ import { firebase } from "../firebase/config"
 
 
 
-export const isAllowedRemaining= async (resId) => {
-    let queueId= await getQueueId(resId)
+export const isAllowedRemaining= async (resId,queueID) => {
+    let queueId;
+    if (queueID === "") {
+        queueId=await getQueueId(resId);
+    } else {
+        queueId=queueID
+    }
     const ref=await firebase.database().ref("queues/" + queueId);
     let result=undefined;
     //console.log("AWAIT ONCESINDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE: " + ref);
@@ -46,6 +51,7 @@ export const getQueueId = async (resId) => {
 
 
 export const startRemainingTime = async (reservation) => {
+    console.log("it is locked")
     let resId=reservation.id
     //,//console.log("race condition code")
     //console.log("current res" + reservation.id)
@@ -87,17 +93,18 @@ export const startRemainingTime = async (reservation) => {
 
         }
     }
-    await unLockTheRemaining(resId)
+    
+    
     
 }
 
 
 export const latencyChecker = async (reservation) => {
     const ref=await firebase.database().ref("reservations/" + reservation.id)
-    ////console.log(ref)
+    console.log("ref" + ref)
     await ref.once("value", reservationSnap => {
         let data=reservationSnap.val()
-       // //console.log("data " + data)
+       console.log("data " + data)
         let latency=data.latencyTime
         console.log("LATENCY-CHECKER SONRASI.");
         ////console.log("old latency" + latency);
@@ -115,8 +122,13 @@ export const latencyChecker = async (reservation) => {
 
 
 
-export const lockTheRemaining = async (resId) => {
-    let queueId=await getQueueId(resId);
+export const lockTheRemaining = async (resId,queueID) => {
+    let queueId;
+    if (queueID === "") {
+        queueId=await getQueueId(resId);
+    } else {
+        queueId=queueID
+    }
     const ref=await firebase.database().ref("queues/" + queueId)
     await ref.update({
         remainingIsAllowed:false // lock the remaining time
@@ -125,8 +137,13 @@ export const lockTheRemaining = async (resId) => {
     ////console.log("Race condition is locked.")
 }
 
-export const unLockTheRemaining = async (resId) => {
-    let queueId=await getQueueId(resId);
+export const unLockTheRemaining = async (resId,queueID) => {
+    let queueId;
+    if (queueID === "") {
+        queueId=await getQueueId(resId);
+    } else {
+        queueId=queueID
+    }
     const ref=await firebase.database().ref("queues/" + queueId)
     await ref.update({
         remainingIsAllowed:true // lock the remaining time
@@ -185,8 +202,9 @@ function sleep(milliseconds) {
 
 
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
+    //console.log("reservations : " + reservations)
     reservations.forEach(reservation => {
-        sleep(100)
+        sleep(10)
         let id=reservation.id
         remainingExecution(id)
                        
@@ -221,7 +239,7 @@ export const findReservations = async (queueId) => {
 
 export const findCurrent =  (reservations) => {
     let found=false
-    let res={}
+    let res=undefined
     let todayTime=getCurrentTime()
     let todayDate=getCurrentDate()
     reservations.sort(function (r1, r2) {return dateComparison(r1,r2)});
@@ -239,20 +257,21 @@ export const findCurrent =  (reservations) => {
 
 
 export const remainingExecution = async (resId) => {
-    let allowed=await isAllowedRemaining(resId)
+    let allowed=await isAllowedRemaining(resId,"")
     if (!allowed) {
         return false
     }
-    await lockTheRemaining(resId);
+    await lockTheRemaining(resId,"");
     let queueId=await getQueueId(resId)
-
+    
     ////console.log("queue Id" + queueId)
     let reservations=await findReservations(queueId)
     let res=findCurrent(reservations)
   //  //console.log("res :" + res)
-    await startRemainingTime(res)
-    unLockTheRemaining(resId)
-    
+    if (res) {
+      await startRemainingTime(res)
+    }
+    await unLockTheRemaining(resId,"")
 }
 
 export const isExist = async (queueId,time) => {
@@ -278,6 +297,8 @@ export const lateOperation= async (reservation) => {
     if (nextResId === -1) {
         nextResId=await findNextReservation(reservation,0)    
         if (nextResId === -1) {
+            let diff=1
+            await otherReservationsOperation(reservation.queueId,reservation.date,diff,1)
             return
         }
     }

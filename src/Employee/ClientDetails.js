@@ -44,7 +44,10 @@ export const startAlert = (action, userId, navigation, route) =>
     "Session Started!",
     "Directing to the Dashboard",
     [
-        { text: "OK", onPress: async () => {await action(route.params.reservation.id, userId, navigation)}}
+        { text: "OK", onPress: async () => {
+            await action(route.params.reservation.id, userId)
+            navigation.navigate("Dashboard");
+        }}
     ]
     );
 
@@ -53,7 +56,10 @@ Alert.alert(
 "Session Finished!",
 "Directing to the Dashboard",
 [
-    { text: "OK", onPress: async () => {await action(route.params.reservation.id, navigation)} }
+    { text: "OK", onPress: async () => {
+        await action(route.params.reservation.id)
+        navigation.navigate("Dashboard");
+    } }
 ]
 );
 
@@ -74,15 +80,15 @@ export const getClientData = async (clientId) => {
     });
 };
 
-export const startSession = async (reservationId, userId, navigation) => {
+export const startSession = async (reservationId, userId) => {
     //await lockForEmployee(reservationId)
     //console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + reservationId + "   " + "  " + userId + navigation);
-    let allowed=await isAllowedRemaining(reservationId)
+    let allowed=await isAllowedRemaining(reservationId,"")
     while (!allowed) {
         //console.log("sonsuz loopayım cok mutluyum.")
     };
     //console.log("reservastion id :" + reservationId)
-    await lockTheRemaining(reservationId);
+    await lockTheRemaining(reservationId,"");
     const ref = await firebase.database().ref("reservations/" + reservationId);
     //console.log("RESERVATION REF : " + ref);
     await ref.once("value" , (reservation) => {
@@ -97,26 +103,25 @@ export const startSession = async (reservationId, userId, navigation) => {
             
         });})
     })
-    await unLockTheRemaining(reservationId)
+    await unLockTheRemaining(reservationId,"")
     //await unLockForEmployee(reservationId)
-    navigation.navigate("Dashboard");
     
 };
 
-export const endSession = async (reservationId, navigation) => {
+export const endSession = async (reservationId) => {
    // await lockForEmployee(reservationId);
     let allowed=await isAllowedRemaining(reservationId)
     while (!allowed) {};
-    await lockTheRemaining(reservationId);
+    await lockTheRemaining(reservationId,"");
     const ref = await firebase.database().ref("reservations/" + reservationId);
     let currentTime=getCurrentTime()
     ref.update({
         status : 2,
         finishTime: currentTime
     });
-    await unLockTheRemaining(reservationId)
+    await unLockTheRemaining(reservationId,"")
   //  await unLockForEmployee(reservationId)
-  navigation.navigate("Dashboard");
+  
   
 };
 

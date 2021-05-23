@@ -4,7 +4,7 @@ import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
-import { addMinutes, calculateLatency, findLatency, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist } from '../ExternalComponents/DateOperations';
+import { addMinutes, isAllowedRemaining,lockTheRemaining, unLockTheRemaining, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist } from '../ExternalComponents/DateOperations';
 
 
 const CreateReservation = ({ navigation, route}) => {
@@ -166,6 +166,9 @@ const CreateReservation = ({ navigation, route}) => {
     }
 */
     const addReservation = async () => {
+        let allowed=await isAllowedRemaining(0,queueId)
+        if (!allowed) {return false};
+        await lockTheRemaining(0,queueId);
         await removeTimeFromQueue() 
         let resId=await isExist(queueId,time)
         let ref;
@@ -176,12 +179,12 @@ const CreateReservation = ({ navigation, route}) => {
                 clientId:USER_ID,               
             })
             navigation.navigate('Home', {screen: 'Dashboard'})
-            return
+            return true
         }
         let type=getTransactionType()
         ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
         let interval=await findSlotInterval(queueId)
-        await ref.set({
+        ref.set({
             date: date.split("-").join("/"),
             time:time,
             clientId: USER_ID,
@@ -196,9 +199,9 @@ const CreateReservation = ({ navigation, route}) => {
             finishTime:"",
             expectedFinishTime:addMinutes(interval,time),
             latencyTime:""
-            });
-        navigation.navigate('Home', {screen: 'Dashboard'})
-           
+            })
+            await unLockTheRemaining(0,queueId);
+            return true          
         
     };
 
@@ -224,7 +227,13 @@ const CreateReservation = ({ navigation, route}) => {
         }
         </View>
         <View style={styles.button}>
-            <Button  title="Save Reservation" onPress={() => addReservation() } />
+            <Button  title="Save Reservation" onPress={ async () => {
+                let checker= await addReservation() 
+                while (!checker) {
+                    checker=await addReservation()
+                }
+                navigation.navigate('Home', {screen: 'Dashboard'})
+            }} />
         </View>
     </View>
     );

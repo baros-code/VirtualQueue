@@ -42,6 +42,7 @@ const ClientDashboard = ( {navigation} ) => {
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
                 if (clientId === USER_ID && currentReservation.status !== 3) {
+                  //console.log(USER_ID)
                   response.push(currentReservation)
                 }
             });
@@ -125,18 +126,18 @@ const addTimeToTheQueue = async (id) => {
 }
 
 
-export const deleteReservation = async (id, navigation) => {
-    let allowed=await isAllowedRemaining(id)
-    while (!allowed) {};
-    await lockTheRemaining(id);
+export const deleteReservation = async (id) => {
+    let allowed=await isAllowedRemaining(id,"")
+    if (!allowed) {return false};
+    await lockTheRemaining(id,"");
     await addTimeToTheQueue(id)
     const ref = firebase.database().ref("reservations/" + id);   
     await ref.update({
       status:4,
       clientId:""
     })
-    await unLockTheRemaining(id)  //if not found exception eklenmeli.
-    navigation.pop();
+    await unLockTheRemaining(id,"")  //if not found exception eklenmeli.
+    return true
 }
 
 
