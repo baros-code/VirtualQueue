@@ -109,7 +109,7 @@ const HomeStackScreen = ({navigation}) => {
       <HomeStack.Screen
         name="QueueForm"
         component={QueueForm}
-        initialParams={{editable: true}}
+        initialParams={{editPage: true}}
         options={({ route }) => ({
           title: route.params.name
         })}
@@ -117,7 +117,7 @@ const HomeStackScreen = ({navigation}) => {
       <HomeStack.Screen
         name="ListClients"
         component={ListClients}
-        initialParams={{editable: true}}
+        initialParams={{editPage: true}}
         options={({ route }) => ({
           title: route.params.name
         })}
@@ -157,7 +157,7 @@ const MyQueuesStackScreen = ({navigation}) => (
 
 const CreateQueueStackScreen = ({navigation}) => (
   <CreateQueueStack.Navigator>
-    <CreateQueueStack.Screen name="CreateQueue" component={QueueForm} initialParams={{editable: false}}     
+    <CreateQueueStack.Screen name="CreateQueue" component={QueueForm} initialParams={{editPage: false, queueId: "", }}     
     options={{ headerLeft: () => (
       <TouchableOpacity style={{paddingLeft: 15}}onPress={() => navigation.navigate("Home",{screen: "Dashboard"}) }>
         <Ionicons name="arrow-back-outline" size={24} color="black" />

@@ -11,8 +11,8 @@ const AdminDashboard = ( {navigation} ) => {
   const USER_ID = userToken.uid;
 
   const [queues, setQueues] = useState([])
-  const organizationId=navigation.getParam("organizationId")
 
+  
   const deleteQueue = (id) => {
     // const ref = firebase.database().ref("queues");   
     // ref.child(id).remove();         //if not found exception eklenmeli.

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState,useEffect, useContext } from 'react';
 import { StyleSheet, View,Text, TextInput,Button} from 'react-native';
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
@@ -15,7 +15,7 @@ const CreateReservation = ({ navigation, route}) => {
     const organizationId = route.params.organizationId;       //selected organization to enqueue
     const organizationName = route.params.organizationName;    
 
-    console.log("From CreateReservation: " + userToken.uid, organizationId, organizationName);
+    //console.log("From CreateReservation: " + userToken.uid, organizationId, organizationName);
   
     const USER_ID = userToken.uid;
 
@@ -47,9 +47,9 @@ const CreateReservation = ({ navigation, route}) => {
     function biggerThanToday(date) {
             let dateFormat=date.split("-")
             let compareDate=dateFormat[0] + "/" + dateFormat[1] + "/" + dateFormat[2]
-            console.log(compareDate)
+            //console.log(compareDate)
             let today=getCurrentDate()
-            console.log(today)
+            //console.log(today)
             let result=compareTwoDate(compareDate,today,"/")
             return (result === 0 || result === 1)
     }
@@ -94,7 +94,7 @@ const CreateReservation = ({ navigation, route}) => {
                     let timesList=timeReference.val()
                     timesList.forEach(time => {
                         let currentTime={}
-                        console.log(time)
+                        //console.log(time)
                         currentTime.value=time
                         currentTime.label=time
                         times.push(currentTime)
@@ -189,7 +189,7 @@ const CreateReservation = ({ navigation, route}) => {
            
         
     };
-    
+
     return (
         <View>
         <Text style={styles.label}>Organization Name:</Text>

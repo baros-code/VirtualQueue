@@ -52,7 +52,7 @@ const findKey=async (time,date,queueId) => {
   await dateRef.get().then((data) => {
     data.forEach((timeData) => {
       let currentTime=timeData.val()
-      console.log(currentTime)
+      //console.log(currentTime)
       if (isTimeBigger(currentTime,time)) {
           timeKey=currentKey
       } else {
@@ -72,7 +72,7 @@ const addTimeToTheQueue = async (id) => {
       let time=reservationData.time
       let queueId=reservationData.queueId
       findKey(time,date,queueId).then((key) => {
-        console.log(key)
+        //console.log(key)
         let updates={}
         updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
         firebase.database().ref().update(updates);
@@ -124,7 +124,7 @@ const addTimeToTheQueue = async (id) => {
           keyExtractor={(reservation) => reservation.id}
           renderItem={({item}) => {
             return (
-            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id, deleteOperation: deleteReservation(item.id)})}>
+            <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
               <View style={styles.row}>     
                 <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) ({item.estimatedTime})</Text>  
               </View>

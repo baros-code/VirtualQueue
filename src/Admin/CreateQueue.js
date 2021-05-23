@@ -5,7 +5,7 @@ const CreateQueue = ({ navigation}) => {
     
     //const queueData
     const deneme = () => {
-        console.log(navigation)
+        //console.log(navigation)
         return true
     }
 

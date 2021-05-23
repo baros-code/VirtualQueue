@@ -12,7 +12,9 @@ const QueueForm = ( { navigation, route} ) => {
     const [interval, setInterval] = useState("Slot Interval Option");
     const [startTime, setstartTime] = useState("Start Time Option");
     const [finishTime, setFinishTime] = useState("Finish Time Option");
-    const editPage=navigation.getParam("editPage")
+
+
+    const editPage= route.params.editPage;
     const [employees,setEmployees]= useState([])
 
     const { userToken } = useContext(AuthContext);
@@ -20,7 +22,6 @@ const QueueForm = ( { navigation, route} ) => {
     const USER_ID = userToken.uid;
     const queueId = route.params.queueId;
     const organizationId = userToken.organizationId;
-
 
     const convertMinsToHrsMins = (mins) => {
         let h = Math.floor(mins / 60);
@@ -121,7 +122,7 @@ const QueueForm = ( { navigation, route} ) => {
         let dates=getDates(reservationTimes)
         await queueRef.update({dates:dates})
         }
-        navigation.navigate("AdminDashboard")
+        navigation.navigate("Dashboard")
     }
      
     
