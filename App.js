@@ -196,9 +196,9 @@ const TabsScreen = () => {
     tabBarOptions={{ showIcon: true, labelStyle: { fontSize: 12 }}}
     >
       <Tabs.Screen name="Home" component={HomeStackScreen} options={  {tabBarIcon:() => (<Ionicons name="home" size={24} color="#047DB9" />) }  }/> 
-      {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
-      {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
-      {userToken.role === 2 ? <Tabs.Screen name="Create Queue" component={CreateQueueStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />)} }/> : null}
+      {userToken.role === 0 ? <Tabs.Screen name="Create Reservation" component={CreateReservationStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />), unmountOnBlur:true } }/> : null}
+      {userToken.role === 1 ? <Tabs.Screen name="MyQueues" component={MyQueuesStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />), unmountOnBlur:true} }/> : null}
+      {userToken.role === 2 ? <Tabs.Screen name="Create Queue" component={CreateQueueStackScreen} options={ {tabBarIcon:() => (<Ionicons name="create" size={24} color="#047DB9" />), unmountOnBlur:true} }/> : null}
     </Tabs.Navigator>
     );
 
