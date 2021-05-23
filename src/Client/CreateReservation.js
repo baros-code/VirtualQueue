@@ -4,7 +4,7 @@ import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
-import { addMinutes, calculateLatency, findLatency, findSlotInterval, getCurrentDate,compareTwoDate } from '../ExternalComponents/DateOperations';
+import { addMinutes, calculateLatency, findLatency, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist } from '../ExternalComponents/DateOperations';
 
 
 const CreateReservation = ({ navigation, route}) => {
@@ -93,11 +93,14 @@ const CreateReservation = ({ navigation, route}) => {
                 await timesReference.once("value",function (timeReference) {
                     let timesList=timeReference.val()
                     timesList.forEach(time => {
+                        let todayTime=getCurrentTime()
                         let currentTime={}
                         //console.log(time)
                         currentTime.value=time
                         currentTime.label=time
-                        times.push(currentTime)
+                        if (compareTwoTime(todayTime,time) !== 1) {
+                            times.push(currentTime)
+                        }                       
                     })
                    
                 })
@@ -164,9 +167,19 @@ const CreateReservation = ({ navigation, route}) => {
 */
     const addReservation = async () => {
         await removeTimeFromQueue() 
+        let resId=await isExist(queueId,time)
+        let ref;
+        if (resId !== -1) {
+            ref=await firebase.database().ref("reservations/" + resId); 
+            await ref.update({
+                status:0,
+                clientId:USER_ID,               
+            })
+            navigation.navigate('Home', {screen: 'Dashboard'})
+            return
+        }
         let type=getTransactionType()
-        var ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
-        let latency=await findLatency(queueId)
+        ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
         let interval=await findSlotInterval(queueId)
         await ref.set({
             date: date.split("-").join("/"),
@@ -182,7 +195,6 @@ const CreateReservation = ({ navigation, route}) => {
             startTime: "",
             finishTime:"",
             expectedFinishTime:addMinutes(interval,time),
-           // latencyTime:addMinutes(latency,time)
             latencyTime:""
             });
         navigation.navigate('Home', {screen: 'Dashboard'})

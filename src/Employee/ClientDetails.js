@@ -22,9 +22,9 @@ const ClientDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Reservation Date: {reservation.date}</Text>
                 {userToken.role === 1 ? <View style={styles.button}>
                     <View style={styles.button2}>
-                    <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession(reservation.id, () => {navigation.pop()} )) }/>
+                    <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession(reservation.id,USER_ID)) }/>
                     </View>
-                    <Button  color='green' title="Start" disabled={reservation.status !== 0} onPress={() => startAlert(startSession(reservation.id, USER_ID, () => {navigation.pop()} )) }/>
+                    <Button  color='green' title="Start" disabled={reservation.status !== 0} onPress={() => startAlert(startSession(reservation.id, USER_ID)) }/>
                 </View> : <Text style={styles.label}>Assigned Employee: {reservation.employeeId}</Text>}                    
             </View>
             );
@@ -39,21 +39,21 @@ const ClientDetails = ({ navigation, route }) => {
         
 };
 
-export const startAlert = ( action ) =>
+export const startAlert = (resId,userId) =>
     Alert.alert(
     "Session Started!",
     "Directing to the Dashboard",
     [
-        { text: "OK", onPress: () => action}
+        { text: "OK", onPress: async () => {await startSession(resId,userId)}}
     ]
     );
 
-export const endAlert = ( action ) =>
+export const endAlert = ( resId,userId ) =>
 Alert.alert(
 "Session Finished!",
 "Directing to the Dashboard",
 [
-    { text: "OK", onPress: () => action}
+    { text: "OK", onPress: async () => {await endSession(resId,userId)}}
 ]
 );
 
@@ -74,10 +74,11 @@ export const getClientData = async (clientId) => {
     });
 };
 
-export const startSession = async (reservationId, userId, callback) => {
+export const startSession = async (reservationId, userId) => {
     //await lockForEmployee(reservationId);
     let allowed=await isAllowedRemaining(reservationId)
     while (!allowed) {};
+    console.log("reservastion id :" + reservationId)
     await lockTheRemaining(reservationId);
     const ref = await firebase.database().ref("reservations/" + reservationId);
     ref.once("value" , (reservation) => {
@@ -93,11 +94,10 @@ export const startSession = async (reservationId, userId, callback) => {
     })
     await unLockTheRemaining(reservationId)
     //await unLockForEmployee(reservationId)
-    if(callback)
-        callback();
+    
 };
 
-export const endSession = async (reservationId, callback) => {
+export const endSession = async (reservationId) => {
    // await lockForEmployee(reservationId);
     let allowed=await isAllowedRemaining(reservationId)
     while (!allowed) {};
@@ -110,8 +110,7 @@ export const endSession = async (reservationId, callback) => {
     });
     await unLockTheRemaining(reservationId)
   //  await unLockForEmployee(reservationId)
-    if(callback)
-        callback();
+  
 };
 
 

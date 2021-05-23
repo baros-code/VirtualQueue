@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'reac
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
-import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime} from "../ExternalComponents/DateOperations"
+import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime, unLockTheRemaining} from "../ExternalComponents/DateOperations"
 
 
 const ClientDashboard = ( {navigation} ) => {
@@ -22,7 +22,7 @@ const ClientDashboard = ( {navigation} ) => {
       return "Not Started"
     } else if (statusInteger === 2) {
       return "Finished"
-    } else if (statusInteger === 3) {
+    } else if (statusInteger === 4) {
       return "Cancelled"
     } else  {
       return "Unknown condition"
@@ -30,6 +30,8 @@ const ClientDashboard = ( {navigation} ) => {
 
   }
 
+
+    
   useEffect(()  => {
     const fetchReservations = async  () => {
           const ref = await firebase.database().ref("reservations");
@@ -76,36 +78,6 @@ const ClientDashboard = ( {navigation} ) => {
 };
 
 
-export const deleteReservation = async (id, navigation) => {
-  await addTimeToTheQueue(id).then(() => {
-    const ref = firebase.database().ref("reservations");   
-    ref.child(id).remove();         //if not found exception eklenmeli.
-  
-    //setState(state.filter(reservation => {return reservation.id !== id} ) );
-    navigation.pop();
-  });
-}
-
-
-const findKey=async (time,date,queueId) => {
-  const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
-  let currentKey=0;
-  let timeKey=0;
-  await dateRef.get().then((data) => {
-    data.forEach((timeData) => {
-      let currentTime=timeData.val()
-      //console.log(currentTime)
-      if (isTimeBigger(currentTime,time)) {
-          timeKey=currentKey
-      } else {
-        currentKey += 1
-      }
-    })
-  })
-  return timeKey
-   
-}
-
 const isTimeBigger = (date1,date2) => {
   let dateList1=date1.split(":")
   let dateList2=date2.split(":")
@@ -116,9 +88,29 @@ const isTimeBigger = (date1,date2) => {
   return (d1.getTime() > d2.getTime())
 }
 
+
+
+const findKey=async (time,date,queueId) => {
+    const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
+    let currentKey=0;
+    let timeKey=0;
+    await dateRef.get().then((data) => {
+    data.forEach((timeData) => {
+      let currentTime=timeData.val()
+      //console.log(currentTime)
+      if (isTimeBigger(currentTime,time)) {
+          timeKey=currentKey
+      } else {
+        currentKey += 1
+      }
+    })
+    })
+    return timeKey
+}
+
 const addTimeToTheQueue = async (id) => {
-  const reservation=await firebase.database().ref("reservations/" + id)
-  await reservation.get().then((data) => {
+    const reservation=await firebase.database().ref("reservations/" + id)
+    await reservation.get().then((data) => {
       let reservationData=data.val()
       let date=reservationData.date.split("/").join("-")
       let time=reservationData.time
@@ -128,12 +120,25 @@ const addTimeToTheQueue = async (id) => {
         let updates={}
         updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
         firebase.database().ref().update(updates);
-      })
-      
-     
+      }) 
   })
-
 }
+
+
+export const deleteReservation = async (id, navigation) => {
+    let allowed=await isAllowedRemaining(id)
+    while (!allowed) {};
+    await lockTheRemaining(id);
+    await addTimeToTheQueue(id)
+    const ref = firebase.database().ref("reservations");   
+    await ref.update({
+      status:4,
+      clientId:""
+    })
+    await unLockTheRemaining(id)  //if not found exception eklenmeli.
+    navigation.pop();
+}
+
 
 const styles = StyleSheet.create({
   background: {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { compareTwoTime, getCurrentTime } from '../ExternalComponents/DateOperations';
 import { firebase } from '../firebase/config'
 import { deleteReservation } from './ClientDashboard'
 
@@ -9,12 +10,13 @@ const ReservationDetails = ({ navigation, route }) => {
     const [state, setState] = useState({});
 
     const id = route.params.id;
-    
+
+
 
     useEffect(()  => {
         const fetchReservation = async () => {
             try {
-                setState({state});
+               // setState({state});
                 //const response = await axios.get(USER_SERVICE_URL);
                 const ref = await firebase.database().ref("reservations/"+ id);
                 var response = {};
@@ -66,7 +68,7 @@ const createTwoButtonAlert = ( action, navigation, route ) =>
     "Are you sure you want to cancel the reservation?",
     [
         { text: "Cancel", onPress: () => navigation.navigate('ReservationDetails',{id: route.params.id }) },
-        { text: "OK", onPress: () => action(route.params.id, navigation)}
+        { text: "OK", onPress: async () => {await action(route.params.id, navigation)} }
     ]
     );
 
