@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Button, Alert } from 'react-native';
+import { compareTwoTime, getCurrentTime } from '../ExternalComponents/DateOperations';
 import { firebase } from '../firebase/config'
 import { deleteReservation } from './ClientDashboard'
 
@@ -9,12 +10,13 @@ const ReservationDetails = ({ navigation, route }) => {
     const [state, setState] = useState({});
 
     const id = route.params.id;
-    
+
+
 
     useEffect(()  => {
         const fetchReservation = async () => {
             try {
-                setState({state});
+               // setState({state});
                 //const response = await axios.get(USER_SERVICE_URL);
                 const ref = await firebase.database().ref("reservations/"+ id);
                 var response = {};
@@ -40,9 +42,10 @@ const ReservationDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Reservation Time: {state.time}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
-                <View style={styles.button}>
+                {state.status === 0 && <View style={styles.button}>
                     <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation(id), navigation) }/>
-                </View>
+                </View>}
+                
             </View>
             );
     }
@@ -66,7 +69,7 @@ const createTwoButtonAlert = ( action, navigation ) =>
     "Are you sure you want to cancel the reservation?",
     [
         { text: "Cancel", onPress: () => navigation.push('ReservationDetails',{id: id }) },
-        { text: "OK", onPress:  async () => action}
+        { text: "OK", onPress:  async () => await action}
     ]
     );
 

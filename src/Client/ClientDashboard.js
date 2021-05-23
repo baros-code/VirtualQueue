@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'reac
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
-import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime} from "../ExternalComponents/DateOperations"
+import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime, unLockTheRemaining} from "../ExternalComponents/DateOperations"
 
 
 
@@ -25,7 +25,7 @@ const ClientDashboard = ( {navigation} ) => {
       return "Not Started"
     } else if (statusInteger === 2) {
       return "Finished"
-    } else if (statusInteger === 3) {
+    } else if (statusInteger === 4) {
       return "Cancelled"
     } else  {
       return "Unknown condition"
@@ -83,12 +83,19 @@ const addTimeToTheQueue = async (id) => {
 
 }
 
+
+
   const deleteReservation = async (id) => {
+    let allowed=await isAllowedRemaining(reservationId)
+    while (!allowed) {};
+    await lockTheRemaining(reservationId);
     await addTimeToTheQueue(id)
     const ref = firebase.database().ref("reservations");   
-    ref.child(id).remove();         //if not found exception eklenmeli.
-  
-    //setState(state.filter(reservation => {return reservation.id !== id} ) );
+    await ref.update({
+      status:4,
+      clientId:""
+    })
+    await unLockTheRemaining(reservationId)  //if not found exception eklenmeli.
     navigation.pop();
   }
     
