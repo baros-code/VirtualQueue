@@ -76,17 +76,17 @@ export const getClientData = async (clientId) => {
 
 export const startSession = async (reservationId, userId, navigation) => {
     //await lockForEmployee(reservationId)
-    console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + reservationId + "   " + "  " + userId + navigation);
+    //console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + reservationId + "   " + "  " + userId + navigation);
     let allowed=await isAllowedRemaining(reservationId)
     while (!allowed) {
-        console.log("sonsuz loopayım cok mutluyum.")
+        //console.log("sonsuz loopayım cok mutluyum.")
     };
-    console.log("reservastion id :" + reservationId)
+    //console.log("reservastion id :" + reservationId)
     await lockTheRemaining(reservationId);
     const ref = await firebase.database().ref("reservations/" + reservationId);
-    console.log("RESERVATION REF : " + ref);
+    //console.log("RESERVATION REF : " + ref);
     await ref.once("value" , (reservation) => {
-        console.log("RESERVATION VALUE: " + reservation.val());
+        //console.log("RESERVATION VALUE: " + reservation.val());
         let queueId=reservation.val().queueId
         let currentTime=getCurrentTime()
         findSlotInterval(queueId).then((slotInterval)=> {ref.update({
