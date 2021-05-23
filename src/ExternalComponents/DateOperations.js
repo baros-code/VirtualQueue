@@ -45,7 +45,7 @@ export const getQueueId = async (resId) => {
 export const startRemainingTime = async (reservation) => {
     let resId=reservation.id
     //console.log("race condition code")
-    console.log("current res" + reservation)
+    //console.log("current res" + reservation)
     await latencyChecker(reservation)
     let isStart=await isStarted(resId)
     //console.log("is Started:" + isStart)
