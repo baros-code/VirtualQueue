@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'reac
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
-import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime, unLockTheRemaining} from "../ExternalComponents/DateOperations"
+import { isAllowedRemaining, findCurrentReservation, lockTheRemaining, startRemainingTime, unLockTheRemaining} from "../ExternalComponents/DateOperations"
 
 
 const ClientDashboard = ( {navigation} ) => {
@@ -130,7 +130,7 @@ export const deleteReservation = async (id, navigation) => {
     while (!allowed) {};
     await lockTheRemaining(id);
     await addTimeToTheQueue(id)
-    const ref = firebase.database().ref("reservations");   
+    const ref = firebase.database().ref("reservations/" + id);   
     await ref.update({
       status:4,
       clientId:""

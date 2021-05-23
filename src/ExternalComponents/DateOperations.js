@@ -9,12 +9,14 @@ export const isAllowedRemaining= async (resId) => {
     let queueId= await getQueueId(resId)
     const ref=await firebase.database().ref("queues/" + queueId);
     let result=undefined;
+    console.log("AWAIT ONCESINDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE: " + ref);
     await ref.once("value", queueSnapShot => {
         let data=queueSnapShot.val();
         let remainingFlag=data.remainingIsAllowed;
         result=remainingFlag;
         
     })
+    console.log("AWAIT SONRASINDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     return result
 }
 
@@ -32,30 +34,32 @@ export const getQueueId = async (resId) => {
     const ref=await firebase.database().ref("reservations/" + resId);
     //console.log("ref :" + ref)
     let result=undefined
+    console.log("AWAIT ONCESINDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE GETQUEUEID: " + ref);
     await ref.once("value", reservation => {
         let queueId=reservation.val().queueId
         result=queueId
     })
     //console.log("queue Id ----:" + result)
+    console.log("AWAIT SONRASINDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA GETQUEUEID");
     return result
 }
 
 
 export const startRemainingTime = async (reservation) => {
     let resId=reservation.id
-    //console.log("race condition code")
-   // console.log("current res" + reservation)
+    //,console.log("race condition code")
+    console.log("current res" + reservation.id)
     await latencyChecker(reservation)
     let isStart=await isStarted(resId)
-    //console.log("is Started:" + isStart)
+    console.log("is Started:" + isStart)
     if (isStart) {
         let finished=await isFinished(resId)
-        //console.log("is Finished:" + finished)
+        console.log("is Finished:" + finished)
         if (finished) { //will be update
             if (await isTakeShort(resId)) {
-                //console.log("it is short")
+                console.log("it is short")
                 let subtractNumber=await findSubtractNumber(resId)
-                //console.log("subtract number :" + subtractNumber)
+                console.log("subtract number :" + subtractNumber)
                 await otherReservationsOperation(reservation.queueId,reservation.date,subtractNumber,0) 
             }
             await finishReservation(resId)
