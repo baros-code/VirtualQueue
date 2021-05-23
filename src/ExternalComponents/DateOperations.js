@@ -204,7 +204,7 @@ function sleep(milliseconds) {
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     //console.log("reservations : " + reservations)
     reservations.forEach(reservation => {
-        sleep(10)
+       // sleep(10)
         let id=reservation.id
         remainingExecution(id)
                        
@@ -297,8 +297,8 @@ export const lateOperation= async (reservation) => {
     if (nextResId === -1) {
         nextResId=await findNextReservation(reservation,0)    
         if (nextResId === -1) {
-            let diff=1
-            await otherReservationsOperation(reservation.queueId,reservation.date,diff,1)
+            //let diff=1
+            //await otherReservationsOperation(reservation.queueId,reservation.date,diff,1)
             return
         }
     }

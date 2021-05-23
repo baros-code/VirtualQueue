@@ -45,8 +45,11 @@ export const startAlert = (action, userId, navigation, route) =>
     "Directing to the Dashboard",
     [
         { text: "OK", onPress: async () => {
-            await action(route.params.reservation.id, userId)
-            navigation.navigate("Dashboard");
+            let checker=await action(route.params.reservation.id, userId)
+            while (!checker) {
+                checker=await action(route.params.reservation.id, userId)
+            }
+            navigation.navigate('Home', {screen: 'Dashboard'})
         }}
     ]
     );
@@ -57,8 +60,11 @@ Alert.alert(
 "Directing to the Dashboard",
 [
     { text: "OK", onPress: async () => {
-        await action(route.params.reservation.id)
-        navigation.navigate("Dashboard");
+        let checker=await action(route.params.reservation.id)
+        while(!checker) {
+            checker=await action(route.params.reservation.id)
+        }
+        navigation.navigate('Home', {screen: 'Dashboard'})
     } }
 ]
 );
@@ -84,9 +90,9 @@ export const startSession = async (reservationId, userId) => {
     //await lockForEmployee(reservationId)
     //console.log("SAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA : " + reservationId + "   " + "  " + userId + navigation);
     let allowed=await isAllowedRemaining(reservationId,"")
-    while (!allowed) {
-        //console.log("sonsuz loopayım cok mutluyum.")
-    };
+    if (!allowed) {
+        return false
+    }
     //console.log("reservastion id :" + reservationId)
     await lockTheRemaining(reservationId,"");
     const ref = await firebase.database().ref("reservations/" + reservationId);
@@ -104,14 +110,17 @@ export const startSession = async (reservationId, userId) => {
         });})
     })
     await unLockTheRemaining(reservationId,"")
+    return true
     //await unLockForEmployee(reservationId)
     
 };
 
 export const endSession = async (reservationId) => {
    // await lockForEmployee(reservationId);
-    let allowed=await isAllowedRemaining(reservationId)
-    while (!allowed) {};
+    let allowed=await isAllowedRemaining(reservationId,"")
+    if (!allowed) {
+       return false
+    }
     await lockTheRemaining(reservationId,"");
     const ref = await firebase.database().ref("reservations/" + reservationId);
     let currentTime=getCurrentTime()
@@ -120,6 +129,7 @@ export const endSession = async (reservationId) => {
         finishTime: currentTime
     });
     await unLockTheRemaining(reservationId,"")
+    return true
   //  await unLockForEmployee(reservationId)
   
   
