@@ -41,7 +41,7 @@ const ReservationDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
                 <View style={styles.button}>
-                    <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation(id), navigation) }/>
+                    <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation, navigation, route) }/>
                 </View>
             </View>
             );
@@ -60,13 +60,13 @@ ReservationDetails.navigationOptions = ( ) => {
   };
 };
 
-const createTwoButtonAlert = ( action, navigation ) =>
+const createTwoButtonAlert = ( action, navigation, route ) =>
     Alert.alert(
     "Confirmation",
     "Are you sure you want to cancel the reservation?",
     [
-        { text: "Cancel", onPress: () => navigation.push('ReservationDetails',{id: id }) },
-        { text: "OK", onPress:  async () => action}
+        { text: "Cancel", onPress: () => navigation.navigate('ReservationDetails',{id: route.params.id }) },
+        { text: "OK", onPress: () => action(route.params.id, navigation)}
     ]
     );
 

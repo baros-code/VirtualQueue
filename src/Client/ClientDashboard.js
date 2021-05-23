@@ -7,9 +7,6 @@ import { AuthContext } from '../Authentication/AuthContext';
 import { differenceBetweenTimes, findCurrentReservation, getCurrentTime, startRemainingTime} from "../ExternalComponents/DateOperations"
 
 
-
-
-
 const ClientDashboard = ( {navigation} ) => {
 
   const { userToken } = useContext(AuthContext);
@@ -33,65 +30,6 @@ const ClientDashboard = ( {navigation} ) => {
 
   }
 
-  const isTimeBigger = (date1,date2) => {
-      let dateList1=date1.split(":")
-      let dateList2=date2.split(":")
-      let d1=new Date()
-      let d2=new Date()
-      d1.setHours(dateList1[0],dateList1[1])
-      d2.setHours(dateList2[0],dateList2[1])
-      return (d1.getTime() > d2.getTime())
-  }
-
-
-
-const findKey=async (time,date,queueId) => {
-  const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
-  let currentKey=0;
-  let timeKey=0;
-  await dateRef.get().then((data) => {
-    data.forEach((timeData) => {
-      let currentTime=timeData.val()
-      //console.log(currentTime)
-      if (isTimeBigger(currentTime,time)) {
-          timeKey=currentKey
-      } else {
-        currentKey += 1
-      }
-    })
-  })
-  return timeKey
-   
-}
-
-const addTimeToTheQueue = async (id) => {
-  const reservation=await firebase.database().ref("reservations/" + id)
-  await reservation.get().then((data) => {
-      let reservationData=data.val()
-      let date=reservationData.date.split("/").join("-")
-      let time=reservationData.time
-      let queueId=reservationData.queueId
-      findKey(time,date,queueId).then((key) => {
-        //console.log(key)
-        let updates={}
-        updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
-        firebase.database().ref().update(updates);
-      })
-      
-     
-  })
-
-}
-
-  const deleteReservation = async (id) => {
-    await addTimeToTheQueue(id)
-    const ref = firebase.database().ref("reservations");   
-    ref.child(id).remove();         //if not found exception eklenmeli.
-  
-    //setState(state.filter(reservation => {return reservation.id !== id} ) );
-    navigation.pop();
-  }
-    
   useEffect(()  => {
     const fetchReservations = async  () => {
           const ref = await firebase.database().ref("reservations");
@@ -137,20 +75,65 @@ const addTimeToTheQueue = async (id) => {
 
 };
 
-/*Whenever React renders ClientDashboard, react-navigation automatically
-calls the navigationOptions function.
- */
 
-ClientDashboard.navigationOptions = ( {navigation} ) => {
-  return {
-    headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate('Services', {clientId: navigation.getParam("uid")} )}>
-        <Feather  name="plus" color="#0e66d4" size={30} />
-      </TouchableOpacity>
-    ),
-    title: "Hello, " + navigation.getParam("fullName"),
-  };
-};
+export const deleteReservation = async (id, navigation) => {
+  await addTimeToTheQueue(id).then(() => {
+    const ref = firebase.database().ref("reservations");   
+    ref.child(id).remove();         //if not found exception eklenmeli.
+  
+    //setState(state.filter(reservation => {return reservation.id !== id} ) );
+    navigation.pop();
+  });
+}
+
+
+const findKey=async (time,date,queueId) => {
+  const dateRef=await firebase.database().ref("queues/" + queueId + "/dates/" + date)
+  let currentKey=0;
+  let timeKey=0;
+  await dateRef.get().then((data) => {
+    data.forEach((timeData) => {
+      let currentTime=timeData.val()
+      //console.log(currentTime)
+      if (isTimeBigger(currentTime,time)) {
+          timeKey=currentKey
+      } else {
+        currentKey += 1
+      }
+    })
+  })
+  return timeKey
+   
+}
+
+const isTimeBigger = (date1,date2) => {
+  let dateList1=date1.split(":")
+  let dateList2=date2.split(":")
+  let d1=new Date()
+  let d2=new Date()
+  d1.setHours(dateList1[0],dateList1[1])
+  d2.setHours(dateList2[0],dateList2[1])
+  return (d1.getTime() > d2.getTime())
+}
+
+const addTimeToTheQueue = async (id) => {
+  const reservation=await firebase.database().ref("reservations/" + id)
+  await reservation.get().then((data) => {
+      let reservationData=data.val()
+      let date=reservationData.date.split("/").join("-")
+      let time=reservationData.time
+      let queueId=reservationData.queueId
+      findKey(time,date,queueId).then((key) => {
+        //console.log(key)
+        let updates={}
+        updates["queues/" + queueId + "/dates/" + date + "/" + key] = time;
+        firebase.database().ref().update(updates);
+      })
+      
+     
+  })
+
+}
 
 const styles = StyleSheet.create({
   background: {
