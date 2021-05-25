@@ -5,6 +5,7 @@ import { AuthContext } from '../Authentication/AuthContext';
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
 import { addMinutes, isAllowedRemaining,lockTheRemaining, unLockTheRemaining, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist } from '../ExternalComponents/DateOperations';
+import { getTimeFromPrevious } from '../ExternalComponents/Precondition';
 
 
 const CreateReservation = ({ navigation, route}) => {
@@ -117,8 +118,9 @@ const CreateReservation = ({ navigation, route}) => {
                     let currentDay=dateSnapShot.val()
                     currentDay.value=dateSnapShot.key
                     currentDay.label=currentDay.transactionType
+                    currentStatus=currentDay.status
                     let currentOrganizationId=currentDay.organizationId
-                    if (currentOrganizationId === organizationId) {
+                    if (currentOrganizationId === organizationId && currentStatus === 1) {
                       queues.push(currentDay)                 
                     }
                 });
@@ -169,7 +171,6 @@ const CreateReservation = ({ navigation, route}) => {
         let allowed=await isAllowedRemaining(0,queueId)
         if (!allowed) {return false};
         await lockTheRemaining(0,queueId);
-        await removeTimeFromQueue() 
         let resId=await isExist(queueId,time)
         let ref;
         if (resId !== -1) {
@@ -178,8 +179,12 @@ const CreateReservation = ({ navigation, route}) => {
                 status:0,
                 clientId:USER_ID,               
             })
-            navigation.navigate('Home', {screen: 'Dashboard'})
+            await unLockTheRemaining(0,queueId);
             return true
+        }
+        let estimated=await getTimeFromPrevious(queueId)
+        if (estimated === -1) {
+            estimated=getCurrentTime()
         }
         let type=getTransactionType()
         ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
@@ -194,12 +199,13 @@ const CreateReservation = ({ navigation, route}) => {
             queueId: queueId,
             status: 0,
             transactionType : type,
-            estimatedTime:time,
+            estimatedTime:estimated,
             startTime: "",
             finishTime:"",
-            expectedFinishTime:addMinutes(interval,time),
+            expectedFinishTime:addMinutes(interval,estimated),
             latencyTime:""
             })
+            await removeTimeFromQueue() 
             await unLockTheRemaining(0,queueId);
             return true          
         

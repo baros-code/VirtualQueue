@@ -50,10 +50,10 @@ const AdminDashboard = ( {navigation} ) => {
         return (
         <TouchableOpacity onPress={() => navigation.push("ListClients", {queueId: item.id})}>
           <View style={styles.row}>     
-            <Text style={styles.title}>{item.transactionType} - {item.employeeName}</Text>
+            <Text style={styles.title}>{item.transactionType} - {item.employeeName} - {item.status ? "Active" : "Inactive"}</Text>
             <View style={{paddingRight: 25}}>
               <TouchableOpacity onPress={() => navigation.push("QueueForm", {queueId: item.id}) }>
-                <Feather name="settings" size={32} color="black" />
+                <Feather name="settings" size={32} color="#0e66d4" />
               </TouchableOpacity>
             </View>
           </View>
@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    color:"#0e66d4"
+    color:"#0e66d4",
+    fontWeight:"bold"
   },
   link: {
     color:"red",

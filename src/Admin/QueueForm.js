@@ -3,6 +3,7 @@ import { View, Text,TextInput, StyleSheet, Button,ScrollView} from 'react-native
 import {firebase} from "../firebase/config"
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { AuthContext } from '../Authentication/AuthContext';
+import { getStatusInterval } from '../ExternalComponents/Precondition';
 
 const QueueForm = ( { navigation, route} ) => {
 
@@ -12,6 +13,7 @@ const QueueForm = ( { navigation, route} ) => {
     const [interval, setInterval] = useState("Slot Interval Option");
     const [startTime, setstartTime] = useState("Start Time Option");
     const [finishTime, setFinishTime] = useState("Finish Time Option");
+    const [status, setStatus] = useState("Status Option");
 
 
     const editPage= route.params.editPage;
@@ -104,7 +106,8 @@ const QueueForm = ( { navigation, route} ) => {
         await employeeRef.get().then((data) => {
             employeeName=data.val().fullName
         })
-        await queueRef.set({    
+        await queueRef.set({ 
+        status:status,   
         dates:dates,
         adminId: USER_ID,
         organizationId: organizationId,
@@ -156,6 +159,7 @@ const QueueForm = ( { navigation, route} ) => {
             setstartTime(queueData.startTime)
             setFinishTime(queueData.finishTime)
             setLatency(queueData.latency)
+            setStatus(queueData.status)
        })
         
       }
@@ -170,8 +174,10 @@ const QueueForm = ( { navigation, route} ) => {
         <ScrollView>
         <Text style={styles.label}>{editPage ? "Queue Type" : "Enter Queue Type" }</Text>
         <TextInput style={getStyle(!editPage)} editable={!editPage} value={transactionType} onChangeText={(text) => setTransactionType(text)} />
-        <Text style={styles.label}>{editPage ? "Set employee" : "Select the employee"}</Text>
+        <Text style={styles.label}>{editPage ? "Set Employee" : "Select the employee"}</Text>
         <ScrollPickerComponent style={getStyle(true)}  data={employees} editable={true} selectedValue={employeeId} callback={(value) => setEmployeeId(value)} />
+        <Text style={styles.label}>{editPage ? "Set Status" : "Select the Status"}</Text>
+        <ScrollPickerComponent style={getStyle(true)}  data={getStatusInterval()} editable={true} selectedValue={status} callback={(value) => setStatus(value)} />
         <Text style={styles.label}>{editPage ? "Slot Interval" : "Select the Slot Interval"}</Text>
         <ScrollPickerComponent style={getStyle(!editPage)}  data={getIntervals(5,5," minutes",50)} editable={!editPage} selectedValue={interval} callback={(value) => setInterval(value)} />
         <Text style={styles.label}>{editPage ? "Set Latency" : "Select the latency"}</Text>

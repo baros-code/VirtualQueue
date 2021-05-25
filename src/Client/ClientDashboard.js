@@ -67,7 +67,7 @@ const ClientDashboard = ( {navigation} ) => {
             return (
             <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
               <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) ({item.estimatedTime})</Text>  
+                <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) {item.status !== 1 && item.estimatedTime}</Text>  
               </View>
             </TouchableOpacity>
             ); 
