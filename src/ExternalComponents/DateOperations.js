@@ -51,7 +51,7 @@ export const getQueueId = async (resId) => {
 
 
 export const startRemainingTime = async (reservation) => {
-    console.log("it is locked")
+    //console.log("it is locked")
     let resId=reservation.id
     //,//console.log("race condition code")
     //console.log("current res" + reservation.id)
@@ -204,7 +204,7 @@ function sleep(milliseconds) {
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     //console.log("reservations : " + reservations)
     reservations.forEach(reservation => {
-       // sleep(10)
+        sleep(10)
         let id=reservation.id
         remainingExecution(id)
                        
@@ -263,7 +263,6 @@ export const remainingExecution = async (resId) => {
     }
     await lockTheRemaining(resId,"");
     let queueId=await getQueueId(resId)
-    
     ////console.log("queue Id" + queueId)
     let reservations=await findReservations(queueId)
     let res=findCurrent(reservations)
@@ -297,15 +296,19 @@ export const lateOperation= async (reservation) => {
     if (nextResId === -1) {
         nextResId=await findNextReservation(reservation,0)    
         if (nextResId === -1) {
-            //let diff=1
-            //await otherReservationsOperation(reservation.queueId,reservation.date,diff,1)
+            let todayTime=getCurrentTime()
+            let resTime=await getEstimatedTime(reservation.id)
+            let diff=differenceBetweenTimes(todayTime,resTime)
+            if (diff >= 1) {
+                await otherReservationsOperation(reservation.queueId,reservation.date,diff,1) //increment by 1 minute
+            } 
             return
         }
     }
     ////console.log("next res Id :" + nextResId)
     const nextRef=await firebase.database().ref("reservations/" + nextResId);
     const currentRef=await firebase.database().ref("reservations/" + reservation.id);
-    let estimatedTime=await getEstimatedTime(reservation.id)
+    //let estimatedTime=await getEstimatedTime(reservation.id)
     ////console.log("estimated time :" + estimatedTime)
     let interval=await findSlotInterval(reservation.queueId)
     ////console.log("slot Interval :" + interval)
@@ -346,10 +349,11 @@ export const findNextReservation = async (currentReservation,findingFlag) => {
             ////console.log("date : " + date)
             let qId=reservation.val().queueId
             let time=reservation.val().time
+            let status=reservation.val().status
             ////console.log("time : " + time)
             let isToday=(compareTwoDate(date,currentDate,"/") === 0) // whether reservation belongs to today
             ////console.log("isToday : " + isToday)
-            if (isToday && time === reservationTime && qId === queueId) {
+            if (isToday && time === reservationTime && qId === queueId && status !== 3) {
                 resId=reservation.key 
             }
         })
