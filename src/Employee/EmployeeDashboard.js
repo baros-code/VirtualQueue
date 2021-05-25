@@ -111,14 +111,14 @@ const EmployeeDashboard = ( {navigation} ) => {
             <View style={styles.row}>     
               <View style={styles.content}>
                   <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date } - {currentReservation.time} </Text> 
-                  <View style={styles.buttons}>
+                 {/**  <View style={styles.buttons}>
                       <TouchableOpacity  onPress={ async ()  => {await startSession(currentReservation.id)}}>
                           <AntDesign size={10} color= "red" style={styles.icon}name="closecircleo" />
                       </TouchableOpacity>
                       <TouchableOpacity style={{paddingLeft: 20}} onPress={ async () => {await endSession(currentReservation.id,USER_ID)}}>
                           <Feather size={5} color= "green" style={styles.icon} name="check-circle" />
                       </TouchableOpacity>
-                  </View>
+    </View> */}
 
               </View>
             </View>
