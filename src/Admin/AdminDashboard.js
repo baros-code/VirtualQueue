@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext'; 
+import queueLogo from "../../assets/images/queue-512.webp"
 
 const AdminDashboard = ( {navigation} ) => {
 
@@ -49,9 +50,21 @@ const AdminDashboard = ( {navigation} ) => {
       renderItem={({item}) => {
         return (
         <TouchableOpacity onPress={() => navigation.push("ListClients", {queueId: item.id})}>
-          <View style={styles.row}>     
-            <Text style={styles.title}>{item.transactionType} - {item.employeeName} - {item.status ? "Active" : "Inactive"}</Text>
-            <View style={{paddingRight: 25}}>
+          <View style={styles.row}> 
+          <View><Image source={queueLogo} style={{
+            resizeMode: "center",
+            height: 100,
+            width:150,
+            borderRadius:10,
+            borderColor:"#0e66d4",
+            marginLeft:-10,
+          }} /></View>
+          <View style={{flexDirection:"column", marginRight:20}}>
+            <Text style={styles.title}>{item.transactionType}</Text>
+            <Text style={styles.title}>{item.employeeName}  </Text>
+            <Text style={styles.title}>{item.status ? "Active" : <Text style={{color:"red"}}>Inactive</Text>}</Text>
+          </View>
+            <View style={{paddingRight: 25,flexDirection:"column",justifyContent:"center"}}>
               <TouchableOpacity onPress={() => navigation.push("QueueForm", {queueId: item.id}) }>
                 <Feather name="settings" size={32} color="#0e66d4" />
               </TouchableOpacity>
@@ -88,7 +101,9 @@ const styles = StyleSheet.create({
     color:"white"
   },
   title: {
-    fontSize: 18,
+    padding:3,
+    textTransform:"uppercase",
+    fontSize: 20,
     color:"#0e66d4",
     fontWeight:"bold"
   },
