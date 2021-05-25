@@ -42,9 +42,9 @@ const ReservationDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Reservation Time: {state.time}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
-                <View style={styles.button}>
+            {state.status === 0 && <View style={styles.button}>
                     <Button  color='red' title="Cancel" onPress={() => createTwoButtonAlert(deleteReservation, navigation, route) }/>
-                </View>
+                </View> }   
             </View>
             );
     }
