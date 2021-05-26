@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button } from 'react-native';
-import { Feather } from '@expo/vector-icons'; 
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Button ,Image} from 'react-native';
+import { Feather,MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
 import { isAllowedRemaining, findCurrentReservation, lockTheRemaining, startRemainingTime, unLockTheRemaining} from "../ExternalComponents/DateOperations"
-
-
+import {images} from "../images"
 const ClientDashboard = ( {navigation} ) => {
 
   const { userToken } = useContext(AuthContext);
@@ -59,15 +58,37 @@ const ClientDashboard = ( {navigation} ) => {
 
  
     return (
-      <View style={styles.background}>
+      <View>
         {state.length !== 0 ? <FlatList
           data={state}
           keyExtractor={(reservation) => reservation.id}
           renderItem={({item}) => {
             return (
             <TouchableOpacity onPress={() => navigation.push("ReservationDetails", {id: item.id})}>
-              <View style={styles.row}>     
-                <Text style={styles.organizationStyle}>{item.organizationName} {item.date} {item.time} ({getStatus(item.status)}) {item.status !== 1 && item.estimatedTime}</Text>  
+              <View style={styles.row}> 
+                <View style={{flexDirection:"column",alignItems:"center",paddingLeft:20}}> 
+                  <Text style={styles.title2}>{item.organizationName}</Text>
+                  <Image  style={styles.image} source={images.find(image => image.name === item.organizationName).image} />
+                </View>
+                <View style={{flexDirection:"column",alignItems:"center",paddingRight:20}}>
+                  <View style={styles.mainInformation}>
+                   <Feather name="calendar" size={28} color="#0e66d4" />
+                    <Text style={styles.title1}> {item.date}</Text>
+                  </View>
+                  <View style={styles.mainInformation}>
+                    <Feather name="activity" size={28} color="#0e66d4" />
+                    <Text style={styles.title1}> {getStatus(item.status)}</Text>
+                  </View>
+                   <View style={styles.mainInformation}>
+                    <Feather name="clock" size={28} color="#0e66d4" />
+                  <Text style={styles.title1}> {item.time}</Text>
+                  </View>
+                  {item.status !== 1 && 
+                  <View style={styles.mainInformation}>
+                  <MaterialCommunityIcons name="timer-sand" size={28} color="#0e66d4" />
+                  <Text style={styles.title1}>  {item.estimatedTime}</Text>
+                  </View>}
+                </View>
               </View>
             </TouchableOpacity>
             ); 
@@ -142,20 +163,34 @@ export const deleteReservation = async (id) => {
 
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: '#0e66d4'
-  },
   row: {
+    flex:1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
-    borderColor: 'gray'
+    justifyContent:"space-between",
+    padding:5,
+    backgroundColor:"white",
+    marginTop:30,
+    borderRadius:25,
+    borderColor: 'gray',
   },
-  organizationStyle: {
-    fontSize: 16,
-    color: 'white'
+   mainInformation: {
+     padding:10,
+    flexDirection:"row",
+    justifyContent:"center",
+    marginBottom:5
+  },
+    title1: {
+    textTransform:"uppercase",
+    fontSize: 18,
+    color:"#0e66d4",
+    fontWeight:"bold"
+  },
+  title2: {
+    padding:5,
+    textTransform:"uppercase",
+    fontSize: 23,
+    color:"#0e66d4",
+    fontWeight:"bold"
   },
   icon: {
     fontSize: 24
@@ -165,7 +200,16 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
+    color:"#0e66d4"
+  },
+  image: {
+    width: 150,
+    height: 150,
+    borderWidth:2,
+    borderRadius:10,
+    borderColor:"#0e66d4",
   }
+
 });
 
 
