@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
 //import { Context as ImageContext } .....
-import { Feather, AntDesign } from '@expo/vector-icons'; 
+import { FontAwesome, AntDesign } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext'; 
 
@@ -70,8 +70,9 @@ const ListClients = ( {navigation, route} ) => {
           renderItem={({item}) => {
             return (
             <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: item})}>
-              <View style={styles.row}>     
-                <Text style={styles.title}>{item.client.fullName} - {item.id}</Text>
+              <View style={styles.row}>
+                <FontAwesome style={styles.icon} name="user-circle-o" size={52} color="#0e66d4" />     
+                <Text style={styles.title}>{item.client.fullName}</Text>
               </View>
             </TouchableOpacity>
             );
@@ -92,27 +93,27 @@ const ListClients = ( {navigation, route} ) => {
 
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: '#047DB9',
-    color:"white"
-  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
+    justifyContent:"center",
+    padding:5,
+    backgroundColor:"white",
+    marginTop:30,
+    borderRadius:15,
     borderColor: 'gray',
-    color:"white"
   },
   title: {
-    fontSize: 18,
-    color:"white"
+    paddingVertical:10,
+    paddingHorizontal:20,
+    marginLeft:5,
+    textTransform:"uppercase",
+    fontSize: 26,
+    color:"#0e66d4",
+    fontWeight:"bold"
   },
   icon: {
-    fontSize: 24,
-    color:"white",
-    margin: 10
+    paddingVertical:10,
+    paddingHorizontal:20
   },
   link: {
     color:"red",

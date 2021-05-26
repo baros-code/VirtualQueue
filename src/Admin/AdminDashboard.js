@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
     marginRight:15
   },
   title2: {
+    marginLeft:10,
     textTransform:"uppercase",
     fontSize: 20,
     color:"#0e66d4",
@@ -130,6 +131,7 @@ const styles = StyleSheet.create({
     borderRadius:5
   },
   title3: {
+    marginLeft:10,
     textTransform:"uppercase",
     fontSize: 20,
     color:"#0e66d4",

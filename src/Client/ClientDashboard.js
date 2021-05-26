@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
-    color:"#0e66d4"
+    color:"white"
   },
   image: {
     width: 150,

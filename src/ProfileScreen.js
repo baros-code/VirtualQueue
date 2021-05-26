@@ -142,11 +142,13 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 18,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#0e66d4',
+        borderRadius:5,
         marginBottom: 15,
         padding: 5,
         margin: 5,
-        color: 'white'
+        color: '#0e66d4',
+        backgroundColor:"white"
     },
     button: {
         flexDirection: 'row',

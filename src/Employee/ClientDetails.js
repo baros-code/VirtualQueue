@@ -20,6 +20,7 @@ const ClientDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Reservation Number: {reservation.id}</Text>
                 <Text style={styles.label}>Transaction Type: {reservation.transactionType}</Text>
                 <Text style={styles.label}>Reservation Date: {reservation.date}</Text>
+                <Text style={styles.label}>Reservation Time: {reservation.time}</Text>
                 {userToken.role === 1 ? <View style={styles.button}>
                     <View style={styles.button2}>
                     <Button  color='red' title="Finish" disabled={reservation.status !== 1} onPress={() => endAlert(endSession, navigation, route) }/>
@@ -145,11 +146,13 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 18,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#0e66d4',
+        backgroundColor:"white",
+        borderRadius:5,
         marginBottom: 15,
         padding: 5,
         margin: 5,
-        color: 'white'
+        color: '#0e66d4'
     },
     button: {
         flexDirection: 'row',

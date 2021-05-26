@@ -40,6 +40,7 @@ const ReservationDetails = ({ navigation, route }) => {
                 <Text style={styles.label}>Organization: {state.organizationName}</Text>
                 <Text style={styles.label}>Reservation Date: {state.date}</Text>
                 <Text style={styles.label}>Reservation Time: {state.time}</Text>
+                <Text style={styles.label}>Estimated Time: {state.estimatedTime}</Text>
                 <Text style={styles.label}>Reservation Number: {id}</Text>
                 <Text style={styles.label}>Transaction Type: {state.transactionType}</Text>
             {state.status === 0 && <View style={styles.button}>
@@ -84,11 +85,13 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 18,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#0e66d4',
+        backgroundColor:"white",
+        borderRadius:5,
         marginBottom: 15,
         padding: 5,
         margin: 5,
-        color: 'white'
+        color: '#0e66d4'
     },
     button: {
         alignSelf: 'flex-end',

@@ -1,6 +1,6 @@
 import React, { useState,useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Feather,AntDesign } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext'; 
 
@@ -42,8 +42,9 @@ const MyQueues = ( {navigation} ) => {
             renderItem={({item}) => {
                 return (
                 <TouchableOpacity onPress={() => navigation.push("ListClients", {queueId: item.id})}>
-                <View style={styles.row}>     
-                    <Text style={styles.title}>{item.transactionType} - {item.employeeId}</Text>
+                <View style={styles.row}> 
+                    <FontAwesome style={styles.icon} name="users" size={50} color="#0e66d4" />
+                    <Text style={styles.title}>{item.transactionType}</Text>
                 </View>
                 </TouchableOpacity>
                 );
@@ -66,28 +67,28 @@ const MyQueues = ( {navigation} ) => {
 
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: 'white',
-    color:"white"
-  },
   row: {
+    flex:1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 35,
-    paddingHorizontal: 10,
+    justifyContent:"center",
+    padding:5,
     backgroundColor:"white",
     marginTop:30,
     borderRadius:25,
-    borderTopWidth: 1,
     borderColor: 'gray',
-    color:"white"
   },
   title: {
-    fontSize: 18,
-    color:"#0e66d4"
+    paddingVertical:10,
+    paddingHorizontal:20,
+    marginLeft:5,
+    textTransform:"uppercase",
+    fontSize: 26,
+    color:"#0e66d4",
+    fontWeight:"bold"
   },
   icon: {
-    fontSize: 24
+    paddingVertical:10,
+    paddingHorizontal:20
   },
   link: {
     color:"red",

@@ -258,21 +258,25 @@ const styles = StyleSheet.create({
     input: {    
         fontSize: 18,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#0e66d4',
+        borderRadius:5,
         marginBottom: 15,
+        backgroundColor:"white",
         padding: 5,
         margin: 5,
-        color: 'white'
+        color: '#0e66d4'
     },
     input2: {    
+        backgroundColor:"white",
+        borderRadius:5,
         fontSize: 20,
         borderWidth: 1,
-        borderColor: 'black',
+        borderColor: '#0e66d4',
         borderRadius:10,
         marginBottom: 15,
         padding: 5,
         margin: 5,
-        color: 'white'
+        color: '#0e66d4'
     },
     iconStyle: {
         fontSize: 40,
