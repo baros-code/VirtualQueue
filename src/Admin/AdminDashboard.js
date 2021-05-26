@@ -51,25 +51,29 @@ const AdminDashboard = ( {navigation} ) => {
         return (
         <TouchableOpacity onPress={() => navigation.push("ListClients", {queueId: item.id})}>
           <View style={styles.row}> 
-          <View><Image source={queueLogo} style={{
-            resizeMode: "center",
-            height: 100,
-            width:150,
-            borderRadius:10,
-            borderColor:"#0e66d4",
-            marginLeft:-10,
-          }} /></View>
-          <View style={{flexDirection:"column", marginRight:20}}>
-            <Text style={styles.title}>{item.transactionType}</Text>
-            <Text style={styles.title}>{item.employeeName}  </Text>
-            <Text style={styles.title}>{item.status ? "Active" : <Text style={{color:"red"}}>Inactive</Text>}</Text>
-          </View>
-            <View style={{paddingRight: 25,flexDirection:"column",justifyContent:"center"}}>
+            <Image source={queueLogo} style={styles.image} />
+            <View style={{flexDirection:"column",alignItems:"center"}}>
+              <View style={styles.mainInformatin}>
+                  <Text style={styles.title1}>{item.transactionType}</Text>                       
+              </View>
+              <View style={styles.mainInformatin}>
+                <View><Feather name="user" size={28} color="#0e66d4" /></View>
+                <View><Text style={styles.title2}>{item.employeeName}</Text></View>
+              </View>
+              <View style={styles.mainInformatin}>
+                <Feather name="activity" size={28} color="#0e66d4" />
+                <Text style={styles.title3}>{item.status ? <Text style={{color:"green"}}>Active</Text> : <Text style={{color:"red"}}>Inactive</Text>} </Text> 
+                
+              </View>
+            </View>
+            <View style={styles.settings}>
               <TouchableOpacity onPress={() => navigation.push("QueueForm", {queueId: item.id}) }>
-                <Feather name="settings" size={32} color="#0e66d4" />
+                          <Feather name="settings" size={32} color="#0e66d4" />
               </TouchableOpacity>
             </View>
           </View>
+                  
+            
         </TouchableOpacity>
         );
       }}
@@ -80,37 +84,64 @@ const AdminDashboard = ( {navigation} ) => {
 
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: 'white',
-    color:"white"
-  },
   text: {
     color:"white",
     fontSize:25
   },
   row: {
+    flex:1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 35,
-    paddingHorizontal: 10,
+    paddingVertical: 25,
     backgroundColor:"white",
     marginTop:30,
     borderRadius:25,
-    borderTopWidth: 1,
     borderColor: 'gray',
-    color:"white"
   },
-  title: {
-    padding:3,
+  mainInformatin: {
+    flexDirection:"row",
+    justifyContent:"flex-start",
+    marginBottom:15
+  },
+  title1: {
+    justifyContent:"center",
+    marginBottom:15,
+    marginRight:25,
     textTransform:"uppercase",
-    fontSize: 20,
+    fontSize: 23,
     color:"#0e66d4",
     fontWeight:"bold"
   },
-  link: {
-    color:"red",
-    fontSize:20,
-    margin:10,
+  settings: {
+    flex:1,
+    flexDirection:"row",
+    justifyContent:"flex-end",
+    marginRight:20
+
+  },
+  queueDetails: {
+    flexDirection:"column",
+    marginRight:15
+  },
+  title2: {
+    textTransform:"uppercase",
+    fontSize: 20,
+    color:"#0e66d4",
+    fontWeight:"bold",
+    borderRadius:5
+  },
+  title3: {
+    textTransform:"uppercase",
+    fontSize: 20,
+    color:"#0e66d4",
+    fontWeight:"bold",
+    borderRadius:5
+  },
+  image: {
+    resizeMode: "center",
+    height: 100,
+    width:150,
+    borderRadius:10,
+    borderColor:"#0e66d4",
   }
 });
 
