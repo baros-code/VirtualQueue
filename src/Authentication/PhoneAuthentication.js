@@ -9,18 +9,21 @@ import {
   TextInput
 } from 'react-native'
 import {firebase} from '../firebase/config'
-import {useState} from "react"
+import {useState, useContext} from "react"
 import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {useRef} from 'react';
+import { AuthContext } from './AuthContext';
 
-export default function phoneAuthentication ({navigation}) {
+export default function phoneAuthentication ({navigation, route}) {
 
     const [phone, setPhone] = useState('');
     const [confirmResult, setResult] = useState(null);
     const [verificationCode, setVerification] = useState("");
     const [userId,setUserId]=useState("");
     const recaptchaVerifier = useRef(null);
+
+    const { signUp } = useContext(AuthContext);
 
   const validatePhoneNumber = () => {
     let regexp = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/
@@ -77,9 +80,9 @@ export default function phoneAuthentication ({navigation}) {
   const handleVerifyCode = () => {
     // Request for OTP verification
     if (verificationCode.length == 6) {
-        const email=navigation.getParam("email");
-        const password=navigation.getParam("password");
-        const fullName=navigation.getParam("fullName");
+        const email= route.params.email;
+        const password= route.params.password;
+        const fullName= route.params.fullName;
         console.log(email,password,fullName)
       confirmResult
         .confirm(verificationCode)
@@ -101,7 +104,7 @@ export default function phoneAuthentication ({navigation}) {
                   .set(data)
                   .then(() => {
                      const userData = {...data, uid: uid};
-                      navigation.navigate('ClientDashboard', userData)
+                      signUp(userData);
                   })
                   .catch((error) => {
                       alert(error)

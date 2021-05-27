@@ -279,9 +279,9 @@ export default () => {
                 alert(error);
             })
       },
-      signUp: () => {
+      signUp: (data) => {
         setIsLoading(false);
-        setUserToken("asdf");
+        setUserToken(data);
       },
       signOut: () => {
         setIsLoading(false);
