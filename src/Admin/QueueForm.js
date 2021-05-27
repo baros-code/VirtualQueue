@@ -199,6 +199,7 @@ const QueueForm = ( { navigation, route} ) => {
 
 const styles = StyleSheet.create({
     input: {
+        borderRadius:5,
         fontSize: 18,
         borderWidth: 1,
         borderColor: 'white',
@@ -210,6 +211,7 @@ const styles = StyleSheet.create({
         opacity:1
     },
     noInput: {
+        borderRadius:5,
         fontSize: 18,
         borderWidth: 1,
         borderColor: 'white',

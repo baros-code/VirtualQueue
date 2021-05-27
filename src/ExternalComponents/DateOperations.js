@@ -101,12 +101,12 @@ export const startRemainingTime = async (reservation) => {
 
 export const latencyChecker = async (reservation) => {
     const ref=await firebase.database().ref("reservations/" + reservation.id)
-    console.log("ref" + ref)
+    //console.log("ref" + ref)
     await ref.once("value", reservationSnap => {
         let data=reservationSnap.val()
-       console.log("data " + data)
+       //console.log("data " + data)
         let latency=data.latencyTime
-        console.log("LATENCY-CHECKER SONRASI.");
+        //console.log("LATENCY-CHECKER SONRASI.");
         ////console.log("old latency" + latency);
         if (latency === "") {
             ////console.log("buraya girmeli")
@@ -451,7 +451,7 @@ export const isLate= async (resId) => {
     await ref.once("value", (reservation) => {
         let data=reservation.val()
         let latencyTime=data.latencyTime
-        console.log("ISLATE SONRASI.");
+        //console.log("ISLATE SONRASI.");
         let today=getCurrentTime()
         let compareFlag=compareTwoTime(today,latencyTime)
         if (compareFlag === 1) { // if current time is bigger than latency time

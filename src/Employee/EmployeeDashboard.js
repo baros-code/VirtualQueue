@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
-import { Feather, AntDesign } from '@expo/vector-icons'; 
+import { Feather, AntDesign,FontAwesome5 } from '@expo/vector-icons'; 
 import { startSession, endSession, startAlert, endAlert } from './ClientDetails'
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
@@ -106,30 +106,32 @@ const EmployeeDashboard = ( {navigation} ) => {
 
   if(currentReservation) {
     return (
-      <View style={styles.background}>
-          <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: currentReservation})}>
-            <View style={styles.row}>     
+       
+          
+        <TouchableOpacity onPress={() => navigation.push("ClientDetails", {reservation: currentReservation})}>
+          <View style={styles.row}>   
+             <FontAwesome5 style={styles.userIcon} name="user-clock" size={75} color="#0e66d4" />
               <View style={styles.content}>
-                  <Text style={styles.title}>{currentReservation.transactionType} -  {currentReservation.date } - {currentReservation.time} </Text> 
-                 {/**  <View style={styles.buttons}>
-                      <TouchableOpacity  onPress={ async ()  => {await startSession(currentReservation.id)}}>
-                          <AntDesign size={10} color= "red" style={styles.icon}name="closecircleo" />
-                      </TouchableOpacity>
-                      <TouchableOpacity style={{paddingLeft: 20}} onPress={ async () => {await endSession(currentReservation.id,USER_ID)}}>
-                          <Feather size={5} color= "green" style={styles.icon} name="check-circle" />
-                      </TouchableOpacity>
-    </View> */}
-
+                <View style={styles.mainInformation}>
+                  <Text style={styles.title}>{currentReservation.transactionType}</Text>
+                </View>
+                <View style={styles.mainInformation}>
+                  <Feather name="calendar" size={28} color="#0e66d4" />
+                  <Text style={styles.title}>{currentReservation.date } </Text>
+                </View>
+                <View style={styles.mainInformation}>
+                  <Feather name="clock" size={28} color="#0e66d4" />
+                  <Text style={styles.title}>{currentReservation.time}</Text>
+                </View>  
               </View>
-            </View>
-          </TouchableOpacity>
-      </View>
+          </View>
+        </TouchableOpacity>
       );
   }
   else {
     return (
       <View style={styles.background}>
-        <Text style={styles.title}>NO QUEUE FOUND!</Text>
+        <Text style={styles.title}>NO RESERVATION FOUND!</Text>
       </View>
     );
   };
@@ -149,21 +151,20 @@ EmployeeDashboard.navigationOptions = ( {navigation} ) => {
 
 
 const styles = StyleSheet.create({
-  background: {
-    backgroundColor: '#047DB9',
-    color:"white"
-  },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    borderTopWidth: 1,
+    justifyContent:"center",
+    padding:5,
+    backgroundColor:"white",
+    marginTop:30,
+    borderRadius:15,
     borderColor: 'gray',
-    color:"white"
   },
   content: {
-      flexDirection: 'row',
+    padding:10,
+    flexDirection:"column",
+    alignItems:"center",
+    marginBottom:5
   },
   buttons: {
     flexDirection: 'row',
@@ -171,9 +172,21 @@ const styles = StyleSheet.create({
 
   },
   title: {
-    fontSize: 18,
-    color:"white"
+    marginLeft:5,
+    textTransform:"uppercase",
+    fontSize: 23,
+    color:"#0e66d4",
+    fontWeight:"bold"
   },
+  userIcon: {
+    padding:25
+  },
+  mainInformation: {
+    padding:5,
+   flexDirection:"row",
+   justifyContent:"center",
+   marginBottom:5
+ },
   icon: {
     fontSize: 24,
     color:"white"
