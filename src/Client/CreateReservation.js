@@ -4,7 +4,7 @@ import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext';
 import ScrollPickerComponent from "../ExternalComponents/ScrollPickerComponent"
 import { Feather } from '@expo/vector-icons'; 
-import { addMinutes, isAllowedRemaining,lockTheRemaining, unLockTheRemaining, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist } from '../ExternalComponents/DateOperations';
+import { addMinutes, isAllowedRemaining,lockTheRemaining, unLockTheRemaining, findSlotInterval, getCurrentDate,compareTwoTime,compareTwoDate, getCurrentTime, isExist, findReservations } from '../ExternalComponents/DateOperations';
 import { getTimeFromPrevious } from '../ExternalComponents/Precondition';
 
 
@@ -118,7 +118,7 @@ const CreateReservation = ({ navigation, route}) => {
                     let currentDay=dateSnapShot.val()
                     currentDay.value=dateSnapShot.key
                     currentDay.label=currentDay.transactionType
-                    currentStatus=currentDay.status
+                    let currentStatus=currentDay.status
                     let currentOrganizationId=currentDay.organizationId
                     if (currentOrganizationId === organizationId && currentStatus === 1) {
                       queues.push(currentDay)                 
@@ -148,29 +148,29 @@ const CreateReservation = ({ navigation, route}) => {
       },([queueId,date]))
 
 
+      const isSameReservationExist = async () => {
+          let result=false
+        let reservations=await findReservations(queueId)
+        reservations.forEach((reservation) => {
+            if (clientId === reservation.clientId && !(reservation.status === 3 || reservation.status === 4)) {
+                result=true
+                alert("You can not create the reservation from the  same queue")
+            }
+        })
+        return result
+      }
 
-/** 
-    const findQueue = async (transactionType) => {
-        var ref = await firebase.database().ref("queues");   
-        var response;
-        await ref.once("value",function (queues) {
-          queues.forEach( queue => {
-              let currentDay = queue.val();
-              currentDay.id = queue.key;
-              if(currentDay.organizationId === organizationId && currentDay.transactionType === transactionType) {
-                  response = currentDay;
-                  return true;      //end forEach
-                  //takeValue(response);        herhangi bir methoda argüman olarak verirsek promise dönebiliyor, alternatif return şekli.
-              }
-          });
-      }); 
-      return response;
-    }
-*/
+
+
+
     const addReservation = async () => {
         let allowed=await isAllowedRemaining(0,queueId)
         if (!allowed) {return false};
         await lockTheRemaining(0,queueId);
+        if (await isSameReservationExist()) {
+            await unLockTheRemaining(0,queueId);
+            return true
+        }
         let resId=await isExist(queueId,time)
         let ref;
         if (resId !== -1) {
@@ -184,7 +184,7 @@ const CreateReservation = ({ navigation, route}) => {
         }
         let estimated=await getTimeFromPrevious(queueId)
         if (estimated === -1) {
-            estimated=getCurrentTime()
+            estimated=time
         }
         let type=getTransactionType()
         ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.

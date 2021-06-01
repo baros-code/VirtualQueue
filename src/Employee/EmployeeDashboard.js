@@ -131,7 +131,7 @@ const EmployeeDashboard = ( {navigation} ) => {
   else {
     return (
       <View style={styles.background}>
-        <Text style={styles.title}>NO RESERVATION FOUND!</Text>
+        <Text style={styles.title2}>NO RESERVATION FOUND!</Text>
       </View>
     );
   };
@@ -176,6 +176,13 @@ const styles = StyleSheet.create({
     textTransform:"uppercase",
     fontSize: 23,
     color:"#0e66d4",
+    fontWeight:"bold"
+  },
+  title2: {
+    marginLeft:5,
+    textTransform:"uppercase",
+    fontSize: 23,
+    color:"white",
     fontWeight:"bold"
   },
   userIcon: {
