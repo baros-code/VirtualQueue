@@ -4,7 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList, } from "@react-navigation/drawer";
 import { Ionicons } from '@expo/vector-icons'; 
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View, LogBox } from 'react-native';
 
 import { firebase } from './src/firebase/config'
 import  { AuthContext }  from "./src/Authentication/AuthContext";
@@ -314,6 +314,8 @@ export default () => {
       background: '#0e66d4'
     },
   };
+
+  LogBox.ignoreLogs(['update on an unmounted component']); 
 
   return (
     <AuthContext.Provider value={authContext}>

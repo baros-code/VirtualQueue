@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react'
-import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TextInput, TouchableOpacity, View, LogBox } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import styles from './styles';
 import { AuthContext } from './AuthContext';
 
-import { LogBox } from 'react-native';
+
 
 
 export default function LoginScreen({navigation}) {
