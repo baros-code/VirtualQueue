@@ -184,7 +184,7 @@ const CreateReservation = ({ navigation, route}) => {
         }
         let estimated=await getTimeFromPrevious(queueId)
         if (estimated === -1) {
-            estimated=time
+            estimated= getCurrentTime()
         }
         let type=getTransactionType()
         ref = await firebase.database().ref("reservations").push();      //push sayesinde unique key'li branch olarak ekliyor.
