@@ -24,6 +24,10 @@ export const images = [
         image: require('../assets/images/batigoz.jpg')
     },
     {
+        name: 'Ekol',
+        image: require('../assets/images/ekol.png')
+    },
+    {
         name: 'profilePhoto',
         image: require('../assets/images/profilePhoto.png')
     }

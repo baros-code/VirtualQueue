@@ -1,13 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 
-const ImageDetails = ({ imageSource,name, address, imageStyle }) => {
+const ImageDetails = ({ imageSource,name, address, branch, phone, imageStyle }) => {
 
   return (
     <View style={styles.container}>
       <Image style={imageStyle} source={imageSource} />
       {address !== undefined ? 
-      <Text style={{color:'white', alignSelf:'flex-start', margin: 10}}>ADDRESS:{'\n'} {address}</Text> : 
+      <View style={{flex:1}}> 
+        <Text style={{color:'white', alignSelf:'flex-start', marginLeft: 10, fontSize: 18}}>{branch}</Text>
+        <Text style={{color:'white', alignSelf:'flex-start', marginLeft: 10}}>{address}</Text>
+        <Text style={{color:'white', alignSelf:'flex-start', marginLeft: 10,marginTop: 5}}>{phone}</Text>
+      </View> : 
       <Text style={{textTransform: 'uppercase', margin:10, fontSize: 18, color:'white', paddingLeft:30}}>{name}</Text>}
     </View>
   );

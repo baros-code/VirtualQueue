@@ -50,6 +50,8 @@ const Organizations = ( {navigation, route} ) => {
                         imageSource={item.logo}
                         name={item.name}
                         address={item.address}
+                        branch={item.branch}
+                        phone={item.phoneNumber}
                         imageStyle={styles.logo}
                         />
                     </View>
