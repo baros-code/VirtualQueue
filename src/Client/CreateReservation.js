@@ -152,7 +152,7 @@ const CreateReservation = ({ navigation, route}) => {
           let result=false
         let reservations=await findReservations(queueId)
         reservations.forEach((reservation) => {
-            if (USER_ID === reservation.clientId && !(reservation.status === 3 || reservation.status === 4)) {
+            if (USER_ID === reservation.clientId && reservation.status !== 3 && reservation.status !== 4) {
                 result=true
                 alert("You can not get more than one reservation from the same queue")
             }
