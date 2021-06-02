@@ -73,6 +73,8 @@ const ListClients = ( {navigation, route} ) => {
               <View style={styles.row}>
                 <FontAwesome style={styles.icon} name="user-circle-o" size={52} color="#0e66d4" />     
                 <Text style={styles.title}>{item.client.fullName}</Text>
+                <Feather name="calendar" size={28} color="#0e66d4" />
+                <Text style={styles.title}>{item.client.estimatedTime}</Text>
               </View>
             </TouchableOpacity>
             );
