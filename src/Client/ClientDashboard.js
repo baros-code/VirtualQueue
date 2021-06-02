@@ -40,7 +40,7 @@ const ClientDashboard = ( {navigation} ) => {
                 let currentReservation = reservationSnapShot.val()
                 currentReservation.id = reservationSnapShot.key;
                 let clientId = currentReservation.clientId;
-                if (clientId === USER_ID && currentReservation.status !== 3) {
+                if (clientId === USER_ID && (currentReservation.status !== 3 && currentReservation.status !== 4) ) {
                   //console.log(USER_ID)
                   response.push(currentReservation)
                 }

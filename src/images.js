@@ -1,14 +1,14 @@
 export const images = [
     {
-        name: 'akbank',
+        name: 'Akbank',
         image: require('../assets/images/akbank.png')
     },
     {
-        name: 'ziraatbankasi',
+        name: 'Ziraatbankasi',
         image: require('../assets/images/ziraatbankasi.png')
     },
     {
-        name: 'halkbank',
+        name: 'Halkbank',
         image: require('../assets/images/halkbank.png')
     },
     {

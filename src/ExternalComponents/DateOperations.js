@@ -204,7 +204,7 @@ function sleep(milliseconds) {
 export const findCurrentReservation = async (reservations) => { // karşılaştırma expected(estimated) time ile yapılacak
     //console.log("reservations : " + reservations)
     reservations.forEach(reservation => {
-        sleep(20)
+        sleep(10)
         let id=reservation.id
         remainingExecution(id)
                        
