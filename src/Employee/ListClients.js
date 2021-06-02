@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, FlatList, Button, TouchableOpacity } from 'react-native';
 //import { Context as ImageContext } .....
-import { FontAwesome, AntDesign } from '@expo/vector-icons'; 
+import { FontAwesome, AntDesign,Feather } from '@expo/vector-icons'; 
 import { firebase } from '../firebase/config'
 import { AuthContext } from '../Authentication/AuthContext'; 
 
@@ -73,8 +73,10 @@ const ListClients = ( {navigation, route} ) => {
               <View style={styles.row}>
                 <FontAwesome style={styles.icon} name="user-circle-o" size={52} color="#0e66d4" />     
                 <Text style={styles.title}>{item.client.fullName}</Text>
-                <Feather name="calendar" size={28} color="#0e66d4" />
-                <Text style={styles.title}>{item.client.estimatedTime}</Text>
+                <View style={styles.mainInformation}>
+                <Feather style= {{  paddingVertical:10,paddingHorizontal:5}}name="clock" size={28} color="#0e66d4" />
+                <Text style={styles.title2}>{item.estimatedTime}</Text>
+                </View>
               </View>
             </TouchableOpacity>
             );
@@ -96,6 +98,7 @@ const ListClients = ( {navigation, route} ) => {
 
 const styles = StyleSheet.create({
   row: {
+    flex:1,
     flexDirection: 'row',
     justifyContent:"center",
     padding:5,
@@ -105,14 +108,32 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
   },
   title: {
+    flex:1,
     paddingVertical:10,
     paddingHorizontal:20,
     marginLeft:5,
     textTransform:"uppercase",
-    fontSize: 26,
+    fontSize: 23,
     color:"#0e66d4",
     fontWeight:"bold"
   },
+  title2: {
+    flex:1,
+    paddingVertical:10,
+    //paddingHorizontal:8,
+    //marginLeft:5,
+    textTransform:"uppercase",
+    fontSize: 20,
+    color:"#0e66d4",
+    fontWeight:"bold"
+  },
+  mainInformation: {
+    flex:1,
+    //padding:10,
+   flexDirection:"row",
+   justifyContent:"center",
+  // marginBottom:5
+ },
   icon: {
     paddingVertical:10,
     paddingHorizontal:20
